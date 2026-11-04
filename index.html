@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Uganda MDT Referral & Discharge Planning Tool</title>
+  <style>
+    :root {
+      --primary: #0f766e;
+      --primary-dark: #115e59;
+      --primary-light: #f0fdfa;
+      --secondary: #1e293b;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #cbd5e1;
+      --danger: #dc2626;
+      --danger-bg: #fef2f2;
+      --text: #0f172a;
+      --muted: #64748b;
+    }
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 60px; }
+    
+    /* Top Header & Patient Bar */
+    header { background: var(--primary); color: white; padding: 14px 20px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+    .header-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; max-width: 1280px; margin: 0 auto; }
+    .header-title { margin: 0; font-size: 1.25rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .action-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn { border: none; padding: 8px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.85rem; transition: 0.15s; }
+    .btn-white { background: white; color: var(--primary-dark); }
+    .btn-white:hover { background: #e2e8f0; }
+    .btn-danger { background: var(--danger); color: white; }
+    
+    /* Patient Metadata Bar */
+    .patient-bar { background: var(--secondary); color: white; padding: 12px 20px; }
+    .patient-grid { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+    .patient-field label { display: block; font-size: 0.72rem; text-transform: uppercase; color: #94a3b8; margin-bottom: 3px; letter-spacing: 0.04em; }
+    .patient-field input, .patient-field select { width: 100%; padding: 6px 8px; border-radius: 4px; border: 1px solid #475569; background: #0f172a; color: white; font-size: 0.88rem; }
+
+    /* Navigation Tabs */
+    .nav-tabs { max-width: 1280px; margin: 16px auto 0; padding: 0 16px; display: flex; gap: 6px; overflow-x: auto; border-bottom: 2px solid var(--border); }
+    .tab-btn { padding: 11px 16px; border: none; background: #e2e8f0; color: var(--secondary); font-weight: 700; font-size: 0.9rem; border-radius: 8px 8px 0 0; cursor: pointer; white-space: nowrap; transition: 0.15s; }
+    .tab-btn.active { background: var(--primary); color: white; }
+    .tab-btn .badge { background: rgba(255,255,255,0.25); padding: 2px 6px; border-radius: 10px; font-size: 0.75rem; margin-left: 6px; }
+
+    /* Containers & Cards */
+    .container { max-width: 1280px; margin: 16px auto; padding: 0 16px; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+    
+    .domain-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 18px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .domain-header { background: var(--primary-light); border-bottom: 1px solid var(--border); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
+    .domain-header h2 { margin: 0; font-size: 1.05rem; color: var(--primary-dark); }
+    .domain-body { padding: 16px; }
+
+    .sub-section { margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px dashed #e2e8f0; }
+    .sub-section:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+    .sub-title { font-size: 0.88rem; font-weight: 700; text-transform: uppercase; color: var(--muted); margin: 0 0 10px 0; letter-spacing: 0.03em; }
+
+    /* Checkboxes & Radios */
+    .check-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; }
+    .check-item { display: flex; align-items: flex-start; gap: 8px; padding: 7px 10px; border: 1px solid #e2e8f0; border-radius: 6px; background: #fcfcfd; cursor: pointer; font-size: 0.9rem; line-height: 1.3; transition: 0.12s; }
+    .check-item:hover { border-color: var(--primary); background: var(--primary-light); }
+    .check-item input[type="checkbox"], .check-item input[type="radio"] { margin-top: 2px; transform: scale(1.15); accent-color: var(--primary); cursor: pointer; }
+    .check-item.resolved-box { background: #f0fdf4; border-color: #bbf7d0; font-weight: 600; color: #166534; }
+
+    /* Inline Subgroup (e.g. RU/LU/RL/LL) */
+    .inline-group { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 8px 12px; background: #f1f5f9; border-radius: 6px; margin-bottom: 8px; font-size: 0.9rem; }
+    .inline-group strong { color: var(--secondary); }
+
+    /* Comments & Textareas */
+    .comment-box { margin-top: 10px; }
+    .comment-box textarea, .comment-box input[type="text"] { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.88rem; resize: vertical; min-height: 46px; }
+    
+    /* Consultation Box */
+    .consult-banner { background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 12px; margin-top: 12px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; }
+    .consult-q { font-weight: 600; font-size: 0.9rem; color: #92400e; }
+    .yn-group { display: flex; gap: 12px; align-items: center; }
+
+    /* Swallowing Visual Guide Grid */
+    .visual-toggle-btn { background: #0284c7; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; margin-bottom: 12px; font-size: 0.88rem; }
+    .swallow-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .swallow-card { border: 2px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; background: white; cursor: pointer; transition: 0.15s; position: relative; }
+    .swallow-card.selected { border-color: var(--primary); background: var(--primary-light); box-shadow: 0 0 0 2px rgba(15,118,110,0.2); }
+    .swallow-icon { font-size: 2.4rem; margin-bottom: 6px; display: block; }
+    .swallow-card h4 { margin: 4px 0; font-size: 0.92rem; color: var(--secondary); }
+    .swallow-card p { margin: 0; font-size: 0.78rem; color: var(--muted); }
+
+    /* MDT Table Styling */
+    .mdt-table { width: 100%; border-collapse: collapse; background: white; font-size: 0.88rem; }
+    .mdt-table th, .mdt-table td { border: 1px solid var(--border); padding: 10px 12px; vertical-align: top; text-align: left; }
+    .mdt-table th { background: var(--secondary); color: white; font-weight: 600; }
+    .mdt-domain-cell { font-weight: 700; color: var(--primary-dark); background: var(--primary-light); width: 140px; }
+    .pill-list { margin: 0; padding-left: 16px; }
+    .pill-list li { margin-bottom: 3px; }
+    .empty-note { color: #94a3b8; font-style: italic; font-size: 0.82rem; }
+    .red-flag-banner { background: var(--danger-bg); border: 2px solid var(--danger); border-radius: 8px; padding: 14px; margin-bottom: 16px; }
+
+    @media print {
+      header, .nav-tabs, .no-print { display: none !important; }
+      .tab-pane { display: block !important; page-break-after: always; }
+      body { background: white; padding: 0; }
+      .domain-card { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <h1 class="header-title">🇺🇬 Multi-Disciplinary Referral & Discharge Tool</h1>
+    <div class="action-btns no-print">
+      <button class="btn btn-white" onclick="exportData()">💾 Save Patient JSON</button>
+      <button class="btn btn-white" onclick="document.getElementById('importFile').click()">📂 Load JSON</button>
+      <input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(event)">
+      <button class="btn btn-white" onclick="window.print()">🖨️ Print / Save PDF</button>
+      <button class="btn btn-danger" onclick="clearForm()">🗑️ Reset Form</button>
+    </div>
+  </div>
+</header>
+
+<section class="patient-bar">
+  <div class="patient-grid">
+    <div class="patient-field">
+      <label>Patient Name / Initials</label>
+      <input type="text" id="pt_name" placeholder="Enter Name" oninput="saveState()">
+    </div>
+    <div class="patient-field">
+      <label>Inpatient / Hospital ID</label>
+      <input type="text" id="pt_id" placeholder="IPD / File No." oninput="saveState()">
+    </div>
+    <div class="patient-field">
+      <label>Ward / Bed Number</label>
+      <input type="text" id="pt_ward" placeholder="e.g., Neurosurgery Ward B" oninput="saveState()">
+    </div>
+    <div class="patient-field">
+      <label>Filled Date</label>
+      <input type="date" id="pt_date" oninput="saveState()">
+    </div>
+    <div class="patient-field">
+      <label>Attendant / Caregiver Phone</label>
+      <input type="text" id="pt_phone" placeholder="07XX XXX XXX" oninput="saveState()">
+    </div>
+  </div>
+</section>
+
+<!-- Navigation Tabs -->
+<nav class="nav-tabs no-print">
+  <button class="tab-btn active" onclick="switchTab('nursing', this)">1. Nursing Daily Page</button>
+  <button class="tab-btn" onclick="switchTab('physio', this)">2. Physiotherapy Daily Page</button>
+  <button class="tab-btn" onclick="switchTab('neuro', this)">3. Neurosurgery Daily Page</button>
+  <button class="tab-btn" onclick="switchTab('mdt', this)">4. Auto-MDT Matrix</button>
+  <button class="tab-btn" onclick="switchTab('dc', this)">5. MDT Discharge Summary</button>
+</nav>
+
+<main class="container">
+
+  <!-- ==================== TAB 1: NURSING DAILY PAGE ==================== -->
+  <section id="tab-nursing" class="tab-pane active">
+    
+    <!-- BOWEL / BLADDER -->
+    <div class="domain-card">
+      <div class="domain-header"><h2>Bowel / Bladder (Nursing)</h2></div>
+      <div class="domain-body">
+        <div class="sub-section">
+          <p class="sub-title">Current Challenges</p>
+          <div class="check-grid">
+            <label class="check-item resolved-box"><input type="checkbox" data-domain="Bowel/Bladder" data-cat="resolved" value="None/All concerns resolved (Nursing)"> None/All concerns resolved</label>
+            <label class="check-item"><input type="checkbox" data-domain="Bowel/Bladder" data-cat="challenge" value="Bowel Incontinence"> Bowel Incontinence</label>
+            <label class="check-item"><input type="checkbox" data-domain="Bowel/Bladder" data-cat="challenge" value="Bladder Incontinence"> Bladder Incontinence</label>
+            <label class="check-item"><input type="checkbox" data-domain="Bowel/Bladder" data-cat="challenge" value="Blockages"> Blockages</label>
+            <label class="check-item"><input type="checkbox" data-domain="Bowel/Bladder" data-cat="challenge" value="Constipation"> Constipation</label>
+            <label class="check-item"><input type="checkbox" data-domain="Bowel/Bladder" data-cat="challenge" value="Diarrhea"> Diarrhea</label>
+            <label class="check-item"><input type="checkbox" data-domain="Bowel/Bladder" data-cat="challenge" value="Urine Retention"> Urine Retention</label>
+            <label class="check-item"><input type="checkbox" data-domain="Bowel/Bladder" data-cat="challenge" value="Pain"> Pain</label>
+            <label class="check-item"><input type="checkbox" data-domain="Bowel/Bladder" data-cat="challenge" value="Infection"> Infection</label>
+            <label class="check-item"><input type="checkbox" data-domain="Bowel/Bladder" data-cat="challenge" value="Trauma/Injury"> Trauma/Injury</label>
+            <label class="check-item"><input type="checkbox" data-domain="Bowel/Bladder" data-cat="challenge" value="Other Bowel/Bladder Challenge"> Other (comment)</label>
+          </div>
+          <div class="comment-box"><textarea data-domain="Bowel/Bladder" data-cat="comment" placeholder="Bowel/Bladder Current Challenges Comments..."></textarea></div>
+        </div>
+
+        <div class="sub-section">
+          <p class="sub-title">Discharge Planning Needs</p>
+          <div class="check-grid">
+            <label class="check-item resolved-box"><input type="checkbox" data-domain="Bowel/Bladder" data-cat="resolved" value="DC Needs Resolved"> None/All concerns resolved</label>
+            <label class="check-item"><input type="checkbox" data-domain="Bowel/Bladder" data-cat="education" value="Diet Education/Modification needed for digestion"> Diet Education/Modification for digestion</label>
+            <label class="check-item"><input type="checkbox" data-domain="Bowel/Bladder" data-cat="education" value="Non-Catheter Bladder Management"> Non-Catheter Bladder Management</label>
+            <label class="check-item"><input type="checkbox" data-domain="Bowel/Bladder" data-cat="education" value="Bowel Management"> Bowel Management</label>
+            <label class="check-item"><input type="checkbox" data-domain="Bowel/Bladder" data-cat="education" value="Catheter Education"> Catheter Education</label>
+            <label class="check-item"><input type="checkbox" data-domain="Bowel/Bladder" data-cat="education" value="Other Patient/Caregiver Education (Bowel/Bladder)"> Other Patient/Caregiver Education (comment)</label>
+          </div>
+          <div class="comment-box"><textarea data-domain="Bowel/Bladder" data-cat="comment" placeholder="Bowel/Bladder Discharge Planning Comments..."></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SKIN -->
+    <div class="domain-card">
+      <div class="domain-header"><h2>Skin (Nursing)</h2></div>
+      <div class="domain-body">
+        <div class="sub-section">
+          <p class="sub-title">Current Challenges</p>
+          <div class="check-grid">
+            <label class="check-item resolved-box"><input type="checkbox" data-domain="Skin" data-cat="resolved" value="None/All concerns resolved (Nursing)"> None/All concerns resolved</label>
+            <label class="check-item"><input type="checkbox" data-domain="Skin" data-cat="challenge" value="Pressure Sores"> Pressure Sores</label>
+            <label class="check-item"><input type="checkbox" data-domain="Skin" data-cat="challenge" value="Edema"> Edema</label>
+            <label class="check-item"><input type="checkbox" data-domain="Skin" data-cat="challenge" value="Infection"> Infection</label>
+            <label class="check-item"><input type="checkbox" data-domain="Skin" data-cat="challenge" value="Poor Wound Healing"> Poor Wound Healing</label>
+            <label class="check-item"><input type="checkbox" data-domain="Skin" data-cat="challenge" value="Burns"> Burns</label>
+            <label class="check-item"><input type="checkbox" data-domain="Skin" data-cat="challenge" value="Other Skin Challenge"> Other (comment)</label>
+          </div>
+          <div class="comment-box"><textarea data-domain="Skin" data-cat="comment" placeholder="Skin Current Challenges Comments..."></textarea></div>
+        </div>
+
+        <div class="sub-section">
+          <p class="sub-title">Equipment Needs</p>
+          <div class="check-grid">
+            <label class="check-item resolved-box"><input type="checkbox" data-domain="Skin" data-cat="resolved" value="No Skin Equipment Needed"> None/All concerns resolved</label>
+            <label class="check-item"><input type="checkbox" data-domain="Skin" data-cat="equipment" value="Pressure Prevention Surfaces (mattresses, cushions)"> Pressure Prevention Surfaces (mattresses, cushions)</label>
+            <label class="check-item"><input type="checkbox" data-domain="Skin" data-cat="equipment" value="Cream/Ointment"> Cream/Ointment (comment)</label>
+            <label class="check-item"><input type="checkbox" data-domain="Skin" data-cat="equipment" value="Dressing Materials"> Dressing Materials (comment)</label>
+          </div>
+          <div class="comment-box"><textarea data-domain="Skin" data-cat="comment" placeholder="Specify creams, ointments, cushions, or dressing materials..."></textarea></div>
+        </div>
+
+        <div class="sub-section">
+          <p class="sub-title">Discharge Planning Needs</p>
+          <div class="check-grid">
+            <label class="check-item resolved-box"><input type="checkbox" data-domain="Skin" data-cat="resolved" value="Skin DC Needs Resolved"> None/All concerns resolved</label>
+            <label class="check-item"><input type="checkbox" data-domain="Skin" data-cat="education" value="Turning/Pressure Relief Education"> Turning/Pressure Relief Education</label>
+            <label class="check-item"><input type="checkbox" data-domain="Skin" data-cat="education" value="Edema Control Education"> Edema Control Education</label>
+            <label class="check-item"><input type="checkbox" data-domain="Skin" data-cat="education" value="Wound Management Education"> Wound Management Education</label>
+            <label class="check-item"><input type="checkbox" data-domain="Skin" data-cat="education" value="Other Patient/Caregiver Skin Education"> Other Patient/Caregiver Education</label>
+            <label class="check-item"><input type="checkbox" data-domain="Skin" data-cat="other" value="Other Skin DC Need"> Other (comment)</label>
+          </div>
+          <div class="comment-box"><textarea data-domain="Skin" data-cat="comment" placeholder="Skin Discharge Planning Comments..."></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOBILITY (NURSING) -->
+    <div class="domain-card">
+      <div class="domain-header"><h2>Mobility (Nursing)</h2></div>
+      <div class="domain-body">
+        <p class="sub-title">Current Challenges — Patient needs help with:</p>
+        <div class="check-grid">
+          <label class="check-item resolved-box"><input type="checkbox" data-domain="Mobility" data-cat="resolved" value="Patient does not need help with mobility (Nursing)"> The patient does not need help with mobility</label>
+          <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Moving around in bed (turning side to side)"> Moving around in the bed (turning side to side)</label>
+          <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Coming to a sitting position on side of bed"> Coming to a sitting position on the side of the bed</label>
+          <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Moving between bed and chair/seated surface"> Moving between a bed and a chair/seated surface</label>
+          <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Walking or moving with assistive device/wheelchair"> Walking or moving with an assistive device or wheelchair</label>
+          <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Other Nursing Mobility Challenge"> Other (Comment)</label>
+        </div>
+        <div class="comment-box"><textarea data-domain="Mobility" data-cat="comment" placeholder="Nursing Mobility Comments..."></textarea></div>
+
+        <div class="consult-banner">
+          <span class="consult-q">Physiotherapy Consultation: Has a mobility challenge been identified that requires a PT consultation?</span>
+          <div class="yn-group">
+            <label><input type="radio" name="nurs_pt_req" data-domain="Mobility" data-cat="referral" value="Inpatient PT Consultation Requested (by Nursing)"> Yes</label>
+            <label><input type="radio" name="nurs_pt_req" value=""> No</label>
+            <span style="margin-left:12px; font-weight:600; color:#92400e;">If yes, has PT already reviewed the patient?</span>
+            <label><input type="radio" name="nurs_pt_rev" value="PT Reviewed: Yes"> Y</label>
+            <label><input type="radio" name="nurs_pt_rev" data-domain="Mobility" data-cat="referral" value="PT Consultation Pending Review"> N</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SELF-CARE / ADLS (NURSING) -->
+    <div class="domain-card">
+      <div class="domain-header"><h2>Self-Care / ADLs (Nursing)</h2></div>
+      <div class="domain-body">
+        <div class="sub-section">
+          <p class="sub-title">Current Challenges — Patient needs help with:</p>
+          <div class="check-grid">
+            <label class="check-item resolved-box"><input type="checkbox" data-domain="Self-Care" data-cat="resolved" value="Does not need help with self-care (Nursing)"> The patient does not need help with self-care</label>
+            <label class="check-item"><input type="checkbox" data-domain="Self-Care" data-cat="challenge" value="Bathing (Nursing)"> Bathing</label>
+            <label class="check-item"><input type="checkbox" data-domain="Self-Care" data-cat="challenge" value="Grooming (Teeth/Hair) (Nursing)"> Grooming (Brushing Teeth or Hair)</label>
+            <label class="check-item"><input type="checkbox" data-domain="Self-Care" data-cat="challenge" value="Dressing (Nursing)"> Dressing</label>
+            <label class="check-item"><input type="checkbox" data-domain="Self-Care" data-cat="challenge" value="Toileting (Nursing)"> Toileting</label>
+            <label class="check-item"><input type="checkbox" data-domain="Self-Care" data-cat="challenge" value="Feeding (Nursing)"> Feeding</label>
+          </div>
+          <div class="comment-box"><textarea data-domain="Self-Care" data-cat="comment" placeholder="Nursing Self-Care Comments..."></textarea></div>
+
+          <div class="consult-banner">
+            <span class="consult-q">Occupational Therapy Consultation: Requires an OT consultation?</span>
+            <div class="yn-group">
+              <label><input type="radio" name="nurs_ot_req" data-domain="Self-Care" data-cat="referral" value="Inpatient OT Consultation Requested (by Nursing)"> Y</label>
+              <label><input type="radio" name="nurs_ot_req" value=""> N</label>
+              <span style="margin-left:12px; font-weight:600; color:#92400e;">If yes, has OT already reviewed?</span>
+              <label><input type="radio" name="nurs_ot_rev" value="OT Reviewed: Yes"> Y</label>
+              <label><input type="radio" name="nurs_ot_rev" data-domain="Self-Care" data-cat="referral" value="OT Consultation Pending Review"> N</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <p class="sub-title">Discharge Planning Needs</p>
+          <div class="check-grid">
+            <label class="check-item resolved-box"><input type="checkbox" data-domain="Self-Care" data-cat="resolved" value="Self-Care DC Resolved"> None/All concerns resolved</label>
+            <label class="check-item"><input type="checkbox" data-domain="Self-Care" data-cat="referral" value="Outpatient Occupational Therapy referral (Nursing)"> Needs review for possible Outpatient OT referral</label>
+            <label class="check-item"><input type="checkbox" data-domain="Self-Care" data-cat="education" value="Family Education/Training needed to assist patient with ADLs"> Family Education/Training needed to assist patient</label>
+            <label class="check-item"><input type="checkbox" data-domain="Self-Care" data-cat="other" value="Other Self-Care DC Need"> Other (Comment)</label>
+          </div>
+          <div class="comment-box"><textarea data-domain="Self-Care" data-cat="comment" placeholder="Self-Care Discharge Planning Comments..."></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SWALLOWING / NUTRITION (NURSING + VISUAL CARDS) -->
+    <div class="domain-card">
+      <div class="domain-header"><h2>Swallowing / Nutrition (Nursing)</h2></div>
+      <div class="domain-body">
+        <div class="sub-section">
+          <p class="sub-title">Visual Attendant Screening Guide (Click pictures to tick symptoms)</p>
+          <p style="font-size:0.85rem; color:var(--muted); margin-top:0;"><em>Show these cards to the attendant/caregiver and ask: "Are any of the following challenges with swallowing happening during or after eating/drinking?"</em></p>
+          
+          <div class="swallow-cards">
+            <div class="swallow-card" onclick="toggleVisualCard(this, 'sw_wet')">
+              <span class="swallow-icon">🗣️💧</span>
+              <h4>WET VOICE</h4>
+              <p>Voice changes / wet sounds when talking</p>
+            </div>
+            <div class="swallow-card" onclick="toggleVisualCard(this, 'sw_cough')">
+              <span class="swallow-icon">😷💨</span>
+              <h4>COUGHING / CHOKING</h4>
+              <p>Coughing during or after eating/drinking</p>
+            </div>
+            <div class="swallow-card" onclick="toggleVisualCard(this, 'sw_drool')">
+              <span class="swallow-icon">🤤</span>
+              <h4>DROOLING</h4>
+              <p>Poor lip closure / saliva spilling</p>
+            </div>
+            <div class="swallow-card" onclick="toggleVisualCard(this, 'sw_pocket')">
+              <span class="swallow-icon">🐿️🍽️</span>
+              <h4>POCKETING FOOD</h4>
+              <p>Food kept in cheek/mouth, not swallowing</p>
+            </div>
+            <div class="swallow-card" onclick="toggleVisualCard(this, 'sw_spill')">
+              <span class="swallow-icon">🥄💧</span>
+              <h4>ANTERIOR SPILLAGE</h4>
+              <p>Food/liquid falling out from mouth</p>
+            </div>
+            <div class="swallow-card" onclick="toggleVisualCard(this, 'sw_chew')">
+              <span class="swallow-icon">😬⚡</span>
+              <h4>DIFFICULTY CHEWING</h4>
+              <p>Weak or unable to chew food</p>
+            </div>
+            <div class="swallow-card" onclick="toggleVisualCard(this, 'sw_globus')">
+              <span class="swallow-icon">🫱喉🎯</span>
+              <h4>PAIN / GLOBUS</h4>
+              <p>Feeling pain / lump or food stuck in throat</p>
+            </div>
+            <div class="swallow-card" onclick="toggleVisualCard(this, 'sw_breath')">
+              <span class="swallow-icon">🫁⚠️</span>
+              <h4>DIFFICULTY BREATHING</h4>
+              <p>Labored breathing during meals</p>
+            </div>
+            <div class="swallow-card" onclick="toggleVisualCard(this, 'sw_reflux')">
+              <span class="swallow-icon">🔄🤢</span>
+              <h4>REFLUX / REGURGITATION</h4>
+              <p>Food comes back up from stomach</p>
+            </div>
+            <div class="swallow-card" onclick="toggleVisualCard(this, 'sw_slow')">
+              <span class="swallow-icon">🕒🍲</span>
+              <h4>PROLONGED MEAL</h4>
+              <p>Very slow eating / takes extra time</p>
+            </div>
+            <div class="swallow-card" onclick="toggleVisualCard(this, 'sw_fear')">
+              <span class="swallow-icon">✋😰</span>
+              <h4>FEAR / REFUSAL TO EAT</h4>
+              <p>Unwilling or nervous to eat</p>
+            </div>
+          </div>
+
+          <p class="sub-title">Current Swallowing & Nutritional Challenges</p>
+          <div class="check-grid">
+            <label class="check-item resolved-box"><input type="checkbox" data-domain="Swallowing" data-cat="resolved" value="None/All concerns resolved"> None/All concerns resolved</label>
+            <label class="check-item"><input type="checkbox" id="sw_wet" data-domain="Swallowing" data-cat="challenge" value="Wet Voice"> Wet Voice</label>
+            <label class="check-item"><input type="checkbox" id="sw_cough" data-domain="Swallowing" data-cat="challenge" value="Coughing / Choking"> Coughing</label>
+            <label class="check-item"><input type="checkbox" id="sw_drool" data-domain="Swallowing" data-cat="challenge" value="Drooling"> Drooling</label>
+            <label class="check-item"><input type="checkbox" id="sw_pocket" data-domain="Swallowing" data-cat="challenge" value="Pocketing food during eating"> Pocketing food during eating</label>
+            <label class="check-item"><input type="checkbox" id="sw_spill" data-domain="Swallowing" data-cat="challenge" value="Anterior spillage of food/drink"> Anterior spillage of food/drink</label>
+            <label class="check-item"><input type="checkbox" id="sw_chew" data-domain="Swallowing" data-cat="challenge" value="Chewing Difficulty"> Chewing Difficulty</label>
+            <label class="check-item"><input type="checkbox" id="sw_globus" data-domain="Swallowing" data-cat="challenge" value="Globus Sensation (Food stuck)"> Globus Sensation</label>
+            <label class="check-item"><input type="checkbox" id="sw_breath" data-domain="Swallowing" data-cat="challenge" value="Labored/Difficulty Breathing"> Labored/Difficulty Breathing</label>
+            <label class="check-item"><input type="checkbox" id="sw_reflux" data-domain="Swallowing" data-cat="challenge" value="Reflux/Regurgitation"> Reflux/Regurgitation</label>
+            <label class="check-item"><input type="checkbox" id="sw_slow" data-domain="Swallowing" data-cat="challenge" value="Prolonged Meal Time"> Prolonged Meal Time</label>
+            <label class="check-item"><input type="checkbox" id="sw_fear" data-domain="Swallowing" data-cat="challenge" value="Fear or Refusal of Eating"> Fear or Refusal of Eating</label>
+            <label class="check-item"><input type="checkbox" data-domain="Swallowing" data-cat="challenge" value="Low/Inadequate Nutritional Intake"> Nutritional: Low/Inadequate Intake</label>
+            <label class="check-item"><input type="checkbox" data-domain="Swallowing" data-cat="challenge" value="Using NG Tube"> Using NG Tube</label>
+            <label class="check-item"><input type="checkbox" data-domain="Swallowing" data-cat="challenge" value="Tube Feeding Challenges"> Tube Feeding Challenges (comment)</label>
+            <label class="check-item"><input type="checkbox" data-domain="Swallowing" data-cat="education" value="Diet Modification needed for safe swallowing"> Diet Modification needed for safe swallowing</label>
+            <label class="check-item"><input type="checkbox" data-domain="Swallowing" data-cat="challenge" value="Other Swallowing Challenge"> Other (comment)</label>
+          </div>
+          <div class="comment-box"><textarea data-domain="Swallowing" data-cat="comment" placeholder="Swallowing / NG Tube / Diet Modification Comments..."></textarea></div>
+        </div>
+
+        <div class="sub-section">
+          <p class="sub-title">Discharge Planning Needs</p>
+          <div class="check-grid">
+            <label class="check-item resolved-box"><input type="checkbox" data-domain="Swallowing" data-cat="resolved" value="Swallowing DC Resolved"> None/All concerns resolved</label>
+            <label class="check-item"><input type="checkbox" data-domain="Swallowing" data-cat="referral" value="Outpatient Speech Language Therapy (SLT) referral"> Needs review for Outpatient Speech Language Therapy referral</label>
+            <label class="check-item"><input type="checkbox" data-domain="Swallowing" data-cat="referral" value="Follow-up with Neurosurgery for NG Tube"> Needs follow-up with neurosurgery for NG Tube</label>
+            <label class="check-item"><input type="checkbox" data-domain="Swallowing" data-cat="education" value="Family education needed for nutritional intake"> Family education needed for nutritional intake</label>
+            <label class="check-item"><input type="checkbox" data-domain="Swallowing" data-cat="education" value="Family education needed for aspiration risk reduction"> Family education needed for aspiration risk reduction</label>
+            <label class="check-item"><input type="checkbox" data-domain="Swallowing" data-cat="other" value="Other Swallowing DC Need"> Other (Comment)</label>
+          </div>
+          <div class="comment-box"><textarea data-domain="Swallowing" data-cat="comment" placeholder="Swallowing Discharge Planning Comments..."></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BEHAVIOR AND MEDICATION -->
+    <div class="domain-card">
+      <div class="domain-header"><h2>Behavior / Mood & Medication</h2></div>
+      <div class="domain-body">
+        <div class="check-grid">
+          <label class="check-item resolved-box"><input type="checkbox" data-domain="Behavior/Mood" data-cat="resolved" value="None/All concerns resolved"> None/All concerns resolved</label>
+          <label class="check-item"><input type="checkbox" data-domain="Behavior/Mood" data-cat="challenge" value="Agitation / Restlessness"> Agitation / Restlessness</label>
+          <label class="check-item"><input type="checkbox" data-domain="Behavior/Mood" data-cat="challenge" value="Low Mood / Depression / Withdrawal"> Low Mood / Withdrawal</label>
+          <label class="check-item"><input type="checkbox" data-domain="Behavior/Mood" data-cat="education" value="Medication Adherence / Dosing Schedule Education"> Medication Adherence / Dosing Education needed</label>
+          <label class="check-item"><input type="checkbox" data-domain="Behavior/Mood" data-cat="other" value="Behavior/Medication Concern"> Other Behavior / Medication Note</label>
+        </div>
+        <div class="comment-box"><textarea data-domain="Behavior/Mood" data-cat="comment" placeholder="Behavior, Mood, and Medication Comments..."></textarea></div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ==================== TAB 2: PHYSIOTHERAPY DAILY PAGE ==================== -->
+  <section id="tab-physio" class="tab-pane">
+    <div class="domain-card">
+      <div class="domain-header"><h2>Physiotherapy Daily Page & Discharge Planning Observations</h2></div>
+      <div class="domain-body">
+        
+        <!-- Motor / Sensory -->
+        <div class="sub-section">
+          <p class="sub-title">Motor / Sensory Function Challenges</p>
+          <div class="inline-group">
+            <strong>Limb Weakness:</strong>
+            <label><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Limb Weakness: Right Upper (RU)"> RU</label>
+            <label><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Limb Weakness: Left Upper (LU)"> LU</label>
+            <label><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Limb Weakness: Right Lower (RL)"> RL</label>
+            <label><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Limb Weakness: Left Lower (LL)"> LL</label>
+            <span style="margin-left:16px;"><strong>Trunk Weakness:</strong></span>
+            <label><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Trunk Weakness: Right"> R</label>
+            <label><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Trunk Weakness: Left"> L</label>
+            <label><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Trunk Weakness: Both"> Both</label>
+          </div>
+
+          <div class="check-grid">
+            <label class="check-item resolved-box"><input type="checkbox" data-domain="Mobility" data-cat="resolved" value="Motor/Sensory: All Concerns Resolved"> None/All Concerns Resolved</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Postural Control: Righting Reactions"> Postural Control: Righting Reactions</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Postural Control: Protective Responses"> Postural Control: Protective Responses</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Ataxia"> Ataxia</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Hemiplegia"> Hemiplegia</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Tetraplegia"> Tetraplegia</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Paraplegia"> Paraplegia</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Abnormal Tone"> Abnormal Tone</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Primitive Reflexes Present"> Primitive Reflexes Present</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Motor Apraxia"> Motor Apraxia</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Abnormal Postural Alignment"> Abnormal Postural Alignment</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Motor Impersistence"> Motor Impersistence</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Numbness"> Numbness</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Clonus"> Clonus</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Pain (PT)"> Pain</label>
+          </div>
+          <div class="comment-box"><textarea data-domain="Mobility" data-cat="comment" placeholder="Motor/Sensory Function Comment..."></textarea></div>
+        </div>
+
+        <!-- Balance, Transfers, Locomotion -->
+        <div class="sub-section">
+          <p class="sub-title">Balance, Transfer & Locomotion Challenges</p>
+          <div class="check-grid">
+            <label class="check-item resolved-box"><input type="checkbox" data-domain="Mobility" data-cat="resolved" value="Balance: All Concerns Resolved"> Balance: None/All Concerns Resolved</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Static Sitting Balance"> Static Sitting Balance</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Dynamic Sitting Balance"> Dynamic Sitting Balance</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Static Standing Balance"> Static Standing Balance</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Dynamic Standing Balance"> Dynamic Standing Balance</label>
+            
+            <label class="check-item resolved-box"><input type="checkbox" data-domain="Mobility" data-cat="resolved" value="Transfers: All Concerns Resolved"> Transfers: None/All Concerns Resolved</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Bed Mobility"> Bed Mobility</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Transfer: Between Supine and Sitting"> Between Supine and Sitting</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Transfer: Between Sitting and Standing"> Between Sitting and Standing</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Transferring Out of Bed"> Transferring Out of Bed</label>
+
+            <label class="check-item resolved-box"><input type="checkbox" data-domain="Mobility" data-cat="resolved" value="Locomotion: All Concerns Resolved"> Locomotion: None/All Concerns Resolved</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Ambulation"> Ambulation</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Needs Wheelchair"> Needs Wheelchair</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Needs Assistive Device for Ambulation"> Needs Assistive Device for Ambulation</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Stairs Challenge"> Stairs (Comment)</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Other Locomotion Challenge"> Other (Comment)</label>
+          </div>
+          <div class="comment-box"><textarea data-domain="Mobility" data-cat="comment" placeholder="Balance, Transfer & Locomotion Comments..."></textarea></div>
+        </div>
+
+        <!-- PT Self Care -->
+        <div class="sub-section">
+          <p class="sub-title">Current Self-Care Challenges (Observed by PT)</p>
+          <div class="check-grid">
+            <label class="check-item resolved-box"><input type="checkbox" data-domain="Self-Care" data-cat="resolved" value="Does not need help with self-care (PT)"> The patient does not need help with self-care</label>
+            <label class="check-item"><input type="checkbox" data-domain="Self-Care" data-cat="challenge" value="Bathing (PT)"> Bathing</label>
+            <label class="check-item"><input type="checkbox" data-domain="Self-Care" data-cat="challenge" value="Grooming (PT)"> Grooming (Brushing Teeth or Hair)</label>
+            <label class="check-item"><input type="checkbox" data-domain="Self-Care" data-cat="challenge" value="Dressing (PT)"> Dressing</label>
+            <label class="check-item"><input type="checkbox" data-domain="Self-Care" data-cat="challenge" value="Toileting (PT)"> Toileting</label>
+            <label class="check-item"><input type="checkbox" data-domain="Self-Care" data-cat="challenge" value="Feeding (PT)"> Feeding</label>
+          </div>
+          <div class="consult-banner">
+            <span class="consult-q">OT Consultation: Has a self-care challenge been identified that requires an OT consultation?</span>
+            <div class="yn-group">
+              <label><input type="radio" name="pt_ot_req" data-domain="Self-Care" data-cat="referral" value="Inpatient OT Consultation Requested (by PT)"> Y</label>
+              <label><input type="radio" name="pt_ot_req" value=""> N</label>
+              <span style="margin-left:12px; font-weight:600; color:#92400e;">If yes, has OT already reviewed?</span>
+              <label><input type="radio" name="pt_ot_rev" value="OT Reviewed: Yes"> Y</label>
+              <label><input type="radio" name="pt_ot_rev" data-domain="Self-Care" data-cat="referral" value="OT Consultation Pending Review"> N</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Adaptive Equipment Needs -->
+        <div class="sub-section">
+          <p class="sub-title">Adaptive Equipment Needs</p>
+          <div class="check-grid">
+            <label class="check-item resolved-box"><input type="checkbox" data-domain="Mobility" data-cat="resolved" value="Adaptive Equipment: None"> None</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="equipment" value="Cane"> Mobility: Cane</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="equipment" value="Crutches"> Mobility: Crutches</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="equipment" value="Walker"> Mobility: Walker</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="equipment" value="Wheelchair"> Mobility: Wheelchair</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="equipment" value="Sliding Sheet"> Mobility: Sliding Sheet</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="equipment" value="Hoist"> Mobility: Hoist</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="equipment" value="Other Mobility Equipment"> Mobility: Other (Comment)</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="equipment" value="Ankle Splints"> Braces/Orthotics: Ankle Splints</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="equipment" value="Arm Slings"> Braces/Orthotics: Arm Slings</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="equipment" value="Knee Supports"> Braces/Orthotics: Knee Supports</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="equipment" value="Other Braces/Orthotics"> Braces/Orthotics: Other (Comment)</label>
+            <label class="check-item"><input type="checkbox" data-domain="Self-Care" data-cat="equipment" value="Commode Chair"> Self-Care: Commode Chair</label>
+            <label class="check-item"><input type="checkbox" data-domain="Self-Care" data-cat="equipment" value="Other Self-Care Equipment"> Self-Care: Other (Comment)</label>
+          </div>
+          <div class="comment-box"><textarea data-domain="Mobility" data-cat="comment" placeholder="Adaptive Equipment Specifications / Comments..."></textarea></div>
+        </div>
+
+        <!-- Other Barriers to Home Mobility -->
+        <div class="sub-section">
+          <p class="sub-title">Other Barriers to Home Mobility (**Comment required for all barriers**)</p>
+          <div class="check-grid">
+            <label class="check-item resolved-box"><input type="checkbox" data-domain="Mobility" data-cat="resolved" value="Home Barriers: None"> None/All Concerns Resolved</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="other" value="Barrier: Decreased/Lack of Caregiver Support"> Decreased/Lack of Caregiver Support</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="other" value="Barrier: Home Layout/Inaccessible Home Environment"> Home Layout/Inaccessible Environment</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="other" value="Barrier: Wound Management/Prevention"> Wound Management/Prevention</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="other" value="Barrier: Behavior"> Behavior</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="other" value="Barrier: Requires Oxygen"> Requires Oxygen</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="other" value="Barrier: Edema"> Edema</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="other" value="Barrier: Weight Bearing Status"> Weight Bearing Status</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="other" value="Barrier: Trach/Airway Management"> Trach/Airway Management</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="other" value="Barrier: Home Distance from Rehab Facility"> Home Distance from Rehab Facility</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="other" value="Barrier: New Diabetic"> New Diabetic</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="other" value="Barrier: Incontinence"> Incontinence</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="other" value="Barrier: Neurogenic Bowel/Bladder"> Neurogenic Bowel/Bladder</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="other" value="Barrier: Nutrition/Tube Feeding"> Nutrition/Tube Feeding</label>
+          </div>
+          <div class="comment-box"><textarea data-domain="Mobility" data-cat="comment" placeholder="REQUIRED: Explain identified barriers to home mobility..."></textarea></div>
+        </div>
+
+        <!-- PT Patient & Caregiver Education + DC Summary -->
+        <div class="sub-section">
+          <p class="sub-title">Patient & Caregiver Education Needs (PT)</p>
+          <div class="check-grid">
+            <label class="check-item resolved-box"><input type="checkbox" data-domain="Mobility" data-cat="resolved" value="PT Education: All Concerns Resolved"> None/All Concerns Resolved</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="education" value="Transfers Education"> Transfers</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="education" value="Locomotion Education"> Locomotion</label>
+            <label class="check-item"><input type="checkbox" data-domain="Self-Care" data-cat="education" value="Activities of Daily Living (ADL) Education"> Activities of Daily Living (Comment)</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="education" value="Safety Education"> Safety</label>
+            <label class="check-item"><input type="checkbox" data-domain="Skin" data-cat="education" value="Wound Management (PT)"> Wound Management</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="education" value="Contracture Prevention Education"> Contracture Prevention</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="education" value="Adaptive Equipment Use Education"> Adaptive Equipment Use</label>
+            <label class="check-item"><input type="checkbox" data-domain="Cognition" data-cat="education" value="Cognitive Management Education (PT)"> Cognitive Management</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="education" value="Other PT Education"> Other (Comment)</label>
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <p class="sub-title">Physiotherapy Discharge Planning Summary (Select all that apply)</p>
+          <div class="check-grid">
+            <label class="check-item resolved-box"><input type="checkbox" data-domain="Mobility" data-cat="resolved" value="PT DC Summary: All concerns resolved"> None/All concerns resolved</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="referral" value="Outpatient Physiotherapy referral"> If discharging home, needs Outpatient Physiotherapy referral</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="referral" value="Private arrangement for continued home rehab"> Needs private arrangement for continued rehab in the home</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="referral" value="Transfer to peripheral hospital/facility with rehab"> Consider transfer to peripheral hospital/facility with continued rehab</label>
+            <label class="check-item"><input type="checkbox" data-domain="Self-Care" data-cat="referral" value="Outpatient Occupational Therapy referral (PT)"> Needs Outpatient Occupational Therapy referral</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="education" value="Continued patient/family education before DC (safety/equipment)"> Needs continued education before DC for safety/equipment/decline</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="referral" value="Referral for Mobility or Adaptive Equipment"> Needs referral for Mobility or Adaptive Equipment</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="other" value="Other PT DC Need"> Other (Comment)</label>
+          </div>
+          <div class="comment-box"><textarea data-domain="Mobility" data-cat="comment" placeholder="Physiotherapy Discharge Summary Comment..."></textarea></div>
+
+          <div class="consult-banner">
+            <div>
+              <div class="consult-q">1. Has the patient met their goals for acute-level physiotherapy?</div>
+              <div class="yn-group" style="margin-top:4px;">
+                <label><input type="radio" name="pt_goals_met" value="Yes" onchange="saveState()"> Yes</label>
+                <label><input type="radio" name="pt_goals_met" value="No" onchange="saveState()"> No</label>
+              </div>
+            </div>
+            <div>
+              <div class="consult-q">2. Are both the patient's and caregiver's education complete?</div>
+              <div class="yn-group" style="margin-top:4px;">
+                <label><input type="radio" name="pt_edu_done" value="Yes" onchange="saveState()"> Yes</label>
+                <label><input type="radio" name="pt_edu_done" value="No" onchange="saveState()"> No</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== TAB 3: NEUROSURGERY DAILY PAGE ==================== -->
+  <section id="tab-neuro" class="tab-pane">
+    
+    <!-- COGNITION -->
+    <div class="domain-card">
+      <div class="domain-header"><h2>Cognition (Neurosurgery)</h2></div>
+      <div class="domain-body">
+        <div class="sub-section">
+          <p class="sub-title">Current Orientation, Comprehension & Cognitive Challenges</p>
+          <div class="check-grid">
+            <label class="check-item resolved-box"><input type="checkbox" data-domain="Cognition" data-cat="resolved" value="Cognition: None/All concerns resolved"> None/All concerns resolved</label>
+            <label class="check-item"><input type="checkbox" data-domain="Cognition" data-cat="challenge" value="Orientation: Self"> Orientation: Self</label>
+            <label class="check-item"><input type="checkbox" data-domain="Cognition" data-cat="challenge" value="Orientation: Time"> Orientation: Time</label>
+            <label class="check-item"><input type="checkbox" data-domain="Cognition" data-cat="challenge" value="Orientation: Place"> Orientation: Place</label>
+            <label class="check-item"><input type="checkbox" data-domain="Cognition" data-cat="challenge" value="Orientation: Condition (Medical Problem)"> Orientation: Condition (Medical Problem)</label>
+            <label class="check-item"><input type="checkbox" data-domain="Cognition" data-cat="challenge" value="Orientation: Person Recognition"> Orientation: Person Recognition</label>
+            <label class="check-item"><input type="checkbox" data-domain="Cognition" data-cat="challenge" value="Comprehension: Activity Recognition"> Comprehension: Activity Recognition</label>
+            <label class="check-item"><input type="checkbox" data-domain="Cognition" data-cat="challenge" value="Comprehension: Understanding Simple Task"> Comprehension: Understanding Simple Task</label>
+            <label class="check-item"><input type="checkbox" data-domain="Cognition" data-cat="challenge" value="Cognitive: Sustained Attention"> Cognitive: Sustained Attention</label>
+            <label class="check-item"><input type="checkbox" data-domain="Cognition" data-cat="challenge" value="Cognitive: Left Hemineglect"> Cognitive: Left Hemineglect</label>
+            <label class="check-item"><input type="checkbox" data-domain="Cognition" data-cat="challenge" value="Cognitive: Right Hemineglect"> Cognitive: Right Hemineglect</label>
+            <label class="check-item"><input type="checkbox" data-domain="Cognition" data-cat="challenge" value="Cognitive: Memory (recall)"> Cognitive: Memory (recall)</label>
+          </div>
+          <div class="comment-box"><textarea data-domain="Cognition" data-cat="comment" placeholder="Cognition Challenges Comment..."></textarea></div>
+        </div>
+
+        <div class="sub-section">
+          <p class="sub-title">Discharge Planning Needs (Cognition)</p>
+          <div class="check-grid">
+            <label class="check-item resolved-box"><input type="checkbox" data-domain="Cognition" data-cat="resolved" value="Cognition DC: None/All concerns resolved"> None/All concerns resolved</label>
+            <label class="check-item"><input type="checkbox" data-domain="Cognition" data-cat="referral" value="Review for Occupational Therapy referral (Cognition)"> Needs review for possible Occupational Therapy referral</label>
+            <label class="check-item"><input type="checkbox" data-domain="Cognition" data-cat="education" value="Family Education/Training needed to assist patient (Cognition)"> Family Education/Training needed to assist patient</label>
+            <label class="check-item"><input type="checkbox" data-domain="Cognition" data-cat="other" value="Other Cognition DC Need"> Other (Comment)</label>
+          </div>
+          <div class="comment-box"><textarea data-domain="Cognition" data-cat="comment" placeholder="Cognition Discharge Planning Comment..."></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMMUNICATION -->
+    <div class="domain-card">
+      <div class="domain-header"><h2>Communication (Neurosurgery)</h2></div>
+      <div class="domain-body">
+        <div class="sub-section">
+          <div class="inline-group">
+            <strong>Current Communication Style:</strong>
+            <label><input type="checkbox" data-domain="Communication" data-cat="challenge" value="Style: Verbal"> Verbal</label>
+            <label><input type="checkbox" data-domain="Communication" data-cat="challenge" value="Style: Non-Verbal"> Non-Verbal</label>
+          </div>
+          <p class="sub-title">Verbal Communication & Facial Challenges</p>
+          <div class="check-grid">
+            <label class="check-item resolved-box"><input type="checkbox" data-domain="Communication" data-cat="resolved" value="Communication: None/All concerns resolved"> None/All concerns resolved</label>
+            <label class="check-item"><input type="checkbox" data-domain="Communication" data-cat="challenge" value="Low Volume"> Low Volume</label>
+            <label class="check-item"><input type="checkbox" data-domain="Communication" data-cat="challenge" value="Slurring/Pronunciation Difficulty"> Slurring/Pronunciation Difficulty</label>
+            <label class="check-item"><input type="checkbox" data-domain="Communication" data-cat="challenge" value="Hypernasal"> Hypernasal</label>
+            <label class="check-item"><input type="checkbox" data-domain="Communication" data-cat="challenge" value="Difficulty with Word Finding or Starting Words"> Difficulty with Word Finding or Starting Words</label>
+            <label class="check-item"><input type="checkbox" data-domain="Communication" data-cat="challenge" value="Using Short or Incomplete Sentences"> Using Short or Incomplete Sentences</label>
+            <label class="check-item"><input type="checkbox" data-domain="Communication" data-cat="challenge" value="Slow or Rapid Speech"> Slow or Rapid Speech</label>
+            <label class="check-item"><input type="checkbox" data-domain="Communication" data-cat="challenge" value="Difficulty Understanding Spoken Words"> Difficulty with Understanding Spoken Words</label>
+            <label class="check-item"><input type="checkbox" data-domain="Communication" data-cat="challenge" value="Using Incorrect or Made Up Words"> Using Incorrect or Made Up Words</label>
+            <label class="check-item"><input type="checkbox" data-domain="Communication" data-cat="challenge" value="Facial Weakness: Constant Gaping Mouth"> Facial Weakness: Constant Gaping Mouth</label>
+            <label class="check-item"><input type="checkbox" data-domain="Communication" data-cat="challenge" value="Facial Weakness: Facial Asymmetry"> Facial Weakness: Facial Asymmetry</label>
+            <label class="check-item"><input type="checkbox" data-domain="Communication" data-cat="challenge" value="Other Communication Challenge"> Other (comment)</label>
+          </div>
+          <div class="comment-box"><textarea data-domain="Communication" data-cat="comment" placeholder="Communication Challenges Comment..."></textarea></div>
+        </div>
+
+        <div class="sub-section">
+          <p class="sub-title">Discharge Planning Needs (Communication)</p>
+          <div class="check-grid">
+            <label class="check-item resolved-box"><input type="checkbox" data-domain="Communication" data-cat="resolved" value="Communication DC Resolved"> None/All concerns resolved</label>
+            <label class="check-item"><input type="checkbox" data-domain="Communication" data-cat="referral" value="Review for Speech Language Therapy (SLT) referral"> Needs review for possible Speech Language Therapy referral</label>
+            <label class="check-item"><input type="checkbox" data-domain="Communication" data-cat="other" value="Other Communication DC Need"> Other (Comment)</label>
+          </div>
+          <div class="comment-box"><textarea data-domain="Communication" data-cat="comment" placeholder="Communication Discharge Planning Comment..."></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEUROSURGERY MOBILITY, MEDICAL & REHAB REFERRALS -->
+    <div class="domain-card">
+      <div class="domain-header"><h2>Mobility & Other Functional / Medical Concerns (Neurosurgery)</h2></div>
+      <div class="domain-body">
+        <div class="sub-section">
+          <div class="inline-group">
+            <strong>Reduced Power/Control:</strong>
+            <label><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="NS Reduced Power: Lower"> Lower</label>
+            <label><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="NS Reduced Power: Upper"> Upper</label>
+            <label><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="NS Reduced Power: Trunk"> Trunk</label>
+          </div>
+          <div class="check-grid">
+            <label class="check-item resolved-box"><input type="checkbox" data-domain="Mobility" data-cat="resolved" value="NS Functional: None/All concerns resolved"> None/All concerns resolved</label>
+            <label class="check-item"><input type="checkbox" data-domain="Swallowing" data-cat="challenge" value="Breathing Challenges (NS)"> Breathing Challenges</label>
+            <label class="check-item"><input type="checkbox" data-domain="Cognition" data-cat="challenge" value="Low GCS"> Low GCS</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="DVT Concern"> DVT Concern</label>
+            <label class="check-item"><input type="checkbox" data-domain="Skin" data-cat="challenge" value="Sepsis Concern"> Sepsis Concern</label>
+            <label class="check-item"><input type="checkbox" data-domain="Cognition" data-cat="challenge" value="Vision Challenges"> Vision Challenges</label>
+            <label class="check-item"><input type="checkbox" data-domain="Communication" data-cat="challenge" value="Hearing Challenges"> Hearing Challenges</label>
+            <label class="check-item"><input type="checkbox" data-domain="Skin" data-cat="challenge" value="Skin Healing Concern (NS)"> Skin Healing</label>
+            <label class="check-item"><input type="checkbox" data-domain="Self-Care" data-cat="challenge" value="Self-Care/ADLs Concern (NS)"> Self-Care/ADLs</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Pain (NS)"> Pain</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="challenge" value="Other NS Functional Concern"> Other (comment)</label>
+          </div>
+          <div class="comment-box"><textarea data-domain="Mobility" data-cat="comment" placeholder="Neurosurgery Functional/Medical Concerns Comment..."></textarea></div>
+        </div>
+
+        <div class="sub-section">
+          <p class="sub-title">Discharge Planning Referrals (Rehabilitation & Medical Care)</p>
+          <div class="check-grid">
+            <label class="check-item resolved-box"><input type="checkbox" data-domain="Mobility" data-cat="resolved" value="NS Referrals: None"> None/All concerns resolved</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="referral" value="Rehab Referral: Physiotherapy (NS)"> Rehab: Physiotherapy</label>
+            <label class="check-item"><input type="checkbox" data-domain="Self-Care" data-cat="referral" value="Rehab Referral: Occupational Therapy (NS)"> Rehab: Occupational Therapy</label>
+            <label class="check-item"><input type="checkbox" data-domain="Communication" data-cat="referral" value="Rehab Referral: Speech Therapy (NS)"> Rehab: Speech Therapy</label>
+            <label class="check-item"><input type="checkbox" data-domain="Cognition" data-cat="referral" value="Rehab Referral: Neuropsychology (NS)"> Rehab: Neuropsychology</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="referral" value="Rehab Referral: Orthopedic Technology (NS)"> Rehab: Orthopedic Technology</label>
+            <label class="check-item"><input type="checkbox" data-domain="Swallowing" data-cat="referral" value="Medical Referral: Ear/Nose/Throat (ENT)"> Medical: Ear/Nose/Throat (ENT)</label>
+            <label class="check-item"><input type="checkbox" data-domain="Swallowing" data-cat="referral" value="Medical Referral: Nutrition"> Medical: Nutrition</label>
+            <label class="check-item"><input type="checkbox" data-domain="Skin" data-cat="referral" value="Medical Referral: Plastics"> Medical: Plastics</label>
+            <label class="check-item"><input type="checkbox" data-domain="Cognition" data-cat="referral" value="Medical Referral: Ophthalmology"> Medical: Ophthalmology</label>
+            <label class="check-item"><input type="checkbox" data-domain="Communication" data-cat="referral" value="Medical Referral: Audiology"> Medical: Audiology</label>
+            <label class="check-item"><input type="checkbox" data-domain="Mobility" data-cat="referral" value="Other Medical/Rehab Referral (NS)"> Other (comment)</label>
+          </div>
+          <div class="comment-box"><textarea data-domain="Mobility" data-cat="comment" placeholder="Neurosurgery Discharge Referral Comments..."></textarea></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== TAB 4: AUTO-GENERATED MDT MATRIX ==================== -->
+  <section id="tab-mdt" class="tab-pane">
+    <div class="domain-card">
+      <div class="domain-header">
+        <h2>MDT Page (Automatically Compiled from Nursing, PT, and Neurosurgery Notes)</h2>
+        <button class="btn btn-white no-print" onclick="buildMDT()">🔄 Refresh Matrix</button>
+      </div>
+      <div class="domain-body" style="overflow-x:auto;">
+        <table class="mdt-table">
+          <thead>
+            <tr>
+              <th>Domain & DC Readiness</th>
+              <th>Challenges & Comments</th>
+              <th>Referral & Equipment Needs</th>
+              <th>Education & Other Needs</th>
+            </tr>
+          </thead>
+          <tbody id="mdt-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== TAB 5: MDT DISCHARGE PLANNING SUMMARY ==================== -->
+  <section id="tab-dc" class="tab-pane">
+    
+    <!-- Red Flag Escalation Banner -->
+    <div class="red-flag-banner">
+      <h3 style="margin:0 0 8px 0; color:var(--danger);">🚨 Strong / Red Flag / Emergent Concerns & Status Decline Escalation</h3>
+      <div class="check-grid" style="margin-bottom:8px;">
+        <label class="check-item"><input type="checkbox" id="rf_gcs" onchange="saveState()"> Drop in GCS / Neurological Decline</label>
+        <label class="check-item"><input type="checkbox" id="rf_asp" onchange="saveState()"> Severe Aspiration / Airway Compromise</label>
+        <label class="check-item"><input type="checkbox" id="rf_sepsis" onchange="saveState()"> Sepsis / Uncontrolled Infection</label>
+        <label class="check-item"><input type="checkbox" id="rf_dvt" onchange="saveState()"> Suspected DVT / PE</label>
+      </div>
+      <textarea id="rf_notes" style="width:100%; padding:8px; border:1px solid var(--danger); border-radius:6px;" placeholder="Document immediate escalation actions taken, senior clinician notified, and time of notification..." oninput="saveState()"></textarea>
+    </div>
+
+    <!-- Consolidated Summary Cards -->
+    <div class="domain-card">
+      <div class="domain-header"><h2>MDT Discharge Planning Summary</h2></div>
+      <div class="domain-body">
+        <div id="dc-compiled-summary"></div>
+
+        <div class="sub-section" style="margin-top:20px;">
+          <p class="sub-title">Communication & Readiness Confirmation</p>
+          <div class="check-grid">
+            <label class="check-item"><input type="checkbox" id="dc_comm_confirmed" onchange="saveState()"> <strong>Confirmed communication of discharge plan to patient/caregiver</strong></label>
+            <label class="check-item"><input type="checkbox" id="dc_overall_ready" onchange="saveState()"> <strong>Patient is Medically & Functionally Ready for Discharge</strong></label>
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <p class="sub-title">Multi-Disciplinary Team Sign-Off Table</p>
+          <table class="mdt-table">
+            <thead>
+              <tr>
+                <th>Discipline</th>
+                <th>Clinician Name</th>
+                <th>Ready for DC?</th>
+                <th>Final Remarks / Signature & Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Nursing</strong></td>
+                <td><input type="text" id="sig_nurs_name" style="width:100%; padding:6px;" placeholder="Nurse Name" oninput="saveState()"></td>
+                <td><select id="sig_nurs_ready" onchange="saveState()"><option value="">Select...</option><option value="Yes">Yes</option><option value="No">No</option></select></td>
+                <td><input type="text" id="sig_nurs_rem" style="width:100%; padding:6px;" placeholder="Remarks / Date" oninput="saveState()"></td>
+              </tr>
+              <tr>
+                <td><strong>Physiotherapy</strong></td>
+                <td><input type="text" id="sig_pt_name" style="width:100%; padding:6px;" placeholder="PT Name" oninput="saveState()"></td>
+                <td><select id="sig_pt_ready" onchange="saveState()"><option value="">Select...</option><option value="Yes">Yes</option><option value="No">No</option></select></td>
+                <td><input type="text" id="sig_pt_rem" style="width:100%; padding:6px;" placeholder="Remarks / Date" oninput="saveState()"></td>
+              </tr>
+              <tr>
+                <td><strong>Neurosurgery</strong></td>
+                <td><input type="text" id="sig_ns_name" style="width:100%; padding:6px;" placeholder="Doctor Name" oninput="saveState()"></td>
+                <td><select id="sig_ns_ready" onchange="saveState()"><option value="">Select...</option><option value="Yes">Yes</option><option value="No">No</option></select></td>
+                <td><input type="text" id="sig_ns_rem" style="width:100%; padding:6px;" placeholder="Remarks / Date" oninput="saveState()"></td>
+              </tr>
+              <tr>
+                <td><strong>OT / SLT / Other</strong></td>
+                <td><input type="text" id="sig_ot_name" style="width:100%; padding:6px;" placeholder="Specialist Name" oninput="saveState()"></td>
+                <td><select id="sig_ot_ready" onchange="saveState()"><option value="">Select...</option><option value="Yes">Yes</option><option value="No">No</option></select></td>
+                <td><input type="text" id="sig_ot_rem" style="width:100%; padding:6px;" placeholder="Remarks / Date" oninput="saveState()"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  const DOMAINS = [
+    "Skin",
+    "Bowel/Bladder",
+    "Mobility",
+    "Self-Care",
+    "Swallowing",
+    "Cognition",
+    "Communication",
+    "Behavior/Mood"
+  ];
+
+  // Initialize date and listeners
+  window.addEventListener('DOMContentLoaded', () => {
+    const dateInput = document.getElementById('pt_date');
+    if (!dateInput.value) {
+      dateInput.value = new Date().toISOString().split('T')[0];
+    }
+    document.querySelectorAll('input, textarea, select').forEach(el => {
+      el.addEventListener('change', () => {
+        syncVisualCards();
+        saveState();
+        buildMDT();
+      });
+      if (el.tagName === 'TEXTAREA') {
+        el.addEventListener('input', () => {
+          saveState();
+          buildMDT();
+        });
+      }
+    });
+    loadState();
+    syncVisualCards();
+    buildMDT();
+  });
+
+  function switchTab(tabId, btn) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + tabId).classList.add('active');
+    btn.classList.add('active');
+    buildMDT();
+  }
+
+  function toggleVisualCard(cardEl, checkboxId) {
+    const cb = document.getElementById(checkboxId);
+    if (cb) {
+      cb.checked = !cb.checked;
+      syncVisualCards();
+      saveState();
+      buildMDT();
+    }
+  }
+
+  function syncVisualCards() {
+    const map = ['sw_wet','sw_cough','sw_drool','sw_pocket','sw_spill','sw_chew','sw_globus','sw_breath','sw_reflux','sw_slow','sw_fear'];
+    const cards = document.querySelectorAll('.swallow-card');
+    map.forEach((id, idx) => {
+      const cb = document.getElementById(id);
+      if (cb && cards[idx]) {
+        cards[idx].classList.toggle('selected', cb.checked);
+      }
+    });
+  }
+
+  function renderList(items) {
+    if (!items || items.length === 0) return '<span class="empty-note">None recorded</span>';
+    return '<ul class="pill-list">' + items.map(i => `<li>${i}</li>`).join('') + '</ul>';
+  }
+
+  function buildMDT() {
+    const data = {};
+    DOMAINS.forEach(d => {
+      data[d] = { challenge: [], comment: [], referral: [], equipment: [], education: [], other: [], resolved: [] };
+    });
+
+    // Collect checked items
+    document.querySelectorAll('input[type="checkbox"]:checked, input[type="radio"]:checked').forEach(el => {
+      const dom = el.getAttribute('data-domain');
+      const cat = el.getAttribute('data-cat');
+      if (dom && cat && data[dom] && el.value) {
+        data[dom][cat].push(el.value);
+      }
+    });
+
+    // Collect non-empty textareas
+    document.querySelectorAll('textarea[data-domain]').forEach(el => {
+      const dom = el.getAttribute('data-domain');
+      const val = el.value.trim();
+      if (dom && val && data[dom]) {
+        data[dom].comment.push(val);
+      }
+    });
+
+    // Render Tab 4: MDT Matrix Table
+    const tbody = document.getElementById('mdt-tbody');
+    tbody.innerHTML = '';
+
+    let allReferrals = [];
+    let allEducation = [];
+    let allEquipment = [];
+    let allOther = [];
+
+    DOMAINS.forEach(dom => {
+      const d = data[dom];
+      allReferrals.push(...d.referral.map(r => `<strong>${dom}:</strong> ${r}`));
+      allEducation.push(...d.education.map(e => `<strong>${dom}:</strong> ${e}`));
+      allEquipment.push(...d.equipment.map(eq => `<strong>${dom}:</strong> ${eq}`));
+      allOther.push(...d.other.map(o => `<strong>${dom}:</strong> ${o}`));
+
+      const readyId = `mdt_ready_${dom.replace(/[^a-zA-Z]/g, '')}`;
+      const savedReady = localStorage.getItem(readyId) || '';
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="mdt-domain-cell">
+          <div style="font-size:1rem; margin-bottom:8px;">${dom}</div>
+          <label style="font-size:0.78rem; font-weight:normal; display:block;">Ready for DC?</label>
+          <select onchange="localStorage.setItem('${readyId}', this.value); buildDC();" style="width:100%; padding:4px; margin-top:3px;">
+            <option value="" ${savedReady===''?'selected':''}>Pending</option>
+            <option value="Yes" ${savedReady==='Yes'?'selected':''}>Yes</option>
+            <option value="No" ${savedReady==='No'?'selected':''}>No</option>
+          </select>
+        </td>
+        <td>
+          <strong>Challenges:</strong> ${renderList(d.challenge)}
+          <div style="margin-top:8px;"><strong>Comments:</strong> ${renderList(d.comment)}</div>
+        </td>
+        <td>
+          <strong>Referral Needs:</strong> ${renderList(d.referral)}
+          <div style="margin-top:8px;"><strong>Equipment Needs:</strong> ${renderList(d.equipment)}</div>
+        </td>
+        <td>
+          <strong>Education Needs:</strong> ${renderList(d.education)}
+          <div style="margin-top:8px;"><strong>Other Needs / Barriers:</strong> ${renderList(d.other)}</div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    // Render Tab 5: Consolidated DC Summary
+    const dcDiv = document.getElementById('dc-compiled-summary');
+    dcDiv.innerHTML = `
+      <div class="check-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:14px;">
+        <div style="border:1px solid var(--border); padding:12px; border-radius:6px; background:#fcfcfd;">
+          <h4 style="margin:0 0 8px 0; color:var(--primary-dark);">1. Consolidated Referrals</h4>
+          ${renderList(allReferrals)}
+        </div>
+        <div style="border:1px solid var(--border); padding:12px; border-radius:6px; background:#fcfcfd;">
+          <h4 style="margin:0 0 8px 0; color:var(--primary-dark);">2. Patient & Caregiver Education</h4>
+          ${renderList(allEducation)}
+        </div>
+        <div style="border:1px solid var(--border); padding:12px; border-radius:6px; background:#fcfcfd;">
+          <h4 style="margin:0 0 8px 0; color:var(--primary-dark);">3. Equipment Needs</h4>
+          ${renderList(allEquipment)}
+        </div>
+        <div style="border:1px solid var(--border); padding:12px; border-radius:6px; background:#fcfcfd;">
+          <h4 style="margin:0 0 8px 0; color:var(--primary-dark);">4. Other Discharge Needs & Barriers</h4>
+          ${renderList(allOther)}
+        </div>
+      </div>
+    `;
+  }
+
+  // LocalStorage Persistence
+  function saveState() {
+    const state = { inputs: [], textareas: [], meta: {} };
+    document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach((el, i) => {
+      state.inputs[i] = el.checked;
+    });
+    document.querySelectorAll('textarea').forEach((el, i) => {
+      state.textareas[i] = el.value;
+    });
+    ['pt_name','pt_id','pt_ward','pt_date','pt_phone','rf_notes','sig_nurs_name','sig_nurs_ready','sig_nurs_rem','sig_pt_name','sig_pt_ready','sig_pt_rem','sig_ns_name','sig_ns_ready','sig_ns_rem','sig_ot_name','sig_ot_ready','sig_ot_rem'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) state.meta[id] = el.value;
+    });
+    localStorage.setItem('uganda_mdt_state', JSON.stringify(state));
+  }
+
+  function loadState() {
+    const raw = localStorage.getItem('uganda_mdt_state');
+    if (!raw) return;
+    try {
+      const state = JSON.parse(raw);
+      document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach((el, i) => {
+        if (state.inputs && state.inputs[i] !== undefined) el.checked = state.inputs[i];
+      });
+      document.querySelectorAll('textarea').forEach((el, i) => {
+        if (state.textareas && state.textareas[i] !== undefined) el.value = state.textareas[i];
+      });
+      if (state.meta) {
+        Object.keys(state.meta).forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.value = state.meta[id];
+        });
+      }
+    } catch (e) { console.error(e); }
+  }
+
+  function clearForm() {
+    if (!confirm('Clear all ticked fields and comments for a new patient?')) return;
+    localStorage.clear();
+    location.reload();
+  }
+
+  function exportData() {
+    saveState();
+    const state = localStorage.getItem('uganda_mdt_state');
+    const ptName = (document.getElementById('pt_name').value || 'patient').replace(/\s+/g, '_');
+    const blob = new Blob([state], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `MDT_Referral_${ptName}_${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+  }
+
+  function importData(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      localStorage.setItem('uganda_mdt_state', evt.target.result);
+      loadState();
+      syncVisualCards();
+      buildMDT();
+    };
+    reader.readAsText(file);
+  }
+</script>
+</body>
+</html>
