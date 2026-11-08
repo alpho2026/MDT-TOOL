@@ -1,1474 +1,422 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<!-- ... existing code ... ... -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-<meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.27">
+  <style>
+    /* Exact Quarto / The Graph Courses layout and styling */
+    html {
+      scroll-behavior: smooth;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: #212529;
+      background-color: #ffffff;
+      line-height: 1.6;
+    }
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    /* Strict Two-Column Top-Aligned Layout Container */
+    .page-layout {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 3rem 2rem 5rem 2.5rem;
+      box-sizing: border-box;
+      gap: 2.5rem;
+    }
 
+    /* Main Left Content */
+    .content-area {
+      flex: 1 1 auto;
+      min-width: 0;
+      max-width: 820px;
+    }
 
-<title>16&nbsp; Power and Sample Size – Global Health Research in Practice</title>
-<style>
-code{white-space: pre-wrap;}
-span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
-div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-ul.task-list{list-style: none;}
-ul.task-list li input[type="checkbox"] {
-  width: 0.8em;
-  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
-  vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-  margin-bottom: 0em;
-}
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+    /* TOP RIGHT Permanent Sticky TOC */
+    .toc-sidebar {
+      width: 250px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 2rem;
+      align-self: flex-start;
+      z-index: 50;
+    }
 
+    .toc-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 0.65rem;
+      letter-spacing: -0.01em;
+    }
 
-<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../../../">
-<link href="../../../book-project/chapters/pilotstudies/pilotstudies.html" rel="next">
-<link href="../../../book-project/chapters/sampling/sampling.html" rel="prev">
-<link href="../../../favicon.svg" rel="icon" type="image/svg+xml">
-<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
-<script src="../../../site_libs/quarto-html/popper.min.js"></script>
-<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap-e95aa6678737fff39a23bab0e41ef327.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
-<script id="quarto-search-options" type="application/json">{
-  "location": "sidebar",
-  "copy-button": false,
-  "collapse-after": 3,
-  "panel-placement": "start",
-  "type": "textbox",
-  "limit": 50,
-  "keyboard-shortcut": [
-    "f",
-    "/",
-    "s"
-  ],
-  "show-item-context": false,
-  "language": {
-    "search-no-results-text": "No results",
-    "search-matching-documents-text": "matching documents",
-    "search-copy-link-title": "Copy link to search",
-    "search-hide-matches-text": "Hide additional matches",
-    "search-more-match-text": "more match in this document",
-    "search-more-matches-text": "more matches in this document",
-    "search-clear-button-title": "Clear",
-    "search-text-placeholder": "",
-    "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit",
-    "search-label": "Search"
-  }
-}</script>
+    .toc-nav {
+      border-left: 1.5px solid #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+    .toc-link {
+      position: relative;
+      display: block;
+      padding: 0.35rem 0 0.35rem 0.95rem;
+      font-size: 0.925rem;
+      color: #4b5563;
+      text-decoration: none;
+      line-height: 1.35;
+      margin-left: -1.5px;
+      border-left: 2px solid transparent;
+      transition: color 0.15s ease, border-color 0.15s ease;
+    }
 
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
+    .toc-link:hover {
+      color: #0d6efd;
+    }
+
+    /* Active State Matching Screenshot (Blue vertical bar + Blue text) */
+    .toc-link.active {
+      color: #0d6efd !important;
+      font-weight: 500;
+      border-left: 2.5px solid #0d6efd !important;
+    }
+
+    /* Typography from Screenshot */
+    h1.course-title {
+      font-size: 2.45rem;
+      font-weight: 700;
+      line-height: 1.2;
+      color: #111827;
+      letter-spacing: -0.025em;
+      margin: 0 0 1.25rem 0;
+    }
+
+    .author-block {
+      margin-bottom: 2.75rem;
+    }
+
+    .author-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.25rem;
+    }
+
+    .author-name {
+      font-size: 1.05rem;
+      color: #1f2937;
+      font-weight: 400;
+    }
+
+    h2.section-heading {
+      font-size: 1.95rem;
+      font-weight: 700;
+      color: #111827;
+      letter-spacing: -0.02em;
+      margin: 2.75rem 0 1.15rem 0;
+    }
+
+    h3.sub-heading {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin: 1.75rem 0 0.75rem 0;
+    }
+
+    p.lead-text {
+      font-size: 1.15rem;
+      line-height: 1.65;
+      color: #1f2937;
+      margin-bottom: 1.25rem;
+    }
+
+    /* Code and block styling */
+    .code-box {
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 0.85rem 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      color: #0f172a;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+
+    @media (max-width: 860px) {
+      .page-layout {
+        flex-direction: column-reverse;
+        padding: 1.5rem 1rem;
+      }
+      .toc-sidebar {
+        width: 100%;
+        position: relative;
+        top: 0;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #e2e8f0;
       }
     }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<link rel="stylesheet" href="../../../styles.css">
+  </style>
 </head>
+<body>
 
-<body class="nav-sidebar floating slimcontent quarto-light">
-
-<div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
-  <nav class="quarto-secondary-nav">
-    <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-        <i class="bi bi-layout-text-sidebar-reverse"></i>
-      </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../book-project/chapters/samplesize/samplesize.html"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Power and Sample Size</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-        </a>
-      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
-        <i class="bi bi-search"></i>
-      </button>
-    </div>
-  </nav>
-</header>
-<!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
-<!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
-    <div class="sidebar-title mb-0 py-0">
-      <a href="../../../">Global Health Research in Practice</a> 
-    </div>
-      </div>
-        <div class="mt-2 flex-shrink-0 align-items-center">
-        <div class="sidebar-search">
-        <div id="quarto-search" class="" title="Search"></div>
-        </div>
-        </div>
-    <div class="sidebar-menu-container"> 
-    <ul class="list-unstyled mt-1">
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Preface</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../introduction.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Introduction</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../part_1.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Part I: Get Started with Global Health Research</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../book-project/chapters/ghr/ghr.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Global Health Research</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../book-project/chapters/collaborate/collaborate.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Build Collaborations</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../book-project/chapters/ask/ask.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Develop Research Ideas and Questions</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../book-project/chapters/search/search.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Searching the Literature</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../book-project/chapters/read/read.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">How to Read Scientific Articles</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../part_2.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Part II: Consider Threats to Validity</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../book-project/chapters/statinference/statinference.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Statistical Inference</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../book-project/chapters/causalinference/causalinference.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Causal Inference</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../book-project/chapters/externalvalidity/externalvalidity.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">External Validity, Generalizability, and Transportability</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../book-project/chapters/measurement/measurement.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Measurement and Construct Validation</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../part_3.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Part III: Select a Research Design</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../book-project/chapters/experimental/experimental.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Randomized Controlled Trials</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../book-project/chapters/quasiexperimental/quasiexperimental.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Quasi-Experimental Designs</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../book-project/chapters/observational/observational.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Observational Designs</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../book-project/chapters/qualitative/qualitative.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Qualitative and Mixed Methods</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../book-project/chapters/otherdesigns/otherdesigns.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Other Designs and Approaches to Know</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../part_4.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Part IV: Specify the Methods</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../book-project/chapters/sampling/sampling.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Sampling and Participant Recruitment</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../book-project/chapters/samplesize/samplesize.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Power and Sample Size</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../book-project/chapters/pilotstudies/pilotstudies.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Preliminary Studies and Pilot Trials</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">Appendices</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../book-project/chapters/appendix-process.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">How This Book Was Written</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-    </ul>
-    </div>
-</nav>
-<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
-<!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
-   
-  <ul>
-  <li><a href="#the-three-buckets-of-how-many" id="toc-the-three-buckets-of-how-many" class="nav-link active" data-scroll-target="#the-three-buckets-of-how-many"><span class="header-section-number">16.1</span> The Three Buckets of “How Many?”</a></li>
-  <li><a href="#bucket-1-qualitative-studiessampling-until-saturation" id="toc-bucket-1-qualitative-studiessampling-until-saturation" class="nav-link" data-scroll-target="#bucket-1-qualitative-studiessampling-until-saturation"><span class="header-section-number">16.2</span> Bucket 1: Qualitative Studies—Sampling Until Saturation</a>
-  <ul class="collapse">
-  <li><a href="#what-saturation-actually-means" id="toc-what-saturation-actually-means" class="nav-link" data-scroll-target="#what-saturation-actually-means">WHAT SATURATION ACTUALLY MEANS</a></li>
-  <li><a href="#the-goldilocks-frame-for-qualitative-research" id="toc-the-goldilocks-frame-for-qualitative-research" class="nav-link" data-scroll-target="#the-goldilocks-frame-for-qualitative-research">THE GOLDILOCKS FRAME FOR QUALITATIVE RESEARCH</a></li>
-  </ul></li>
-  <li><a href="#bucket-2-descriptive-inferencesample-size-for-precision" id="toc-bucket-2-descriptive-inferencesample-size-for-precision" class="nav-link" data-scroll-target="#bucket-2-descriptive-inferencesample-size-for-precision"><span class="header-section-number">16.3</span> Bucket 2: Descriptive Inference—Sample Size for Precision</a>
-  <ul class="collapse">
-  <li><a href="#understanding-margin-of-error" id="toc-understanding-margin-of-error" class="nav-link" data-scroll-target="#understanding-margin-of-error">UNDERSTANDING MARGIN OF ERROR</a></li>
-  <li><a href="#example-two-malaria-surveys-in-mozambique" id="toc-example-two-malaria-surveys-in-mozambique" class="nav-link" data-scroll-target="#example-two-malaria-surveys-in-mozambique">EXAMPLE: TWO MALARIA SURVEYS IN MOZAMBIQUE</a></li>
-  <li><a href="#proportions" id="toc-proportions" class="nav-link" data-scroll-target="#proportions">PROPORTIONS</a></li>
-  <li><a href="#means" id="toc-means" class="nav-link" data-scroll-target="#means">MEANS</a></li>
-  <li><a href="#the-goldilocks-frame-for-descriptive-studies" id="toc-the-goldilocks-frame-for-descriptive-studies" class="nav-link" data-scroll-target="#the-goldilocks-frame-for-descriptive-studies">THE GOLDILOCKS FRAME FOR DESCRIPTIVE STUDIES</a></li>
-  </ul></li>
-  <li><a href="#bucket-3-hypothesis-testingthe-heart-of-power-analysis" id="toc-bucket-3-hypothesis-testingthe-heart-of-power-analysis" class="nav-link" data-scroll-target="#bucket-3-hypothesis-testingthe-heart-of-power-analysis"><span class="header-section-number">16.4</span> Bucket 3: Hypothesis Testing—The Heart of Power Analysis</a>
-  <ul class="collapse">
-  <li><a href="#a-hypothesis-testing-refresher" id="toc-a-hypothesis-testing-refresher" class="nav-link" data-scroll-target="#a-hypothesis-testing-refresher">A HYPOTHESIS TESTING REFRESHER</a></li>
-  <li><a href="#introducing-power" id="toc-introducing-power" class="nav-link" data-scroll-target="#introducing-power">INTRODUCING POWER</a></li>
-  <li><a href="#levers-of-power" id="toc-levers-of-power" class="nav-link" data-scroll-target="#levers-of-power">LEVERS OF POWER</a></li>
-  <li><a href="#the-lamp-in-the-basement" id="toc-the-lamp-in-the-basement" class="nav-link" data-scroll-target="#the-lamp-in-the-basement">THE LAMP IN THE BASEMENT</a></li>
-  <li><a href="#example-powering-the-healthy-activity-program-trial" id="toc-example-powering-the-healthy-activity-program-trial" class="nav-link" data-scroll-target="#example-powering-the-healthy-activity-program-trial">EXAMPLE: POWERING THE HEALTHY ACTIVITY PROGRAM TRIAL</a></li>
-  <li><a href="#power-calculations" id="toc-power-calculations" class="nav-link" data-scroll-target="#power-calculations">POWER CALCULATIONS</a></li>
-  <li><a href="#simulation-based-power-analysis" id="toc-simulation-based-power-analysis" class="nav-link" data-scroll-target="#simulation-based-power-analysis">SIMULATION-BASED POWER ANALYSIS</a></li>
-  <li><a href="#special-topic-cluster-randomized-trials-and-the-icc-problem" id="toc-special-topic-cluster-randomized-trials-and-the-icc-problem" class="nav-link" data-scroll-target="#special-topic-cluster-randomized-trials-and-the-icc-problem">SPECIAL TOPIC: CLUSTER RANDOMIZED TRIALS AND THE ICC PROBLEM</a></li>
-  <li><a href="#the-goldilocks-frame-for-hypothesis-testing-studies" id="toc-the-goldilocks-frame-for-hypothesis-testing-studies" class="nav-link" data-scroll-target="#the-goldilocks-frame-for-hypothesis-testing-studies">THE GOLDILOCKS FRAME FOR HYPOTHESIS-TESTING STUDIES</a></li>
-  </ul></li>
-  <li><a href="#closing-reflection" id="toc-closing-reflection" class="nav-link" data-scroll-target="#closing-reflection"><span class="header-section-number">16.5</span> Closing Reflection</a></li>
-  </ul>
-</nav>
-    </div>
-<!-- main -->
-<main class="content page-columns page-full" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title"><span id="sec-power-sample-size" class="quarto-section-identifier"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Power and Sample Size</span></span></h1>
-</div>
-
-
-
-<div class="quarto-title-meta">
-
+  <!-- Strict Flex Row Container: Left = Content, Right = TOC -->
+  <div class="page-layout">
     
-  
-    
+    <!-- LEFT COLUMN: MAIN CONTENT -->
+    <main class="content-area">
+      
+      <!-- Title Header Block (Direct Match to Screenshot) -->
+      <header>
+        <h1 class="course-title">Final Project: Generative AI for work &amp; research</h1>
+        <div class="author-block">
+          <div class="author-label">AUTHOR</div>
+          <div class="author-name">The Graph Courses</div>
+        </div>
+      </header>
+
+      <!-- Section: Overview -->
+      <section id="overview" class="scroll-mt-6 mb-12">
+        <h2 class="section-heading">Overview</h2>
+        <p class="lead-text">
+          For your final project, you will design and build an AI solution relevant to your work, research or personal projects, combining <strong>at least two themes</strong> from this course.
+        </p>
+        <p class="lead-text">
+          You will submit a <strong>1–2 page document</strong> describing your solution and linking to it, and give a <strong>4-minute live presentation</strong> with a demo in class.
+        </p>
+
+        <!-- Course timing summary banner -->
+        <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 my-6 text-sm text-slate-700">
+          <div class="font-semibold text-slate-900 mb-1">Cohort 2026 T3 Session Details:</div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 text-xs sm:text-sm">
+            <div><strong>Weekly Workshop:</strong> Sundays 11:00–13:00 GMT or Wednesdays 15:00–17:00 GMT</div>
+            <div><strong>Help Sessions:</strong> 1 hour before each workshop</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Course Themes -->
+      <section id="course-themes" class="scroll-mt-6 mb-12">
+        <h2 class="section-heading">Course Themes</h2>
+        <p class="text-slate-700 text-lg mb-4">Here is a reminder of the main course themes:</p>
+        
+        <div class="space-y-4">
+          <div class="border-l-2 border-sky-500 pl-4 py-1">
+            <h4 class="font-semibold text-slate-900 text-base">Theme 1: Websites &amp; Presentations</h4>
+            <p class="text-sm text-slate-600">Creating static sites with ChatGPT and GitHub Pages; understanding websites vs. web applications; automated slide design using Gamma and Beautiful.ai.</p>
+          </div>
+
+          <div class="border-l-2 border-sky-500 pl-4 py-1">
+            <h4 class="font-semibold text-slate-900 text-base">Theme 2: Automated Data Analysis</h4>
+            <p class="text-sm text-slate-600">Local data privacy and de-identification; no-code data analyses and plotting with R/Python via Cursor; automated dashboards in Bricks AI.</p>
+          </div>
+
+          <div class="border-l-2 border-sky-500 pl-4 py-1">
+            <h4 class="font-semibold text-slate-900 text-base">Theme 3: Text Processing &amp; Research</h4>
+            <p class="text-sm text-slate-600">Running LLM operations directly in spreadsheets; academic literature discovery and knowledge extraction using Consensus, Elicit, and Scite.</p>
+          </div>
+
+          <div class="border-l-2 border-sky-500 pl-4 py-1">
+            <h4 class="font-semibold text-slate-900 text-base">Theme 4: Custom GPTs and Chatbots</h4>
+            <p class="text-sm text-slate-600">LLM model terminology (matching reasoning vs. latency); creating stateful interactive chatbots with Botpress; building specialized Custom GPTs.</p>
+          </div>
+
+          <div class="border-l-2 border-sky-500 pl-4 py-1">
+            <h4 class="font-semibold text-slate-900 text-base">Theme 5: AI for Workflow Automation</h4>
+            <p class="text-sm text-slate-600">AI agents vs. deterministic workflows; building automated event-driven pipelines in Make.com; introduction to browser control agents.</p>
+          </div>
+
+          <div class="border-l-2 border-sky-500 pl-4 py-1">
+            <h4 class="font-semibold text-slate-900 text-base">Theme 6: GenAI for Communication and Outreach</h4>
+            <p class="text-sm text-slate-600">Visual model comprehension; generating graphics with ChatGPT and Canva; editable diagrams via AI-generated SVG; introduction to video tools.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Project Ideas -->
+      <section id="project-ideas" class="scroll-mt-6 mb-12">
+        <h2 class="section-heading">Project Ideas</h2>
+        <p class="text-slate-700 text-base mb-4">You are encouraged to build a project directly relevant to your daily work or research. Examples of multi-theme combinations include:</p>
+        <ul class="list-disc pl-6 space-y-2 text-slate-700 text-base">
+          <li><strong>Automated Research Digest:</strong> An automated Make.com workflow connecting to Google Sheets to extract, categorize, and summarize weekly literature into a live GitHub Pages feed (Themes 1, 3, 5).</li>
+          <li><strong>Clinical Registry Query Assistant:</strong> An interactive Botpress chatbot grounded in trial protocol documents that feeds structured patient queries into a sanitized R data pipeline (Themes 2, 4).</li>
+          <li><strong>Executive KPI Pipeline:</strong> A Cursor-driven analytical pipeline that takes raw operational CSVs, performs statistical summaries, and generates an SVG chart embedded into an executive summary webpage (Themes 1, 2, 6).</li>
+        </ul>
+      </section>
+
+      <!-- Section: Submission Instructions -->
+      <section id="submission-instructions" class="scroll-mt-6 mb-12">
+        <h2 class="section-heading">Submission Instructions</h2>
+        <p class="text-slate-700 text-base mb-4">Please submit your project deliverables via the student portal before the presentation date:</p>
+        <ol class="list-decimal pl-6 space-y-2 text-slate-700 text-base">
+          <li><strong>1–2 Page Document:</strong> An executive summary describing your problem statement, tool architecture, failure recoveries, and live URLs to your solution.</li>
+          <li><strong>Live Access Link:</strong> A functional URL (e.g., GitHub Pages site, published Botpress chatbot, or exported Make.com blueprint).</li>
+          <li><strong>Demo Slides:</strong> A concise 3-to-4 slide deck supporting your 4-minute presentation.</li>
+        </ol>
+      </section>
+
+      <!-- Section: Presentation Dates -->
+      <section id="presentation-dates" class="scroll-mt-6 mb-12">
+        <h2 class="section-heading">Presentation Dates</h2>
+        <p class="text-slate-700 text-base mb-4">Presentations take place during Week 8 of the cohort:</p>
+        <div class="border border-slate-200 rounded-lg overflow-hidden text-sm">
+          <table class="w-full text-left">
+            <thead class="bg-slate-50 border-b border-slate-200">
+              <tr>
+                <th class="p-3 font-semibold text-slate-900">Cohort Track</th>
+                <th class="p-3 font-semibold text-slate-900">Presentation Date &amp; Time</th>
+                <th class="p-3 font-semibold text-slate-900">Format</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr>
+                <td class="p-3">Track A (Sunday)</td>
+                <td class="p-3 font-medium text-slate-900">November 15, 2026 • 11:00–13:00 GMT</td>
+                <td class="p-3 text-slate-600">4-min live presentation + 2-min Q&amp;A</td>
+              </tr>
+              <tr>
+                <td class="p-3">Track B (Wednesday)</td>
+                <td class="p-3 font-medium text-slate-900">November 18, 2026 • 15:00–17:00 GMT</td>
+                <td class="p-3 text-slate-600">4-min live presentation + 2-min Q&amp;A</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section: Instructor Feedback Sessions -->
+      <section id="feedback-sessions" class="scroll-mt-6 mb-12">
+        <h2 class="section-heading">Instructor Feedback Sessions</h2>
+        <p class="text-slate-700 text-base mb-3">
+          During <strong>Week 7 (Nov 8 or Nov 11)</strong>, workshop time is dedicated to project progress checks, technical troubleshooting, and structured peer feedback rounds.
+        </p>
+        <p class="text-slate-700 text-sm">
+          Additionally, help sessions run one hour before every weekly workshop (10:00 GMT on Sundays, 14:00 GMT on Wednesdays) where instructors assist with API connections, Cursor setup, and workflow bugs.
+        </p>
+      </section>
+
+      <!-- Section: Grading Rubric -->
+      <section id="grading-rubric" class="scroll-mt-6 mb-12">
+        <h2 class="section-heading">Grading Rubric</h2>
+        <p class="text-slate-700 text-base mb-4">The passing threshold for the course is <strong>80%</strong>. The final grade is evaluated as follows:</p>
+
+        <div class="border border-slate-200 rounded-lg overflow-hidden text-sm mb-6">
+          <table class="w-full text-left">
+            <thead class="bg-slate-50 border-b border-slate-200">
+              <tr>
+                <th class="p-3 font-semibold text-slate-900">Component</th>
+                <th class="p-3 font-semibold text-slate-900">Weight</th>
+                <th class="p-3 font-semibold text-slate-900">Criteria</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr>
+                <td class="p-3 font-semibold">Final Capstone Project</td>
+                <td class="p-3 text-sky-700 font-bold">40%</td>
+                <td class="p-3 text-slate-600">Multi-theme execution, utility, safety guardrails, and presentation.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold">Workshop Assignments</td>
+                <td class="p-3 text-sky-700 font-bold">40%</td>
+                <td class="p-3 text-slate-600">Hands-on tasks completed during weekly workshops.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold">Workshop Attendance</td>
+                <td class="p-3 text-sky-700 font-bold">10%</td>
+                <td class="p-3 text-slate-600">Attend at least 5 workshops to receive full attendance credit.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold">Online Quizzes</td>
+                <td class="p-3 text-sky-700 font-bold">10%</td>
+                <td class="p-3 text-slate-600">Weekly prework theory quizzes.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section: Frequently Asked Questions -->
+      <section id="faq" class="scroll-mt-6 mb-12">
+        <h2 class="section-heading">Frequently Asked Questions</h2>
+        <div class="space-y-4 text-base text-slate-700">
+          <div>
+            <h4 class="font-semibold text-slate-900 mb-1">Can I work in pairs or groups?</h4>
+            <p class="text-slate-600 text-sm">Projects are evaluated individually, though you are encouraged to collaborate and test each other’s tools during the Week 7 peer feedback sessions.</p>
+          </div>
+          <div>
+            <h4 class="font-semibold text-slate-900 mb-1">What if I miss a live workshop?</h4>
+            <p class="text-slate-600 text-sm">All workshops are recorded. However, you must attend at least 5 live sessions across the term to earn the 10% attendance credit.</p>
+          </div>
+          <div>
+            <h4 class="font-semibold text-slate-900 mb-1">Do I need coding experience?</h4>
+            <p class="text-slate-600 text-sm">No. The course focuses entirely on no-code tools and AI-assisted scripting where you guide the model rather than writing code manually.</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- RIGHT COLUMN: TABLE OF CONTENTS (TOP RIGHT POSITIONED) -->
+    <aside class="toc-sidebar">
+      <div class="toc-title">Table of contents</div>
+      <nav class="toc-nav" id="tocNav">
+        <a href="#overview" class="toc-link active">Overview</a>
+        <a href="#course-themes" class="toc-link">Course Themes</a>
+        <a href="#project-ideas" class="toc-link">Project Ideas</a>
+        <a href="#submission-instructions" class="toc-link">Submission Instructions</a>
+        <a href="#presentation-dates" class="toc-link">Presentation Dates</a>
+        <a href="#feedback-sessions" class="toc-link">Instructor Feedback Sessions</a>
+        <a href="#grading-rubric" class="toc-link">Grading Rubric</a>
+        <a href="#faq" class="toc-link">Frequently Asked Questions</a>
+      </nav>
+    </aside>
+
   </div>
-  
 
+  <!-- ScrollSpy Script ensuring dynamic active indicator highlighting -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const tocLinks = document.querySelectorAll('#tocNav .toc-link');
+      const sections = document.querySelectorAll('main section[id]');
 
-</header>
+      function updateActiveToc() {
+        let currentSectionId = '';
+        const scrollPosition = window.scrollY + 120;
 
+        sections.forEach(section => {
+          const top = section.offsetTop;
+          const height = section.offsetHeight;
+          if (scrollPosition >= top && scrollPosition < top + height) {
+            currentSectionId = section.getAttribute('id');
+          }
+        });
 
-<p>The previous chapter covered who should be in your study and how to enroll them. This chapter takes up a different question: how many participants do you need?</p>
-<p>The number has to be calibrated, because errors in either direction are costly. Too few participants and your study can’t reliably detect the effect it was designed to find, so the most likely outcome is an inconclusive result. Too many and you’re spending time, money, and participant burden the question doesn’t require. This is the Goldilocks problem of sample size: the target is <em>just right</em>, large enough to answer your research question reliably and small enough to be feasible under real-world constraints.</p>
-<p>Sample size is also an ethical decision. Halpern and colleagues argued that underpowered trials are unethical: participants accept the risks and burdens of research while the study is unlikely to produce knowledge that justifies them <span class="citation" data-cites="halpern2002">(<a href="#ref-halpern2002" role="doc-biblioref">Halpern et al., 2002</a>)</span>. Oversized studies raise a parallel concern in resource-constrained settings, where every unnecessary participant absorbs funding and staff time that could serve patient care or other research.</p>
-<p>What counts as just right depends on what you’re trying to learn. Forty participants is wholly inadequate for a trial designed to detect a reduction in maternal mortality, but may be more than enough for an in-depth qualitative study of women’s experiences of pregnancy. A sample that produces a precise prevalence estimate can be far too small to detect whether an intervention works. The same number can be too many for one question and too few for another, so this chapter organizes sample size around the kind of question you’re asking.</p>
-<section id="the-three-buckets-of-how-many" class="level2" data-number="16.1">
-<h2 data-number="16.1" class="anchored" data-anchor-id="the-three-buckets-of-how-many"><span class="header-section-number">16.1</span> The Three Buckets of “How Many?”</h2>
-<p>“How many?” can’t be answered until you’ve answered a prior question: what are you trying to find out? The right approach to sample size follows from the research question, and research questions sort into three buckets, each with its own logic:</p>
-<p><strong>Bucket 1: Qualitative Research</strong> asks “how many interviews, focus groups, or observations until I’ve captured the depth and diversity of experiences?” The answer comes from the concept of <em>saturation</em>—you keep collecting data until you stop hearing new themes, new perspectives, new dimensions of the phenomenon. Sample size isn’t predetermined; it emerges from the iterative process of data collection and analysis.</p>
-<p><strong>Bucket 2: Descriptive Quantitative Research</strong> asks “how precisely do I need to estimate this quantity?” If you’re measuring disease prevalence, intervention coverage, or health system characteristics, you’re trying to estimate a number with an acceptable <em>margin of error</em>. Your sample size calculation balances how precise you want your estimate to be against how many people you can actually reach.</p>
-<p><strong>Bucket 3: Hypothesis-Testing Research</strong> asks “how confident do I want to be that I’ll detect an effect if it exists?” This is the domain of <em>power analysis</em>—you’re calculating how many participants you need to have a reasonable chance (typically 80%) of finding a statistically significant result if your hypothesis is true.</p>
-<p>No bucket is better than another; the task is matching the approach to your question. The next three sections take each bucket in turn, using real examples from global health research in low- and middle-income countries.</p>
-</section>
-<section id="bucket-1-qualitative-studiessampling-until-saturation" class="level2 page-columns page-full" data-number="16.2">
-<h2 data-number="16.2" class="anchored" data-anchor-id="bucket-1-qualitative-studiessampling-until-saturation"><span class="header-section-number">16.2</span> Bucket 1: Qualitative Studies—Sampling Until Saturation</h2>
-<p>If you’re conducting qualitative research—interviews, focus groups, ethnographic observation—you’re not trying to estimate a number or test a hypothesis. You’re trying to understand the <em>complexity, depth, and diversity</em> of a phenomenon. How do community health workers experience their roles? What barriers do women face in accessing maternal healthcare? How do families navigate dementia care without formal support systems? For these questions, the concept of saturation guides sample size determination.</p>
-<section id="what-saturation-actually-means" class="level3 page-columns page-full">
-<h3 class="anchored" data-anchor-id="what-saturation-actually-means">WHAT SATURATION ACTUALLY MEANS</h3>
-<p>Saturation sounds simple: you’ve reached it when collecting more data yields no new information. But the word covers four distinct ideas, each reached at a different stage of the research and judged by a different standard <span class="citation" data-cites="RahimiS2024_45">(<a href="#ref-RahimiS2024_45" role="doc-biblioref">Rahimi et al., 2024</a>)</span>. Knowing which one you mean keeps “we reached saturation” from becoming an empty claim.</p>
-<section id="data-saturation" class="level4">
-<h4 class="anchored" data-anchor-id="data-saturation">Data saturation</h4>
-<p>Data saturation is reached when new interviews or observations stop adding information that bears on your research question. Picture interviewing patients who stopped tuberculosis treatment before finishing. The first interviews surface a stream of new reasons: the cost of travelling to the clinic, side effects, feeling better and assuming the cure was done, stigma from neighbors. After fifteen or so, a new patient names only reasons you have already recorded and nothing you haven’t. That is data saturation: the data confirm the picture rather than extend it. Because it is judged <em>during data collection</em>, it is the weakest of the four on its own. The patterns and relationships that matter can still shift once you analyze the transcripts in depth.</p>
-<p>Tran and colleagues reached saturation this way in their study of dementia caregivers in Hanoi <span class="citation" data-cites="TranTA2025_13">(<a href="#ref-TranTA2025_13" role="doc-biblioref">Tran et al., 2025</a>)</span>. Interviewing 20 caregiver dyads and 8 health professionals across two rounds, they continued “until evidence became redundant with no new information emerging” and identified data saturation after the twentieth interview.</p>
-</section>
-<section id="code-or-thematic-saturation" class="level4">
-<h4 class="anchored" data-anchor-id="code-or-thematic-saturation">Code or thematic saturation</h4>
-<p>Qualitative analysis works by <strong>coding</strong>: researchers attach a short label to each segment of text that captures a recurring idea, then group related codes into broader <strong>themes</strong>. Code saturation is judged later, <em>during analysis</em>. You’ve reached it when further coding produces no new codes or themes, and no new relationships among them. It is more demanding than data saturation, but it can arrive before you understand how the codes connect, and it usually takes more interviews than researchers expect.</p>
-<p>Squire and colleagues <span class="citation" data-cites="SquireCM2024_42">(<a href="#ref-SquireCM2024_42" role="doc-biblioref">2024</a>)</span> examined five virtual interview studies and found that full code saturation arrived late: across the studies, not until 91% to 100% of the planned interviews were complete. In some, that meant the very last interview. Most of the core codes, though, showed up far earlier, at roughly 15 to 23 interviews—just where teams are tempted to stop. The practical safeguard is a saturation matrix that logs when each new code first appears. If three consecutive interviews add no new codes, the claim stands on firmer ground than if you stopped the first time themes began to repeat.</p>
-</section>
-<section id="meaning-saturation" class="level4">
-<h4 class="anchored" data-anchor-id="meaning-saturation">Meaning saturation</h4>
-<p>Meaning saturation is about depth rather than breadth. Code saturation tells you the <em>labels</em> have stopped multiplying; meaning saturation asks whether you yet understand what each one means. Suppose you are interviewing community health workers about the barriers they face. After a handful of interviews the same codes keep recurring, “lack of supplies” and “difficult travel,” and you are tempted to stop. But do you yet know why supplies run short, or what “difficult travel” actually involves: seasonal flooding, the cost of transport, or safety on the road? Until your reading of a theme stops shifting, you have repetition, not meaning saturation.</p>
-<p>In Ramukumba’s <span class="citation" data-cites="RamukumbaMM2020_1">(<a href="#ref-RamukumbaMM2020_1" role="doc-biblioref">2020</a>)</span> focus-group study of community health workers in South Africa, “lack of support” surfaced in the first of three focus groups with 46 workers and kept recurring; as a code it was saturated early. But the team reached meaning saturation only once they had unpacked what that lack consisted of: unpredictable remuneration, heavy workloads, and limited recognition from the health system of what these workers actually do. What mattered was not that the phrase repeated but that these dimensions, and how they related, became clear only through sustained analysis across the groups. Stopping at the recurring label would have recorded that workers felt unsupported without ever explaining the shape of that feeling.</p>
-</section>
-<section id="theoretical-saturation" class="level4 page-columns page-full">
-<h4 class="anchored" data-anchor-id="theoretical-saturation">Theoretical saturation</h4>
-<p>Theoretical saturation is the original grounded-theory sense, and the most demanding. You reach it when the theory you’re building is complete: no new data alters its concepts, categories, or the relationships among them, and the theory accounts for the evidence you have <span class="citation" data-cites="RahimiS2024_45">(<a href="#ref-RahimiS2024_45" role="doc-biblioref">Rahimi et al., 2024</a>)</span>. It depends on <em>theoretical sampling</em>: deliberately recruiting the cases most likely to challenge or extend the emerging model. A study building a theory of how families decide when to seek care, for instance, would keep recruiting different kinds of families until the model explained each new case and fresh cases stopped reshaping it.</p>
-
-<div class="no-row-height column-margin column-container"><div class="">
-<p>Negative cases—instances that don’t fit your emerging patterns—are <em>gold</em> in qualitative research. If 11 of 12 CHWs feel undervalued but the 12th feels deeply supported, that outlier helps you refine your themes and identify boundary conditions. Actively seek out and analyze these cases.</p>
-</div></div></section>
-</section>
-<section id="the-goldilocks-frame-for-qualitative-research" class="level3">
-<h3 class="anchored" data-anchor-id="the-goldilocks-frame-for-qualitative-research">THE GOLDILOCKS FRAME FOR QUALITATIVE RESEARCH</h3>
-<p>So what does “just right” mean for qualitative sample size?</p>
-<p><strong>Too small</strong>: You miss important perspectives, your thematic development is incomplete, and you can’t distinguish between individual idiosyncrasies and broader patterns. Your findings lack credibility because readers wonder whether different themes would have emerged with more participants.</p>
-<p><strong>Too large</strong>: You’re collecting redundant data that doesn’t add new understanding, overburdening yourself with unnecessary analysis, and potentially exploiting participants’ time when you’ve already learned what you need to know.</p>
-<p><strong>Just right</strong>: You’ve achieved saturation across the dimensions that matter for your research question, captured a sufficient diversity of perspectives, and can demonstrate through systematic analysis that additional data collection would be redundant rather than revelatory.</p>
-<p>The sample sizes in our examples—46 community health workers in one study, 20 caregiver dyads plus 8 health professionals in another—reflect this principle in action. None of these numbers came from a formula. They emerged from rigorous, iterative analysis showing that saturation had been achieved.</p>
-</section>
-</section>
-<section id="bucket-2-descriptive-inferencesample-size-for-precision" class="level2 page-columns page-full" data-number="16.3">
-<h2 data-number="16.3" class="anchored" data-anchor-id="bucket-2-descriptive-inferencesample-size-for-precision"><span class="header-section-number">16.3</span> Bucket 2: Descriptive Inference—Sample Size for Precision</h2>
-<p>Now let’s shift gears entirely. Qualitative research determines sample size through saturation, but what if you’re trying to <em>estimate a quantity</em>?</p>
-<p>Descriptive studies in global health aim to establish the frequency and distribution of health conditions, risk factors, or health system characteristics. What’s the prevalence of tuberculosis in indigenous populations? What proportion of TB contacts develop active disease when screened? How common is exclusive breastfeeding at six months?</p>
-<p>For these questions, sample size determination focuses on <em>precision</em>. Specifically, the margin of error or width of confidence intervals around your point estimate.</p>
-<section id="understanding-margin-of-error" class="level3 page-columns page-full">
-<h3 class="anchored" data-anchor-id="understanding-margin-of-error">UNDERSTANDING MARGIN OF ERROR</h3>
-<p>Suppose you want to estimate the prevalence of active tuberculosis in a particular population. You conduct a survey and find that 3% of your sample has active TB. But here’s the thing: that 3% is an <em>estimate</em> based on your sample. The true population prevalence might be a bit higher or a bit lower.</p>
-<p>The confidence interval is the band of prevalence values your data can’t rule out. If a survey puts the estimate at 3% with a 95% confidence interval of 2.6% to 3.4%, values inside that band are consistent with what you observed and values outside it are not. The width of that interval—here 0.8 percentage points—reflects your precision.</p>
-
-<div class="no-row-height column-margin column-container"><div class="">
-<p>The 95% in a confidence interval refers to the long-run behavior of the procedure that produced it, not to this one interval. <a href="../statinference/statinference.html" class="quarto-xref"><span>Chapter 6</span></a> works through what that means, and how it differs from a Bayesian credible interval.</p>
-</div></div><p>A narrower confidence interval means more precision: you can pin down the true value more exactly. But narrower confidence intervals require larger sample sizes. Wider confidence intervals mean less precision but require smaller samples.</p>
-<p>Here’s where the Goldilocks problem emerges: In low- and middle-income countries where sample size calculations must be balanced against resource constraints and recruitment feasibility, you need to carefully specify an acceptable margin of error. Too wide a margin produces imprecise estimates that may not be useful for decision-making. Too narrow a margin may make your study completely infeasible.</p>
-</section>
-<section id="example-two-malaria-surveys-in-mozambique" class="level3">
-<h3 class="anchored" data-anchor-id="example-two-malaria-surveys-in-mozambique">EXAMPLE: TWO MALARIA SURVEYS IN MOZAMBIQUE</h3>
-<p>One way to see precision at work is to compare two studies of the same disease that made very different choices about sample size. We’ll discuss two examples that estimated <em>Plasmodium falciparum</em> malaria prevalence in Mozambique:</p>
-<ol type="1">
-<li>a national estimate drew on the 2018 Malaria Indicator Survey, which tested 4,347 young children across the country, and put prevalence at 38.9% (95% CI: 36.9%–40.8%) <span class="citation" data-cites="EjiguBA2020_102">(<a href="#ref-EjiguBA2020_102" role="doc-biblioref">Ejigu, 2020</a>)</span>;</li>
-<li>a district study in rural Sussundenga tested 358 people from 96 households and put local prevalence at 31.6% (95% CI: 26.6%–36.5%) <span class="citation" data-cites="EarlandDE2022_101">(<a href="#ref-EarlandDE2022_101" role="doc-biblioref">Earland et al., 2022</a>)</span>.</li>
-</ol>
-<p>Look at the two intervals. The national estimate spans 3.9 percentage points; the district estimate spans 9.9, more than twice as wide. The difference is sample size. With roughly twelve times as many people tested, the national survey pins prevalence down far more tightly.</p>
-<p>That precision has a price. The national figure took the machinery of a countrywide survey, hundreds of clusters and thousands of tests. The district team could field a study of 358 people with far less, but their estimate is correspondingly coarser. Neither is wrong. They answer questions at different scales, and each accepted the margin of error its purpose and resources allowed.</p>
-</section>
-<section id="proportions" class="level3 page-columns page-full">
-<h3 class="anchored" data-anchor-id="proportions">PROPORTIONS</h3>
-<p>The Mozambique surveys estimate a <strong>proportion</strong>: the share of people who test positive for malaria. Both used rapid diagnostic tests, which detect a current infection, so the estimate is a point prevalence: the proportion infected at the time of the survey, not over some earlier period.</p>
-<p>For a proportion, the margin of error has a simple form. If you draw a simple random sample of size <span class="math inline">\(n\)</span> and observe a proportion <span class="math inline">\(p\)</span>, the 95% margin of error is approximately</p>
-<p><span class="math display">\[\text{ME} = 1.96 \sqrt{\frac{p(1-p)}{n}}.\]</span></p>
-<p>Two things drive it. The numerator, <span class="math inline">\(p(1-p)\)</span>, is the variability of a yes-or-no answer. It is largest when <span class="math inline">\(p = 0.5\)</span> and shrinks as prevalence moves toward 0 or 1. The denominator is your sample size. Because <span class="math inline">\(n\)</span> sits under a square root, precision improves only with the square root of effort: to halve your margin of error you need four times the sample.</p>
-<p>Rearranging tells you the sample size a target margin of error requires:</p>
-<p><span class="math display">\[n = \frac{1.96^2 \, p(1-p)}{\text{ME}^2}.\]</span></p>
-<p>When you don’t yet know the prevalence, use <span class="math inline">\(p = 0.5\)</span>. It is the worst case, so the resulting sample size is safe for any true value. <a href="#fig-moe-proportion" class="quarto-xref">Figure&nbsp;<span>16.1</span></a> shows what that demand looks like as you ask for more and more precision.</p>
-<div class="cell page-columns page-full">
-<div class="cell-output-display page-columns page-full">
-<div id="fig-moe-proportion" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full">
-<figure class="quarto-float quarto-float-fig figure page-columns page-full">
-<div aria-describedby="fig-moe-proportion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="page-columns page-full">
-<img src="samplesize_files/figure-html/fig-moe-proportion-1.png" class="img-fluid figure-img column-page" width="864">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-moe-proportion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;16.1: Top: the distribution of estimates you would expect from repeated samples when the true prevalence is 50%, for five sample sizes. Larger samples concentrate the estimates near the truth. Bottom: the 95% confidence interval each sample size produces. Halving the margin of error quadruples the sample required, so a 2-point margin takes 2,401 people while a 10-point margin takes 97. Assumes simple random sampling and the most demanding case of a 50% prevalence.
-</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<p>The top panel shows how estimates from repeated samples would scatter around the truth. A small sample gives a wide, flat distribution: with 97 people, a sample could easily land ten points away from the true value. Each increase in sample size pulls that distribution tighter, and the bottom panel translates the same information into the interval each sample size produces.</p>
-<p>Notice how unevenly the cost falls. Moving from a 10-point margin to a 5-point margin costs about 290 extra participants. Moving from 5 points to 2 costs about 2,000 more. Malaria’s roughly 39% prevalence makes <span class="math inline">\(p(1-p)\)</span> a little smaller than the worst case shown here, so the true requirement is somewhat lower, but the shape is the same. This is why a district team of a few hundred can report a usable estimate while a tightly bounded national figure needs a survey of thousands.</p>
-</section>
-<section id="means" class="level3 page-columns page-full">
-<h3 class="anchored" data-anchor-id="means">MEANS</h3>
-<p>Sometimes the quantity you want is a <strong>mean</strong> rather than a proportion: average systolic blood pressure in a community, average out-of-pocket spending on a hospital visit, or average hemoglobin concentration in an anemia screening program. The logic carries over, with one change.</p>
-<p>For a mean estimated from a simple random sample, the 95% margin of error is approximately</p>
-<p><span class="math display">\[\text{ME} = 1.96 \, \frac{s}{\sqrt{n}},\]</span></p>
-<p>where <span class="math inline">\(s\)</span> is the standard deviation of the measurement in the population. Rearranged,</p>
-<p><span class="math display">\[n = \left( \frac{1.96 \, s}{\text{ME}} \right)^2.\]</span></p>
-<p>The square-root relationship is unchanged: quadruple the sample to halve the margin of error. What is new is <span class="math inline">\(s\)</span>. For a proportion, variability is fixed once you know <span class="math inline">\(p\)</span>. For a mean, it depends on how spread out the values are, and you have to supply that number before collecting any data. You get it from a previous study in a similar population, from a pilot, or from a conservative guess. Get it badly wrong and your study ends up over- or under-sized for the precision you wanted.</p>
-
-<div class="no-row-height column-margin column-container"><div class="">
-<p>The <strong>standard deviation</strong> measures how spread out individual values are around their mean. In a homogeneous population, most people sit close to the average and the standard deviation is small. In a variable one, values scatter widely and it is large. It is the standard deviation of the measurements themselves, not the standard error of the estimate. The two are related by <span class="math inline">\(\text{SE} = s / \sqrt{n}\)</span>.</p>
-</div></div><p><a href="#fig-moe-mean" class="quarto-xref">Figure&nbsp;<span>16.2</span></a> makes the point with hemoglobin concentration. The two curves assume a fairly homogeneous population (a standard deviation of 1.5 g/dL) and a more variable one (2.5 g/dL). The more variable population needs a larger sample for the same precision, which is why the standard deviation you assume at the design stage is worth getting right.</p>
-<div class="cell">
-<div class="cell-output-display">
-<div id="fig-moe-mean" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-moe-mean-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="samplesize_files/figure-html/fig-moe-mean-1.png" class="img-fluid figure-img" width="768">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-moe-mean-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;16.2: Participants needed to estimate a mean hemoglobin concentration within a given 95% margin of error, for a less variable population (standard deviation 1.5 g/dL) and a more variable one (2.5 g/dL). Unlike a proportion, a mean’s required sample size depends on the standard deviation you assume in advance.
-</figcaption>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="the-goldilocks-frame-for-descriptive-studies" class="level3">
-<h3 class="anchored" data-anchor-id="the-goldilocks-frame-for-descriptive-studies">THE GOLDILOCKS FRAME FOR DESCRIPTIVE STUDIES</h3>
-<p>So what’s “just right” for descriptive quantitative research?</p>
-<p><strong>Too small</strong>: With a small sample size, your confidence intervals are so wide that the estimate provides little useful information. Knowing TB prevalence is “somewhere between 10% and 40%” doesn’t help anyone plan interventions.</p>
-<p><strong>Too large</strong>: On the flip side, you could recruit nearly 10,000 people to estimate prevalence within 1 percentage point, when a plus/minus of 2 percentage points would have answered your question at a fraction of the cost and effort.</p>
-<p><strong>Just right</strong>: The just right sample size is the one that answers your question with a tolerable amount of error.</p>
-<p>Think about your research in context. Are you providing the first prevalence estimate in a population where none exists? A wider margin of error might be acceptable. Are you detecting small changes over time to evaluate a program? You might need greater precision. Talk to the people who will use your data—public health officials, program managers, clinicians—and ask: “What level of precision would actually be useful to you?” Then design your study accordingly.</p>
-</section>
-</section>
-<section id="bucket-3-hypothesis-testingthe-heart-of-power-analysis" class="level2 page-columns page-full" data-number="16.4">
-<h2 data-number="16.4" class="anchored" data-anchor-id="bucket-3-hypothesis-testingthe-heart-of-power-analysis"><span class="header-section-number">16.4</span> Bucket 3: Hypothesis Testing—The Heart of Power Analysis</h2>
-<p>Now we arrive at the bucket that causes the most confusion and the most serious errors in research design: hypothesis-testing studies that require power analysis.</p>
-<p>If you’re conducting a randomized trial, a cohort study comparing exposed and unexposed groups, or a case-control study investigating risk factors, you’re testing a hypothesis about whether an effect exists. Does an intervention reduce depression? Does exposure to indoor air pollution increase respiratory infections? Do maternal education programs improve child nutrition?</p>
-<p>These questions change what “how many?” means. You’re no longer estimating a single quantity to a chosen precision. You’re trying to detect something—a difference between groups, an association—that may or may not be there. The sample size question becomes: how many participants give you a good chance of finding the effect if it really exists? That chance is called <strong>power</strong>, and before we calculate anything, I want you to have an intuition for what it is.</p>
-
-<div class="no-row-height column-margin column-container"><div class="">
-<p>Several ideas in this bucket—justifying error rates rather than defaulting to convention, the smallest effect size of interest, sensitivity power analysis—come from Daniël Lakens’ open-access chapter on sample size justification <span class="citation" data-cites="Lakens2022">(<a href="#ref-Lakens2022" role="doc-biblioref">Lakens, 2022</a>)</span>. When you’re ready to go deeper than we can here, start there.</p>
-</div></div><section id="a-hypothesis-testing-refresher" class="level3 page-columns page-full">
-<h3 class="anchored" data-anchor-id="a-hypothesis-testing-refresher">A HYPOTHESIS TESTING REFRESHER</h3>
-<p>To get where we’re going, we need to return to the logic of hypothesis testing from <a href="../statinference/statinference.html" class="quarto-xref"><span>Chapter 6</span></a>. We assume the null hypothesis of no effect and ask how surprising our data would be if that assumption were true.</p>
-<p>For instance, if a prenatal nutrition intervention really had no effect on average newborn birthweight, we’d expect the intervention and control arms to have the same mean birthweight, apart from chance variation. A mean difference of zero.</p>
-<p>But suppose we observed an average difference of 90 grams between the arms, with a p-value of 0.011. If we had set alpha at 0.05, we’d reject the null hypothesis and conclude that the data provide evidence of an effect. A mean difference of 90 grams—our study result—would be sufficiently surprising under the assumption that the intervention had no effect.</p>
-
-<div class="no-row-height column-margin column-container"><div class="">
-<p>As <a href="../statinference/statinference.html" class="quarto-xref"><span>Chapter 6</span></a> emphasized, whether an effect exists is not the only question—or even the most important one. The size of the effect and its clinical or practical significance matter more for decisions. I’m setting that aside here to focus on the testing procedure.</p>
-</div></div><p><a href="#fig-null-world" class="quarto-xref">Figure&nbsp;<span>16.3</span></a> draws that reasoning. The dashed curve is the range of results a trial of this size would produce if the intervention truly did nothing: mostly small differences scattered around zero, because two arms drawn from the same population rarely have identical means. Alpha marks off the tails, our threshold for what we’ll consider “surprising.” Anything inside the bracketed <strong>retention region</strong> is ordinary enough that we don’t reject the null; anything past it is surprising enough that we do. Our 90-gram result sits outside. Therefore, we label it “statistically significant.”</p>
-<div class="cell page-columns page-full">
-<div class="cell-output-display page-columns page-full">
-<div id="fig-null-world" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full">
-<figure class="quarto-float quarto-float-fig figure page-columns page-full">
-<div aria-describedby="fig-null-world-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="page-columns page-full">
-<img src="samplesize_files/figure-html/fig-null-world-1.png" class="img-fluid figure-img column-page" width="768">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-null-world-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;16.3: The null world for the prenatal nutrition trial. The dashed curve shows the differences in mean birthweight to expect if the intervention does nothing, for a trial of 400 women per arm with a birthweight standard deviation of 500 grams. The shaded tails are the most extreme 5% of that distribution (α/2 in each tail). The observed difference of 90 grams falls outside the retention region, so we reject the null.
-</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>What Determines the Shape of The Curve?
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The shape of this curve comes from the central limit theorem (<a href="../statinference/statinference.html" class="quarto-xref"><span>Chapter 6</span></a>). Differences in sample means follow an approximately normal distribution, and its spread depends on just two things: the variability of birthweight and the sample size. With a standard deviation of 500 grams and 400 women per arm, the standard error is <span class="math inline">\(500 \times \sqrt{2/400} \approx 35\)</span> grams. Enroll more women and the curve narrows.</p>
-</div>
-</div>
-</section>
-<section id="introducing-power" class="level3 page-columns page-full">
-<h3 class="anchored" data-anchor-id="introducing-power">INTRODUCING POWER</h3>
-<p>We needed this refresher because the Frequentist hypothesis testing procedure runs entirely on the null hypothesis. The curve in <a href="#fig-null-world" class="quarto-xref">Figure&nbsp;<span>16.3</span></a> describes the plausible results we can expect even if the intervention does not work. The alpha thresholds delineate our automatic decision-making about statistical significance. Inside = not significant. Outside = significant.</p>
-<p>Even as someone new to statistical inference, you can see that it’s better to be outside the null distribution retention region if you think an intervention works, or if you believe an association is real.</p>
-<p>So how do we design studies where we have the best chance of detecting a result that is outside rather than inside? The answer gets us to the idea of statistical power.</p>
-<p>To help me explain power, I created <a href="#fig-null-and-power" class="quarto-xref">Figure&nbsp;<span>16.4</span></a> that keeps the distribution of plausible study results under the null hypothesis and adds the range of results we might expect if the maternal nutrition intervention really does raise birthweight by 100 grams.</p>
-<div class="cell page-columns page-full">
-<div class="cell-output-display page-columns page-full">
-<div id="fig-null-and-power" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full">
-<figure class="quarto-float quarto-float-fig figure page-columns page-full">
-<div aria-describedby="fig-null-and-power-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="page-columns page-full">
-<img src="samplesize_files/figure-html/fig-null-and-power-1.png" class="img-fluid figure-img column-page" width="768">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-null-and-power-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;16.4: The same trial, now with both worlds drawn. The dashed curve is the distribution of results if the intervention does nothing; the solid curve is the distribution if it truly raises mean birthweight by 100 grams. An observed difference of 50 grams falls inside the retention region, so we retain the null—but 50 grams is also a plausible result under a real 100-gram effect. The gray area (β) is the share of the real-effect world that falls inside the retention region and would be missed (19%). The amber area is power: with 400 women per arm, this trial would detect a 100-gram effect 81% of the time. Power uses a normal approximation.
-</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<p>Focus on the hump to the right. Notice how the curve is centered on a difference of 100 grams instead of zero (no effect). But also notice that the two distributions overlap because even in a world where the intervention increases birthweight by 100 grams, sampling variability means that we could see results above or below this mark.</p>
-<p>Imagine that our study found a mean difference of 50 grams. An effect of this size falls inside the retention region of the null distribution, so the inferential procedure is clear and automatic: we retain the null. We label the result not statistically significant. Its position on the null distribution tells us that a difference of 50 grams is not all that surprising if the intervention really has no effect.</p>
-<p>But look where 50 grams sits on the solid curve.</p>
-<p>If the intervention truly raised birthweight by 100 grams, a result of 50 grams would also not be out of the question!</p>
-<p>In fact, 50 grams sits exactly midway between the two curves, so this result is just as likely in a world where the intervention truly raises birthweight by 100 grams as in a world where it does nothing.</p>
-<p>Hypothesis testing happens on the null hypothesis, so we’d label this particular result not statistically significant. But if the effect is real, that retention is a <strong>false negative</strong>, otherwise known as a <strong>Type II error</strong>.</p>
-<p>The light gray area in <a href="#fig-null-and-power" class="quarto-xref">Figure&nbsp;<span>16.4</span></a> shows how often that mistake would happen. I’ve labeled it beta: the share of the real-effect curve that falls inside the retention region, here 19% of the total area under the alternative distribution. Nearly one in five trials of this design would miss a true 100-gram effect. That is to say that nearly 20% of plausible results under the alternative hypothesis also fall inside the null distribution’s retention region. The null wins, and these results get labeled not significant.</p>
-<p>The amber area is power: the share of real-effect trials that clear the critical value and correctly reject the null, 81%. The greater the power, the greater the chance you have when designing a study to find an effect if the effect is real.</p>
-<p>I know, this conditional probability stuff is tiring. It’s key though because in any single study we never know which side of the truth we’re on. If we knew, we wouldn’t need the study.</p>
-<p>When we reject the null, as we did after observing a 90-gram difference in <a href="#fig-null-world" class="quarto-xref">Figure&nbsp;<span>16.3</span></a>, we could be making a Type I error (false positive) if the intervention really has no effect.</p>
-<p>When we retain it, as we just did after observing a 50-gram difference, we could be making a Type II error (false negative) if the opposite is true and the intervention really does work.</p>
-<p>Each world produces a range of plausible results. When these ranges overlap, a single result often can’t tell us which world produced it.</p>
-<p>So the question for us designing studies becomes, “How can we design a study so that the distributions overlap as little as possible?” In other words, how do we design high-powered studies?</p>
-</section>
-<section id="levers-of-power" class="level3 page-columns page-full">
-<h3 class="anchored" data-anchor-id="levers-of-power">LEVERS OF POWER</h3>
-<p>We can’t control which world is true, but we can control the design. Every element of <a href="#fig-null-and-power" class="quarto-xref">Figure&nbsp;<span>16.4</span></a> comes from a quantity we choose or estimate before enrolling a single participant:</p>
-<ul>
-<li>effect size</li>
-<li>variability</li>
-<li>sample size</li>
-<li>alpha level</li>
-<li>power</li>
-</ul>
-<section id="effect-size" class="level4 page-columns page-full">
-<h4 class="anchored" data-anchor-id="effect-size">Effect Size</h4>
-<p>We’ll start with the <strong>effect size</strong>, which sets the center of the solid curve. It’s the true difference between arms in a world where the intervention works—here, 100 grams. We hypothesize it from past studies, pilot data, or the smallest difference that would matter in practice. The value we choose is our <strong>minimum detectable effect size</strong>: the smallest true effect the design would reliably detect. <a href="#fig-effect-size-lever" class="quarto-xref">Figure&nbsp;<span>16.5</span></a> shows the choice at work. With 400 women per arm and a two-sided alpha of 0.05, the trial has 81% power to detect an effect of 100 grams or greater. If we want to detect a smaller impact, say 70 grams, the same design gives us only 51% power. The curves overlap more, and about half of such studies would miss a real 70-gram effect. Detecting smaller effects takes a different design.</p>
-
-<div class="no-row-height column-margin column-container"><div class="">
-<p>For continuous outcomes you’ll often see effect sizes standardized: the difference in means divided by the standard deviation of the outcome. A 100-gram difference against a 500-gram standard deviation is a standardized effect of 0.2. We’ll stay in grams.</p>
-</div></div><div class="cell page-columns page-full">
-<div class="cell-output-display page-columns page-full">
-<div id="fig-effect-size-lever" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full">
-<figure class="quarto-float quarto-float-fig figure page-columns page-full">
-<div aria-describedby="fig-effect-size-lever-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="page-columns page-full">
-<img src="samplesize_files/figure-html/fig-effect-size-lever-1.png" class="img-fluid figure-img column-page" width="960">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-effect-size-lever-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;16.5: The effect size lever. Both panels show the same design—400 women per arm, a birthweight standard deviation of 500 grams, a two-sided alpha of 0.05—and differ only in the effect the study aims to detect. The design has 81% power to detect a true effect of 100 grams but only 51% power to detect 70 grams. The amber area is power, the gray area (β) is the false-negative risk, and the slate tails (α/2) are the false-positive risk. Powers use a normal approximation.
-</figcaption>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="variability" class="level4 page-columns page-full">
-<h4 class="anchored" data-anchor-id="variability">Variability</h4>
-<p>Next is the <strong>variability of the outcome</strong>, by which we mean how much the outcome differs from person to person before any intervention enters the picture. Birthweight varies a lot. With a standard deviation of 500 grams, one newborn might weigh 2,800 grams and the next 3,700, even when their mothers received identical care. That person-to-person spread is the noise a 100-gram treatment signal has to stand out against, and it’s what gives the curves their width: the more variable the outcome, the wider both distributions and the more the two worlds overlap. <a href="#fig-variability-lever" class="quarto-xref">Figure&nbsp;<span>16.6</span></a> shows this lever alone. Both panels keep the target effect at 100 grams and the sample at 400 women per arm; only the standard deviation changes. At 500 grams, the value we’ve been assuming, power is 81%. At 750 grams, both curves widen, the two worlds become harder to tell apart, and power falls to 47%.</p>
-
-<div class="no-row-height column-margin column-container"><div class="">
-<p>Variability looks like a fixed fact about the outcome, but analysis choices can shrink it. Adjusting for baseline covariates that predict the outcome—gestational age at enrollment, the mother’s weight, or a baseline measure of the outcome itself—removes the variation those covariates explain. That narrows the curves and buys power without enrolling anyone new. Covariates that don’t predict the outcome buy nothing.</p>
-</div></div><div class="cell page-columns page-full">
-<div class="cell-output-display page-columns page-full">
-<div id="fig-variability-lever" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full">
-<figure class="quarto-float quarto-float-fig figure page-columns page-full">
-<div aria-describedby="fig-variability-lever-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="page-columns page-full">
-<img src="samplesize_files/figure-html/fig-variability-lever-1.png" class="img-fluid figure-img column-page" width="960">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-variability-lever-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;16.6: The variability lever. Both panels show the same target effect (100 grams) and sample size (400 women per arm) with a two-sided alpha of 0.05; only the standard deviation of birthweight differs. When the outcome is more variable, both distributions widen and overlap more, and power falls from 81% to 47%. Powers use a normal approximation.
-</figcaption>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="sample-size" class="level4 page-columns page-full">
-<h4 class="anchored" data-anchor-id="sample-size">Sample Size</h4>
-<p><strong>Sample size</strong> pushes in the opposite direction. Averages computed from more participants vary less from sample to sample, so enrolling more women narrows both curves. Together, variability and sample size set the standard error—the spread of the distributions. We usually can’t make birthweight less variable, but we can almost always enroll more women, which makes sample size the lever we reach for most often. <a href="#fig-sample-size-lever" class="quarto-xref">Figure&nbsp;<span>16.7</span></a> shows it at work. The left panel is the trial we’ve been studying: 400 women per arm, a critical value of 69 grams, and the 50-gram result inside the retention region. The right panel enrolls 1,600 women per arm instead. Both curves grow taller and narrower because results cluster more tightly around each world’s center. The critical value drops to 35 grams, and the same 50-gram result now rejects the null. Power to detect a true 100-gram effect climbs from 81% to more than 99%.</p>
-<div class="cell page-columns page-full">
-<div class="cell-output-display page-columns page-full">
-<div id="fig-sample-size-lever" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full">
-<figure class="quarto-float quarto-float-fig figure page-columns page-full">
-<div aria-describedby="fig-sample-size-lever-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="page-columns page-full">
-<img src="samplesize_files/figure-html/fig-sample-size-lever-1.png" class="img-fluid figure-img column-page" width="960">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sample-size-lever-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;16.7: The sample size lever. Both panels show the same two worlds—no effect (dashed) versus a true 100-gram effect (solid)—and the same observed difference of 50 grams, on the same vertical scale. Left: with 400 women per arm, the critical value is 69 grams, so 50 grams falls inside the retention region and we retain the null. Right: with 1,600 women per arm, both curves grow taller and narrower, the critical value shrinks to 35 grams, and the same result rejects the null. Power to detect a 100-gram effect rises from 81% to more than 99%. Powers use a normal approximation.
-</figcaption>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="alpha-level" class="level4 page-columns page-full">
-<h4 class="anchored" data-anchor-id="alpha-level">Alpha Level</h4>
-<p>Alpha is the next lever. It sets the critical values: with a two-sided alpha of 0.05, they sit at ±69 grams. There’s nothing special about 0.05. It’s a convention, and researchers set it. If a false negative would be the costlier error—say, when screening candidate interventions to decide which deserve a definitive trial—an alpha of 0.10 can be defensible. <a href="#fig-alpha-lever" class="quarto-xref">Figure&nbsp;<span>16.8</span></a> shows the consequences. Holding everything else fixed, raising alpha from 0.05 to 0.10 moves the critical value inward from 69 grams to 58, and power rises from 81% to 88%. But nothing about the study got more informative. You bought that power by doubling the false-positive risk you’re willing to accept. That’s why the justification for changing alpha has to come from weighing the two errors, never from working backward to the sample size you can afford. And expect reviewers to question anything other than 0.05 regardless.</p>
-<div class="cell page-columns page-full">
-<div class="cell-output-display page-columns page-full">
-<div id="fig-alpha-lever" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full">
-<figure class="quarto-float quarto-float-fig figure page-columns page-full">
-<div aria-describedby="fig-alpha-lever-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="page-columns page-full">
-<img src="samplesize_files/figure-html/fig-alpha-lever-1.png" class="img-fluid figure-img column-page" width="960">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-alpha-lever-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;16.8: The alpha lever. Both panels show the same trial—400 women per arm, a true effect of 100 grams, a birthweight standard deviation of 500 grams—and differ only in alpha. Raising alpha from 0.05 to 0.10 moves the critical value inward from 69 grams to 58, raising power from 81% to 88% at the cost of doubling the false-positive risk. Powers use a normal approximation.
-</figcaption>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="power" class="level4 page-columns page-full">
-<h4 class="anchored" data-anchor-id="power">Power</h4>
-<p>Once the effect size, variability, sample size, and alpha are fixed, the picture is fully drawn and power falls out of it: the share of the solid curve that clears the critical value, 81% here. But power becomes an input when you flip the question around. Set a target—convention says at least 80%—and solve for the minimum sample size that achieves it. That flipped question is the power analysis: given the effect we care about, the variability we expect, and the alpha we’ll test at, how large must the sample be for a real effect to have a strong chance of being detected?</p>
-
-<div class="no-row-height column-margin column-container"><div class="">
-<p>The 80% convention is a default, not a law. Jacob Cohen, who proposed it, judged a false positive to be four times as serious as a false negative, and he hoped researchers would override the default whenever they could justify a better value <span class="citation" data-cites="cohen:1988">(<a href="#ref-cohen:1988" role="doc-biblioref">Cohen, 1988</a>)</span>.</p>
-</div></div><p>We can also solve for the minimum detectable effect. Fix the sample size at whatever you can enroll, keep alpha at 0.05 and the power target at 80%, and solve for the smallest effect the design can reliably detect. With 400 women per arm, the answer is 99 grams, which is why the 100-gram design we’ve been drawing has power just above 80%. If the effects that matter in practice are smaller than the answer, you’ve learned something important before enrolling a single participant.</p>
-</section>
-</section>
-<section id="the-lamp-in-the-basement" class="level3 page-columns page-full">
-<h3 class="anchored" data-anchor-id="the-lamp-in-the-basement">THE LAMP IN THE BASEMENT</h3>
-<p>If you’re feeling good about power, you might skip to the next section. If it’s still a bit fuzzy, consider this analogy.</p>
-<p>Imagine that I ask my kid to find a lamp in the basement. I’m pretty sure it’s down there. He goes down, pokes around, and comes back: “It’s not there.”</p>
-<p>Has he shown that the basement contains no lamp? No.&nbsp;He failed to find it, which is a different claim. His report is the household version of p &gt; 0.05: an absence of evidence, not evidence of absence.</p>
-
-<div class="no-row-height column-margin column-container"><div class="">
-<p>I didn’t invent this analogy, but I’ve lost track of where I first came across it.</p>
-</div></div><p>Now think about what determines whether he finds it.</p>
-<p><strong>The size of the lamp.</strong> A floor lamp is hard to miss. A small reading light can hide behind a single box. That’s the effect size: large effects announce themselves in the data, and small effects are easy to overlook.</p>
-<p><strong>How long he looks.</strong> A thirty-second glance from the bottom of the stairs is one thing. Twenty minutes checking every shelf is another. That’s the sample size. More looking means more chances to find what’s there.</p>
-<p><strong>How messy the basement is.</strong> In a tidy basement, even a small lamp stands out. In a basement crammed with boxes and bikes, a large lamp can sit unnoticed. That’s the variance in your outcome. It also echoes the margin note on the variability lever: if you can account for some of that variation by clearing away clutter that has nothing to do with the lamp, you gain power without enrolling a single extra participant.</p>
-<p>Power is the probability that my kid comes back holding the lamp, <em>given that the lamp really is down there</em>. In study terms, it’s the probability of rejecting the null when the effect truly exists. Just like the p-value is conditional on the null hypothesis being true, power is a conditional probability of finding an effect if there is one to find.</p>
-</section>
-<section id="example-powering-the-healthy-activity-program-trial" class="level3 page-columns page-full">
-<h3 class="anchored" data-anchor-id="example-powering-the-healthy-activity-program-trial">EXAMPLE: POWERING THE HEALTHY ACTIVITY PROGRAM TRIAL</h3>
-<p>For a real power calculation, let’s return to the Healthy Activity Program (HAP), the lay-counsellor treatment for depression in Goa, India, that anchored <a href="../statinference/statinference.html" class="quarto-xref"><span>Chapter 6</span></a>. The trial randomized individual adults with moderate to severe depression to HAP plus enhanced usual care or enhanced usual care alone. A primary outcome was depression severity on the Beck Depression Inventory (BDI-II) at three months.</p>
-<p>Every lever appears in the team’s design. The hardest one came first: the effect size. Meta-analyses of low-intensity psychological interventions for depression had found a summary effect of 0.42 standard deviations, while behavioural interventions overall pooled to 0.7 <span class="citation" data-cites="patel:2014">(<a href="#ref-patel:2014" role="doc-biblioref">Patel et al., 2014</a>)</span>. The team designed around the smaller number. That choice cost them participants, but it protected the study: if HAP performed more like the low-intensity treatments, they would still have the power to detect it.</p>
-
-<div class="no-row-height column-margin column-container"><div class="">
-<p>One detail I’m setting aside: HAP participants shared counsellors and clinics, so the team also inflated their target slightly—by a factor of 1.28—to account for the resulting similarity among patients at the same site <span class="citation" data-cites="patel:2017">(<a href="#ref-patel:2017" role="doc-biblioref">Patel et al., 2017</a>)</span>. What that adjustment means comes later in this chapter, in the section on cluster randomized trials.</p>
-</div></div><p>With the effect size fixed at 0.42, the rest followed. They kept alpha at the conventional 0.05, set power at 90% for depression severity (and 92% for the binary remission outcome), and assumed 15% of participants would be lost to follow-up, inflating the target to compensate. The arithmetic pointed to 500 participants, 250 per arm <span class="citation" data-cites="patel:2017">(<a href="#ref-patel:2017" role="doc-biblioref">Patel et al., 2017</a>)</span>. They enrolled 495.</p>
-<p>The design paid off. The trial found an adjusted mean difference of -7.57 points on the BDI-II, a standardized effect of 0.48—slightly larger than the 0.42 the study was powered to detect. The hypothesized effect was realistic, the sample was large enough to find it, and the trial delivered a clear answer.</p>
-<p>Notice what the 0.42 was: an <em>expectation</em>, borrowed from meta-analyses of similar treatments. There’s a second number worth asking about, and it makes for an even stronger justification: the <strong>smallest effect size of interest</strong>—the smallest effect that would still matter for patients or for the health system. The two numbers answer different questions. Powering for the expected effect tells you whether you can detect the effect if your expectation is right. Powering for the smallest effect that matters does something better: it makes even a null result informative, because any effect the study was likely to miss is smaller than the ones anyone cares about. Arriving at that number takes deliberation with the people who would act on the result. How many BDI-II points must a treatment move, or what remission rate must it reach, before scaling up lay counsellors is worth the cost? That’s hard, and expectations from prior studies are often the practical fallback. But when you can specify the smallest effect of interest, power for it.</p>
-
-<div class="no-row-height column-margin column-container"><div class="">
-<p>Don’t confuse this with the minimum detectable effect size from earlier. The minimum detectable effect size describes the design: the smallest effect your study can reliably find. The smallest effect size of interest describes the decision: the smallest effect anyone would act on. In a well-justified design, the first is no larger than the second.</p>
-</div></div><div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span><strong>Better than, no worse than, or the same as?</strong>
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Everything in this bucket assumes a <strong>superiority</strong> question: is the new treatment better than the comparison? That’s the HAP question, and it’s the default. But trials can ask other questions. An <strong>equivalence trial</strong> asks whether two treatments differ by less than some margin. A <strong>non-inferiority trial</strong> asks whether a new treatment is not worse than the standard by more than a margin. Each design has its own power analysis, and the margin, like the smallest effect size of interest, must be justified rather than defaulted. <span class="citation" data-cites="lakens:2017">Lakens (<a href="#ref-lakens:2017" role="doc-biblioref">2017</a>)</span> offers a practical primer on equivalence testing.</p>
-</div>
-</div>
-</section>
-<section id="power-calculations" class="level3">
-<h3 class="anchored" data-anchor-id="power-calculations">POWER CALCULATIONS</h3>
-<p>You rarely need to do this arithmetic by hand. For basic designs—two arms, one primary outcome, individual randomization—free tools handle the standard calculations (<a href="#tbl-power-tools" class="quarto-xref">Table&nbsp;<span>16.1</span></a>).</p>
-<div id="tbl-power-tools" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-power-tools-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;16.1: Free tools for power calculations in basic designs
-</figcaption>
-<div aria-describedby="tbl-power-tools-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<table class="caption-top table">
-<colgroup>
-<col style="width: 19%">
-<col style="width: 48%">
-<col style="width: 32%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Tool</th>
-<th>Where it runs</th>
-<th>Best for</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>power.t.test()</code>, <code>power.prop.test()</code></td>
-<td>Base R</td>
-<td>Two-group comparisons of means or proportions; no packages needed</td>
-</tr>
-<tr class="even">
-<td><code>pwr</code> package</td>
-<td>R</td>
-<td>The same territory plus correlations, chi-square, and ANOVA, specified in standardized effect sizes</td>
-</tr>
-<tr class="odd">
-<td>G*Power</td>
-<td>Free desktop app</td>
-<td>A long menu of tests behind a point-and-click interface; no coding required</td>
-</tr>
-<tr class="even">
-<td>OpenEpi</td>
-<td>Browser</td>
-<td>Quick epidemiological calculations, including case-control and cohort designs</td>
-</tr>
-<tr class="odd">
-<td><code>power</code> command</td>
-<td>Stata</td>
-<td>Coverage comparable to G*Power for Stata users</td>
-</tr>
-</tbody>
-</table>
-</div>
-</figure>
-</div>
-<p>The base R functions cover everything we’ve done so far. Here is the trial we’ve been drawing:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">power.t.test</span>(<span class="at">n =</span> <span class="dv">400</span>, <span class="at">delta =</span> <span class="dv">100</span>, <span class="at">sd =</span> <span class="dv">500</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-     Two-sample t test power calculation 
-
-              n = 400
-          delta = 100
-             sd = 500
-      sig.level = 0.05
-          power = 0.8064964
-    alternative = two.sided
-
-NOTE: n is number in *each* group</code></pre>
-</div>
-</div>
-<p>There’s the 81% power we read off the curves. Swap the arguments and the same function answers the other two questions. Specify <code>power = 0.80</code> and leave out <code>n</code>, and it solves for sample size:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">power.t.test</span>(<span class="at">delta =</span> <span class="dv">100</span>, <span class="at">sd =</span> <span class="dv">500</span>, <span class="at">power =</span> <span class="fl">0.80</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-     Two-sample t test power calculation 
-
-              n = 393.4067
-          delta = 100
-             sd = 500
-      sig.level = 0.05
-          power = 0.8
-    alternative = two.sided
-
-NOTE: n is number in *each* group</code></pre>
-</div>
-</div>
-<p>Round up: 394 women per arm. Specify <code>n</code> and <code>power</code> and leave out <code>delta</code>, and it returns the minimum detectable effect—the 99 grams from the previous section.</p>
-<p>One more step before a calculated sample size becomes a recruitment target: account for <strong>attrition</strong>. Power calculations count the participants who provide outcome data, not the ones you enroll. If you expect to lose 15% of participants before the outcome is measured, divide by what remains: 394 / 0.85 = 464 women per arm. Base the expected loss on similar studies in your setting, and build it into the recruitment plan from the start rather than discovering the shortfall at analysis. And remember that attrition can do worse than shrink your sample. If the participants who leave differ from those who stay—especially if they differ across arms—the problem becomes bias, not just power.</p>
-<p>Whichever tool you use, check the defaults before trusting the answer: whether alpha is one- or two-sided, whether <em>n</em> means per group or total, and whether the tool expects a raw difference or a standardized effect size. The <code>pwr</code> package, for example, works in Cohen’s standardized units—the d = 0.42 that the HAP team borrowed from meta-analyses plugs in directly.</p>
-</section>
-<section id="simulation-based-power-analysis" class="level3 page-columns page-full">
-<h3 class="anchored" data-anchor-id="simulation-based-power-analysis">SIMULATION-BASED POWER ANALYSIS</h3>
-<p>What happens when your study design gets complicated enough that those simple tools don’t work anymore? Welcome to the world of simulation-based power analysis!</p>
-<p><strong>When do you need simulation?</strong> Common scenarios include multilevel or hierarchical designs with multiple sources of variation (patients nested in clinics nested in districts), non-normal outcome distributions that violate standard assumptions (count data, highly skewed outcomes), multiple correlated outcomes where you’re testing several related hypotheses, complex intervention effects that vary across subgroups or time points, and missing data patterns that you expect will affect your analysis.</p>
-<p>Let me show you the basic logic with a realistic example.</p>
-<section id="the-basic-logic-of-simulation-based-power" class="level4 page-columns page-full">
-<h4 class="anchored" data-anchor-id="the-basic-logic-of-simulation-based-power">The Basic Logic of Simulation-Based Power</h4>
-<p>Imagine you’re planning a stepped-wedge cluster randomized trial to evaluate a maternal health intervention across 12 rural health facilities in Uganda. Health facilities will sequentially transition from control to intervention over 18 months, with measurements every 3 months. Your primary outcome is the proportion of women attending at least 4 antenatal care visits.</p>
-<p>This design is too complex for standard calculators because it’s a cluster design (facilities, not individuals), it’s stepped-wedge rather than parallel groups, you have repeated measurements over time, the outcome is binary rather than continuous, and you expect correlation within facilities and within time periods.</p>
-<p>Simulation lets you answer: “If I enroll <em>X</em> women per facility and randomize <em>Y</em> facilities with this specific design, what’s my probability of detecting a meaningful difference, if one exists?”</p>
-<p>Here’s the conceptual approach demonstrated in R:</p>
-<p><strong>Step 1: Define your design parameters</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Study design</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>n_clusters <span class="ot">&lt;-</span> <span class="dv">12</span>           <span class="co"># Number of health facilities</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>n_per_cluster <span class="ot">&lt;-</span> <span class="dv">40</span>        <span class="co"># Women enrolled per facility per period</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>n_steps <span class="ot">&lt;-</span> <span class="dv">6</span>               <span class="co"># Crossover steps; baseline + 6 steps = 7 periods</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>baseline_rate <span class="ot">&lt;-</span> <span class="fl">0.45</span>      <span class="co"># Proportion with 4+ ANC visits at baseline</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>icc <span class="ot">&lt;-</span> <span class="fl">0.08</span>                <span class="co"># Intracluster correlation coefficient</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>n_sims <span class="ot">&lt;-</span> <span class="dv">1000</span>             <span class="co"># Number of simulated trials to run</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Target effect: raise ANC attendance from 45% to 60%, expressed on</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co"># the log-odds scale the model works on (a log odds ratio of 0.61)</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>effect_lor <span class="ot">&lt;-</span> <span class="fu">qlogis</span>(<span class="fl">0.60</span>) <span class="sc">-</span> <span class="fu">qlogis</span>(<span class="fl">0.45</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>Step 2: Simulate the data-generating process</strong></p>
-<p>To simulate is to generate a fake dataset by drawing random numbers from the model you just specified. Each simulated dataset is one plausible version of your trial—one way the study could turn out if the assumptions in Step 1 are true. For each simulation iteration (typically 1,000 or more):</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Randomly assign each facility a crossover step (2 facilities per step)</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>cluster_step <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">rep</span>(<span class="dv">2</span><span class="sc">:</span>(n_steps <span class="sc">+</span> <span class="dv">1</span>), <span class="at">each =</span> <span class="dv">2</span>))</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate baseline cluster effects</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>cluster_effects <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_clusters, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="fu">sqrt</span>(icc))</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate time period effects</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>time_effects <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_steps <span class="sc">+</span> <span class="dv">1</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="fl">0.05</span>)</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co"># For each cluster and time period, generate outcomes</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (cluster <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_clusters) {</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (period <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(n_steps <span class="sc">+</span> <span class="dv">1</span>)) {</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Determine if cluster has intervention at this time</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    intervention_status <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(period <span class="sc">&gt;=</span> cluster_step[cluster], <span class="dv">1</span>, <span class="dv">0</span>)</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Calculate probability of outcome</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    log_odds <span class="ot">&lt;-</span> <span class="fu">qlogis</span>(baseline_rate) <span class="sc">+</span></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>                cluster_effects[cluster] <span class="sc">+</span></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>                time_effects[period] <span class="sc">+</span></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>                (effect_lor <span class="sc">*</span> intervention_status)</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    prob <span class="ot">&lt;-</span> <span class="fu">plogis</span>(log_odds)</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Generate binary outcomes for n_per_cluster women</span></span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    outcomes <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n_per_cluster, <span class="dv">1</span>, prob)</span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>Step 3: Analyze each simulated dataset</strong></p>
-<p>Use the same statistical approach you’ll use in your real study:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit mixed-effects logistic regression</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">glmer</span>(outcome <span class="sc">~</span> intervention_status <span class="sc">+</span> <span class="fu">factor</span>(period) <span class="sc">+</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>               (<span class="dv">1</span> <span class="sc">|</span> cluster),</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">family =</span> binomial,</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">data =</span> simulated_data)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract p-value for intervention effect</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>p_value <span class="ot">&lt;-</span> <span class="fu">summary</span>(model)<span class="sc">$</span>coefficients[<span class="st">"intervention_status"</span>, <span class="st">"Pr(&gt;|z|)"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>Step 4: Calculate power</strong></p>
-<p>Steps 2 and 3 produce one simulated trial and one p-value. Wrap them in a loop that runs <code>n_sims</code> times, collect the p-values, and count how many fall below your alpha level:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run Steps 2-3 n_sims times, keeping the p-value from each trial</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>p_values <span class="ot">&lt;-</span> <span class="fu">replicate</span>(n_sims, {</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ...Step 2: simulate one dataset</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ...Step 3: fit the model</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  p_value</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Power = proportion of simulations with p &lt; 0.05</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>power <span class="ot">&lt;-</span> <span class="fu">mean</span>(p_values <span class="sc">&lt;</span> <span class="fl">0.05</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>If power is too low (&lt; 80%), increase your sample size parameters and repeat. If power is very high (&gt; 90%), you might be able to reduce sample size.</p>
-<p>Running this loop on the design exactly as specified—12 facilities, 40 women per facility per period—returns power of essentially 100%. A 15-percentage-point improvement is very hard to miss with 3,360 observations, so this design sits in the “power above 90%” branch: we could enroll fewer women. Simulation makes that follow-up question easy to answer. Shrink the enrollment parameter, re-run the loop, and count again.</p>
-<p><a href="#fig-sim-power" class="quarto-xref">Figure&nbsp;<span>16.9</span></a> shows what this counting looks like with enrollment cut to 10 women per facility per period. Each vertical line is one simulated trial’s estimated intervention effect, an odds ratio from the mixed-effects model in Step 3, with its 95% confidence interval. The estimates bounce around the true effect—that’s sampling variability again—and 78 of the 100 intervals exclude an odds ratio of 1. That count is the simulation’s estimate of power: 78%, just short of the usual 80% target. Enrolling 12 women per facility per period brings power to about 84%, so the team could cut planned enrollment by more than two thirds and still meet the target. More iterations make the estimates more precise; the logic doesn’t change.</p>
-<div class="cell page-columns page-full">
-<div class="cell-output-display page-columns page-full">
-<div id="fig-sim-power" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full">
-<figure class="quarto-float quarto-float-fig figure page-columns page-full">
-<div aria-describedby="fig-sim-power-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="page-columns page-full">
-<img src="samplesize_files/figure-html/fig-sim-power-1.png" class="img-fluid figure-img column-page" width="960">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sim-power-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;16.9: Power by simulation. One hundred simulated runs of the stepped-wedge trial with enrollment cut to 10 women per facility per period, each analyzed with the mixed-effects logistic regression from Step 3. Each vertical line is one simulation’s estimated intervention effect (odds ratio) with its 95% confidence interval. Amber intervals exclude an odds ratio of 1: those simulations detect the effect. Slate intervals cross 1: those miss it. Here 78 of 100 simulations detect the effect, for an estimated power of 78%. Confidence intervals are Wald intervals computed on the log-odds scale. Plot design adapted from <span class="citation" data-cites="kurz:2019">Kurz (<a href="#ref-kurz:2019" role="doc-biblioref">2019</a>)</span>.
-</figcaption>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="what-this-reveals-that-calculators-cant" class="level4">
-<h4 class="anchored" data-anchor-id="what-this-reveals-that-calculators-cant">What This Reveals That Calculators Can’t</h4>
-<p>The beauty of simulation is that it handles the messy reality of your specific study design. For this stepped-wedge example, simulation accounts for time trends (what if outcomes are improving regardless of intervention?), variable cluster sizes (what if some facilities enroll 30 women while others enroll 50?), period effects like seasonality in ANC attendance, and the ability to simultaneously assess power for secondary outcomes like skilled birth attendance.</p>
-<p>You can also explore “what if” scenarios that standard calculators can’t touch. What if the ICC is actually 0.12 instead of 0.08? What if 20% of participants drop out by the final time point? What if the intervention effect increases over time as facilities gain experience? Simulation answers all of these and lets you game out best and worst case scenarios to inform planning.</p>
-</section>
-</section>
-<section id="special-topic-cluster-randomized-trials-and-the-icc-problem" class="level3 page-columns page-full">
-<h3 class="anchored" data-anchor-id="special-topic-cluster-randomized-trials-and-the-icc-problem">SPECIAL TOPIC: CLUSTER RANDOMIZED TRIALS AND THE ICC PROBLEM</h3>
-<p>We can’t cover power analysis for every design, but one design worth highlighting is the cluster randomized trial.</p>
-<p>In a standard randomized trial, you randomize individual participants. In a cluster trial, you randomize at a higher level: villages, health facilities, schools, or geographic areas.</p>
-<p>Cluster designs offer major advantages in LMICs. They align with natural service delivery structures and facilitate implementation through existing governance. They reduce contamination between study conditions. And they avoid the ethical concerns that arise when you withhold or delay interventions from some individuals within the same community.</p>
-<p>But cluster trials create a methodological challenge: observations within clusters are <em>not independent</em>. People in the same village, treated at the same health facility, or attending the same school tend to be more similar to each other than to people in other clusters. This positive correlation—quantified by the intracluster correlation coefficient (ICC)—violates the independence assumption of standard statistical tests.</p>
-<p>Two extreme cases will help to clarify the bounds of the ICC. Suppose you recruit 30 villages of 100 people each, for a total of 3,000 participants. If each village were made up of perfect clones—everyone identical on the outcome, an ICC of 1—then every villager after the first would tell you nothing new. Each village would contribute one independent piece of information. Instead of a sample of 3,000, you’d effectively have a sample of 30. At the other extreme, if the people in a village shared nothing in common—an ICC of 0—the clustering would be irrelevant, and you’d have the power of an individually randomized trial of 3,000.</p>
-<section id="understanding-the-design-effect" class="level4 page-columns page-full">
-<h4 class="anchored" data-anchor-id="understanding-the-design-effect">Understanding the Design Effect</h4>
-<p>The higher the ICC, the greater the design effect and the greater the sample size needed for the same power.</p>
-<p><strong>Design Effect = 1 + (n - 1) <span class="math inline">\(\times\)</span> ICC</strong></p>
-<p>where n is the average cluster size. Divide your actual sample size by the design effect to get your effective sample size. With 100 people per village and an ICC of 0.03, the design effect is 1 + 99 <span class="math inline">\(\times\)</span> 0.03 = 3.97. Your 3,000 participants provide the information of about 750 independently sampled individuals. Put the other way: this cluster trial needs roughly 4 times the sample size of an individually randomized trial to reach the same power.</p>
-
-<div class="no-row-height column-margin column-container"><div class="">
-<p>Cluster size n multiplies the ICC in the design effect, but the number of clusters appears nowhere in it. Adding people to existing clusters inflates the design effect; adding clusters doesn’t. With 6,000 participants and an ICC of 0.03, 30 villages of 200 give an effective sample of about 860, while 60 villages of 100 give about 1,510. When you can choose, add clusters, not cluster size.</p>
-</div></div><p>This sample size inflation can be a brutal wake-up call when you’re trying to design feasible research in resource-limited settings.</p>
-</section>
-<section id="how-big-are-iccs-really" class="level4">
-<h4 class="anchored" data-anchor-id="how-big-are-iccs-really">How Big Are ICCs Really?</h4>
-<p>You can’t compute a design effect without an ICC, but you won’t observe your trial’s ICC until the data are in. So where does the number come from? Start with the literature. Many published cluster trials report the ICCs they observed, and methodologists have compiled these values across hundreds of trials. Trials with a similar outcome, population, and cluster type give you a plausible starting range.</p>
-<p>But nothing beats pilot data. If you can measure your outcome in even a handful of clusters, you can calculate the ICC directly for your population, your clusters, and your instrument. Pilot estimates based on few clusters are noisy, so don’t bet the design on a single value: run the power calculation across a range of ICCs and see how sensitive your sample size is. And when your trial ends, report the ICC you observed. The next team designing a similar study will start from better information than you did.</p>
-</section>
-</section>
-<section id="the-goldilocks-frame-for-hypothesis-testing-studies" class="level3">
-<h3 class="anchored" data-anchor-id="the-goldilocks-frame-for-hypothesis-testing-studies">THE GOLDILOCKS FRAME FOR HYPOTHESIS-TESTING STUDIES</h3>
-<p>What’s “just right” for hypothesis testing studies?</p>
-<p><strong>Too small (underpowered)</strong>: You have essentially no chance of detecting anything but enormous effects. Your study will almost certainly be inconclusive, wasting everyone’s time and resources. This is both a scientific failure and an ethical problem.</p>
-<p><strong>Too large (overpowered)</strong>: You’ll detect statistically significant differences that have no practical meaning, like finding that an intervention reduces depression scores by 0.1 points on a 27-point scale. You’ve also demanded far more participants than necessary, potentially making your study infeasible or ethically questionable.</p>
-<p><strong>Just right (adequately powered)</strong>: You have approximately 80% probability of detecting effects of the size that would actually matter for practice or policy. Your sample size is large enough to answer your question reliably, but not so large that you’re wasting resources or participant burden.</p>
-<p>The key is to engage that effect size question. Don’t just power your study to detect whatever effect size makes your desired sample achievable (“we can recruit 100 people, so let’s see what effect size that detects!”). Instead, think carefully: What magnitude of effect would actually be meaningful? What have similar studies found? What do theory and prior evidence suggest is plausible?</p>
-<p>Then design accordingly, even if that makes your study more challenging. If you are limited to a fixed sample size, solve for power and ask what you can learn from your study, and whether it’s worth doing.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Power calculations are used when designing studies
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>Post-hoc power analysis</strong>—computing power from the effect size you just observed—is mathematically circular and provides no new information. Post-hoc power is a restatement of the p-value: a result at exactly p = 0.05 always yields post-hoc power near 50%, and a non-significant result always “reveals” low power. If a reviewer requests it, offer a sensitivity power analysis instead: report the smallest effect your sample could detect, then discuss whether your null result more plausibly reflects a true absence or a miss.</p>
-</div>
-</div>
-</section>
-</section>
-<section id="closing-reflection" class="level2" data-number="16.5">
-<h2 data-number="16.5" class="anchored" data-anchor-id="closing-reflection"><span class="header-section-number">16.5</span> Closing Reflection</h2>
-<p>This chapter opened with a claim: the same sample size can be too many for one question and too few for another. Now you can see why. For an in-depth qualitative study of women’s experiences of pregnancy, forty interviews may be more than saturation requires—the last ten confirming themes the first thirty established. For a survey estimating prevalence, forty participants produce a margin of error too wide to guide any decision. And for a trial designed to detect a reduction in maternal mortality, forty is not even in the right order of magnitude: a rare outcome and a modest realistic effect push the requirement into the thousands, and if the intervention is delivered community by community, the design effect inflates it further.</p>
-<p>Sometimes your sample size planning delivers bad news: the study you can afford can’t detect the answers that matter. The temptation is to work backward—to adjust assumptions until the calculation justifies the sample you already had. The result is a study that looks powered on paper and remains underpowered in fact. Run the honest calculation instead. Fix the sample size at what you can enroll, solve for the minimum detectable effect, and decide whether that study is worth doing. Sometimes it is, with its limits reported plainly. Sometimes the answer is a different design, a longer timeline, more partners—or a different question, like a qualitative study to understand the problem before a trial tries to solve it. Just don’t plow ahead hoping the math changes because it won’t.</p>
-<p>So when you plan your next study, remember Goldilocks. Not too big. Not too small. Calibrated to your question, your context, and your resources.</p>
-
-
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
-<div id="ref-cohen:1988" class="csl-entry" role="listitem">
-Cohen, J. (1988). <em>Statistical power analysis for the behavioral sciences</em> (2nd ed.). Lawrence Erlbaum Associates.
-</div>
-<div id="ref-EarlandDE2022_101" class="csl-entry" role="listitem">
-Earland, D. E. et al. (2022). <a href="https://doi.org/10.1186/s12936-022-04326-z">Plasmodium falciparum community prevalence and health-seeking behaviours in rural sussundenga district, mozambique</a>. <em>Malaria Journal</em>, <em>21</em>, 305.
-</div>
-<div id="ref-EjiguBA2020_102" class="csl-entry" role="listitem">
-Ejigu, B. A. (2020). <a href="https://doi.org/10.1371/journal.pone.0241680">Geostatistical analysis and mapping of malaria risk in children of mozambique</a>. <em>PLOS ONE</em>, <em>15</em>(11), e0241680.
-</div>
-<div id="ref-halpern2002" class="csl-entry" role="listitem">
-Halpern, S. D. et al. (2002). <a href="https://doi.org/10.1001/jama.288.3.358">The continuing unethical conduct of underpowered clinical trials</a>. <em>JAMA</em>, <em>288</em>(3), 358–362.
-</div>
-<div id="ref-kurz:2019" class="csl-entry" role="listitem">
-Kurz, A. S. (2019). <em><a href="https://solomonkurz.netlify.app/blog/bayesian-power-analysis-part-i/">Bayesian power analysis: Part <span>I</span>. Prepare to reject <span>H0</span> with simulation</a></em>. Blog post.
-</div>
-<div id="ref-lakens:2017" class="csl-entry" role="listitem">
-Lakens, D. (2017). <a href="https://doi.org/10.1177/1948550617697177">Equivalence <span>Tests</span>: <span>A Practical Primer</span> for t <span>Tests</span>, <span>Correlations</span>, and <span>Meta</span>-<span>Analyses</span></a>. <em>Social Psychological and Personality Science</em>, <em>8</em>(4), 355–362.
-</div>
-<div id="ref-Lakens2022" class="csl-entry" role="listitem">
-Lakens, D. (2022). <em><a href="https://lakens.github.io/statistical_inferences/">Improving your statistical inferences</a></em>.
-</div>
-<div id="ref-patel:2014" class="csl-entry" role="listitem">
-Patel, V. et al. (2014). <a href="https://doi.org/10.1186/1745-6215-15-101">The effectiveness and cost-effectiveness of lay counsellor-delivered psychological treatments for harmful and dependent drinking and moderate to severe depression in primary care in <span>India</span>: <span>PREMIUM</span> study protocol for randomized controlled trials</a>. <em>Trials</em>, <em>15</em>, 101.
-</div>
-<div id="ref-patel:2017" class="csl-entry" role="listitem">
-Patel, V. et al. (2017). <a href="https://ghr.link/hap">The healthy activity program (HAP), a lay counsellor-delivered brief psychological treatment for severe depression, in primary care in india: A randomised controlled trial</a>. <em>The Lancet</em>.
-</div>
-<div id="ref-RahimiS2024_45" class="csl-entry" role="listitem">
-Rahimi, S. et al. (2024). <a href="https://doi.org/10.1016/j.ijnsa.2024.100174">Saturation in qualitative research: An evolutionary concept analysis</a>. <em>International Journal of Nursing Studies Advances</em>.
-</div>
-<div id="ref-RamukumbaMM2020_1" class="csl-entry" role="listitem">
-Ramukumba, M. M. (2020). <a href="https://doi.org/10.1007/s10900-019-00711-z">Exploration of community health workers’ views about in their role and support in primary health care in northern cape, south africa</a>. <em>Journal of Community Health</em>.
-</div>
-<div id="ref-SquireCM2024_42" class="csl-entry" role="listitem">
-Squire, C. M. et al. (2024). <a href="https://doi.org/10.2196/52998">Determining an appropriate sample size for qualitative interviews to achieve true and near code saturation: Secondary analysis of data</a>. <em>Journal of Medical Internet Research</em>.
-</div>
-<div id="ref-TranTA2025_13" class="csl-entry" role="listitem">
-Tran, T. A. et al. (2025). <a href="https://doi.org/10.1080/07853890.2025.2543057">The experience and needs of informal caregivers of people with dementia in rural vietnam: A qualitative study</a>. <em>Annals of Medicine</em>.
-</div>
-</div>
-</section>
-
-</main> <!-- /main -->
-<script id="quarto-html-after-body" type="application/javascript">
-  window.document.addEventListener("DOMContentLoaded", function (event) {
-    const icon = "";
-    const anchorJS = new window.AnchorJS();
-    anchorJS.options = {
-      placement: 'right',
-      icon: icon
-    };
-    anchorJS.add('.anchored');
-    const isCodeAnnotation = (el) => {
-      for (const clz of el.classList) {
-        if (clz.startsWith('code-annotation-')) {                     
-          return true;
-        }
-      }
-      return false;
-    }
-    const onCopySuccess = function(e) {
-      // button target
-      const button = e.trigger;
-      // don't keep focus
-      button.blur();
-      // flash "checked"
-      button.classList.add('code-copy-button-checked');
-      var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copied!");
-      let tooltip;
-      if (window.bootstrap) {
-        button.setAttribute("data-bs-toggle", "tooltip");
-        button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copied!");
-        tooltip = new bootstrap.Tooltip(button, 
-          { trigger: "manual", 
-            customClass: "code-copy-button-tooltip",
-            offset: [0, -8]});
-        tooltip.show();    
-      }
-      setTimeout(function() {
-        if (tooltip) {
-          tooltip.hide();
-          button.removeAttribute("data-bs-title");
-          button.removeAttribute("data-bs-toggle");
-          button.removeAttribute("data-bs-placement");
-        }
-        button.setAttribute("title", currentTitle);
-        button.classList.remove('code-copy-button-checked');
-      }, 1000);
-      // clear code selection
-      e.clearSelection();
-    }
-    const getTextToCopy = function(trigger) {
-      const outerScaffold = trigger.parentElement.cloneNode(true);
-      const codeEl = outerScaffold.querySelector('code');
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-      text: getTextToCopy
-    });
-    clipboard.on('success', onCopySuccess);
-    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-        text: getTextToCopy,
-        container: window.document.getElementById('quarto-embedded-source-code-modal')
-      });
-      clipboardModal.on('success', onCopySuccess);
-    }
-      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-      var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
-      var isInternal = (href) => {
-          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-      }
-      // Inspect non-navigation links and adorn them if external
-     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-      for (var i=0; i<links.length; i++) {
-        const link = links[i];
-        if (!isInternal(link.href)) {
-          // undo the damage that might have been done by quarto-nav.js in the case of
-          // links that we want to consider external
-          if (link.dataset.originalHref !== undefined) {
-            link.href = link.dataset.originalHref;
+        if (!currentSectionId && sections.length > 0) {
+          if (window.scrollY < sections[0].offsetTop) {
+            currentSectionId = sections[0].getAttribute('id');
           }
         }
-      }
-    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-      const config = {
-        allowHTML: true,
-        maxWidth: 500,
-        delay: 100,
-        arrow: false,
-        appendTo: function(el) {
-            return el.parentElement;
-        },
-        interactive: true,
-        interactiveBorder: 10,
-        theme: 'quarto',
-        placement: 'bottom-start',
-      };
-      if (contentFn) {
-        config.content = contentFn;
-      }
-      if (onTriggerFn) {
-        config.onTrigger = onTriggerFn;
-      }
-      if (onUntriggerFn) {
-        config.onUntrigger = onUntriggerFn;
-      }
-      window.tippy(el, config); 
-    }
-    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-    for (var i=0; i<noterefs.length; i++) {
-      const ref = noterefs[i];
-      tippyHover(ref, function() {
-        // use id or data attribute instead here
-        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-        try { href = new URL(href).hash; } catch {}
-        const id = href.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note) {
-          return note.innerHTML;
-        } else {
-          return "";
-        }
-      });
-    }
-    const xrefs = window.document.querySelectorAll('a.quarto-xref');
-    const processXRef = (id, note) => {
-      // Strip column container classes
-      const stripColumnClz = (el) => {
-        el.classList.remove("page-full", "page-columns");
-        if (el.children) {
-          for (const child of el.children) {
-            stripColumnClz(child);
-          }
-        }
-      }
-      stripColumnClz(note)
-      if (id === null || id.startsWith('sec-')) {
-        // Special case sections, only their first couple elements
-        const container = document.createElement("div");
-        if (note.children && note.children.length > 2) {
-          container.appendChild(note.children[0].cloneNode(true));
-          for (let i = 1; i < note.children.length; i++) {
-            const child = note.children[i];
-            if (child.tagName === "P" && child.innerText === "") {
-              continue;
-            } else {
-              container.appendChild(child.cloneNode(true));
-              break;
-            }
-          }
-          if (window.Quarto?.typesetMath) {
-            window.Quarto.typesetMath(container);
-          }
-          return container.innerHTML
-        } else {
-          if (window.Quarto?.typesetMath) {
-            window.Quarto.typesetMath(note);
-          }
-          return note.innerHTML;
-        }
-      } else {
-        // Remove any anchor links if they are present
-        const anchorLink = note.querySelector('a.anchorjs-link');
-        if (anchorLink) {
-          anchorLink.remove();
-        }
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(note);
-        }
-        if (note.classList.contains("callout")) {
-          return note.outerHTML;
-        } else {
-          return note.innerHTML;
-        }
-      }
-    }
-    for (var i=0; i<xrefs.length; i++) {
-      const xref = xrefs[i];
-      tippyHover(xref, undefined, function(instance) {
-        instance.disable();
-        let url = xref.getAttribute('href');
-        let hash = undefined; 
-        if (url.startsWith('#')) {
-          hash = url;
-        } else {
-          try { hash = new URL(url).hash; } catch {}
-        }
-        if (hash) {
-          const id = hash.replace(/^#\/?/, "");
-          const note = window.document.getElementById(id);
-          if (note !== null) {
-            try {
-              const html = processXRef(id, note.cloneNode(true));
-              instance.setContent(html);
-            } finally {
-              instance.enable();
-              instance.show();
-            }
+
+        tocLinks.forEach(link => {
+          if (link.getAttribute('href') === `#${currentSectionId}`) {
+            link.classList.add('active');
           } else {
-            // See if we can fetch this
-            fetch(url.split('#')[0])
-            .then(res => res.text())
-            .then(html => {
-              const parser = new DOMParser();
-              const htmlDoc = parser.parseFromString(html, "text/html");
-              const note = htmlDoc.getElementById(id);
-              if (note !== null) {
-                const html = processXRef(id, note);
-                instance.setContent(html);
-              } 
-            }).finally(() => {
-              instance.enable();
-              instance.show();
-            });
+            link.classList.remove('active');
           }
-        } else {
-          // See if we can fetch a full url (with no hash to target)
-          // This is a special case and we should probably do some content thinning / targeting
-          fetch(url)
-          .then(res => res.text())
-          .then(html => {
-            const parser = new DOMParser();
-            const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.querySelector('main.content');
-            if (note !== null) {
-              // This should only happen for chapter cross references
-              // (since there is no id in the URL)
-              // remove the first header
-              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-                note.children[0].remove();
-              }
-              const html = processXRef(null, note);
-              instance.setContent(html);
-            } 
-          }).finally(() => {
-            instance.enable();
-            instance.show();
-          });
-        }
-      }, function(instance) {
-      });
-    }
-        let selectedAnnoteEl;
-        const selectorForAnnotation = ( cell, annotation) => {
-          let cellAttr = 'data-code-cell="' + cell + '"';
-          let lineAttr = 'data-code-annotation="' +  annotation + '"';
-          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
-          return selector;
-        }
-        const selectCodeLines = (annoteEl) => {
-          const doc = window.document;
-          const targetCell = annoteEl.getAttribute("data-target-cell");
-          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
-          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
-          const lineIds = lines.map((line) => {
-            return targetCell + "-" + line;
-          })
-          let top = null;
-          let height = null;
-          let parent = null;
-          if (lineIds.length > 0) {
-              //compute the position of the single el (top and bottom and make a div)
-              const el = window.document.getElementById(lineIds[0]);
-              top = el.offsetTop;
-              height = el.offsetHeight;
-              parent = el.parentElement.parentElement;
-            if (lineIds.length > 1) {
-              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-              height = bottom - top;
-            }
-            if (top !== null && height !== null && parent !== null) {
-              // cook up a div (if necessary) and position it 
-              let div = window.document.getElementById("code-annotation-line-highlight");
-              if (div === null) {
-                div = window.document.createElement("div");
-                div.setAttribute("id", "code-annotation-line-highlight");
-                div.style.position = 'absolute';
-                parent.appendChild(div);
-              }
-              div.style.top = top - 2 + "px";
-              div.style.height = height + 4 + "px";
-              div.style.left = 0;
-              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-              if (gutterDiv === null) {
-                gutterDiv = window.document.createElement("div");
-                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-                gutterDiv.style.position = 'absolute';
-                const codeCell = window.document.getElementById(targetCell);
-                const gutter = codeCell.querySelector('.code-annotation-gutter');
-                gutter.appendChild(gutterDiv);
-              }
-              gutterDiv.style.top = top - 2 + "px";
-              gutterDiv.style.height = height + 4 + "px";
-            }
-            selectedAnnoteEl = annoteEl;
-          }
-        };
-        const unselectCodeLines = () => {
-          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
-          elementsIds.forEach((elId) => {
-            const div = window.document.getElementById(elId);
-            if (div) {
-              div.remove();
-            }
-          });
-          selectedAnnoteEl = undefined;
-        };
-          // Handle positioning of the toggle
-      window.addEventListener(
-        "resize",
-        throttle(() => {
-          elRect = undefined;
-          if (selectedAnnoteEl) {
-            selectCodeLines(selectedAnnoteEl);
-          }
-        }, 10)
-      );
-      function throttle(fn, ms) {
-      let throttle = false;
-      let timer;
-        return (...args) => {
-          if(!throttle) { // first call gets through
-              fn.apply(this, args);
-              throttle = true;
-          } else { // all the others get throttled
-              if(timer) clearTimeout(timer); // cancel #2
-              timer = setTimeout(() => {
-                fn.apply(this, args);
-                timer = throttle = false;
-              }, ms);
-          }
-        };
-      }
-        // Attach click handler to the DT
-        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-        for (const annoteDlNode of annoteDls) {
-          annoteDlNode.addEventListener('click', (event) => {
-            const clickedEl = event.target;
-            if (clickedEl !== selectedAnnoteEl) {
-              unselectCodeLines();
-              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-              if (activeEl) {
-                activeEl.classList.remove('code-annotation-active');
-              }
-              selectCodeLines(clickedEl);
-              clickedEl.classList.add('code-annotation-active');
-            } else {
-              // Unselect the line
-              unselectCodeLines();
-              clickedEl.classList.remove('code-annotation-active');
-            }
-          });
-        }
-    const findCites = (el) => {
-      const parentEl = el.parentElement;
-      if (parentEl) {
-        const cites = parentEl.dataset.cites;
-        if (cites) {
-          return {
-            el,
-            cites: cites.split(' ')
-          };
-        } else {
-          return findCites(el.parentElement)
-        }
-      } else {
-        return undefined;
-      }
-    };
-    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-    for (var i=0; i<bibliorefs.length; i++) {
-      const ref = bibliorefs[i];
-      const citeInfo = findCites(ref);
-      if (citeInfo) {
-        tippyHover(citeInfo.el, function() {
-          var popup = window.document.createElement('div');
-          citeInfo.cites.forEach(function(cite) {
-            var citeDiv = window.document.createElement('div');
-            citeDiv.classList.add('hanging-indent');
-            citeDiv.classList.add('csl-entry');
-            var biblioDiv = window.document.getElementById('ref-' + cite);
-            if (biblioDiv) {
-              citeDiv.innerHTML = biblioDiv.innerHTML;
-            }
-            popup.appendChild(citeDiv);
-          });
-          return popup.innerHTML;
         });
       }
-    }
-  });
+
+      window.addEventListener('scroll', updateActiveToc, { passive: true });
+      updateActiveToc();
+    });
   </script>
-<nav class="page-navigation">
-  <div class="nav-page nav-page-previous">
-      <a href="../../../book-project/chapters/sampling/sampling.html" class="pagination-link" aria-label="Sampling and Participant Recruitment">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Sampling and Participant Recruitment</span></span>
-      </a>          
-  </div>
-  <div class="nav-page nav-page-next">
-      <a href="../../../book-project/chapters/pilotstudies/pilotstudies.html" class="pagination-link" aria-label="Preliminary Studies and Pilot Trials">
-        <span class="nav-page-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Preliminary Studies and Pilot Trials</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
-  </div>
-</nav>
-</div> <!-- /content -->
-<footer style="text-align: center; padding: 2em; font-size: 0.9em; color: #666;">
-© 2025 E. Philip Green. Licensed under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a>.
-</footer>
-
-
-
-
-<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"a1914e182ba9497e9d55e75cbeb434f2","r":1,"spa":2}' crossorigin="anonymous"></script>
-</body></html>
+</body>
+</html>
