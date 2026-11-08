@@ -1,1 +1,377 @@
+<!-- ... existing code ... ... -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
+  <style>
+    /* Exact Quarto / The Graph Courses typography and styling */
+    html {
+      scroll-behavior: smooth;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+      color: #212529;
+      background-color: #ffffff;
+      line-height: 1.6;
+    }
+
+    h1.course-title {
+      font-size: 2.6rem;
+      font-weight: 800;
+      line-height: 1.15;
+      color: #1a202c;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.75rem;
+    }
+
+    .author-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #6c757d;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.2rem;
+    }
+
+    .author-name {
+      font-size: 1.05rem;
+      color: #212529;
+      font-weight: 400;
+      margin-bottom: 2rem;
+    }
+
+    h2.section-heading {
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: #1a202c;
+      letter-spacing: -0.02em;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    h3.sub-heading {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #2d3748;
+      margin-top: 1.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    p.lead-text {
+      font-size: 1.125rem;
+      line-height: 1.65;
+      color: #2d3748;
+      margin-bottom: 1.25rem;
+    }
+
+    /* Quarto-style Table of Contents */
+    .toc-container {
+      position: sticky;
+      top: 1.5rem;
+      max-height: calc(100vh - 3rem);
+      overflow-y: auto;
+      padding-left: 0.75rem;
+    }
+
+    .toc-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #212529;
+      margin-bottom: 0.6rem;
+      padding-left: 0.5rem;
+    }
+
+    .toc-nav {
+      border-left: 1px solid #dee2e6;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .toc-item {
+      position: relative;
+      padding: 0.35rem 0 0.35rem 0.85rem;
+      font-size: 0.92rem;
+      color: #374151;
+      text-decoration: none;
+      line-height: 1.35;
+      transition: color 0.15s ease-in-out;
+      margin-left: -1px;
+      border-left: 2px solid transparent;
+    }
+
+    .toc-item:hover {
+      color: #0d6efd;
+    }
+
+    .toc-item.active {
+      color: #0d6efd !important;
+      font-weight: 500;
+      border-left: 2px solid #0d6efd;
+    }
+
+    /* Print settings */
+    @media print {
+      .toc-wrapper { display: none !important; }
+      .main-wrapper { max-width: 100% !important; width: 100% !important; }
+      body { font-size: 10pt; }
+    }
+  </style>
+</head>
+<body class="p-4 sm:p-8 lg:p-12 max-w-7xl mx-auto">
+
+  <!-- Main Grid Layout -->
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-14">
+    
+    <!-- LEFT / MAIN CONTENT AREA -->
+    <main class="md:col-span-8 lg:col-span-9 max-w-3xl">
+      
+      <!-- Title Header Block (Matching Screenshot) -->
+      <header class="mb-8">
+        <h1 class="course-title">
+          Final Project: Generative AI for work &amp; research
+        </h1>
+        <div class="author-label">AUTHOR</div>
+        <div class="author-name">The Graph Courses • Cohort 2026 T3</div>
+      </header>
+
+      <!-- Section: Overview -->
+      <section id="overview" class="scroll-mt-6 mb-12">
+        <h2 class="section-heading">Overview</h2>
+        <p class="lead-text">
+          For your final project, you will design and build an AI solution relevant to your work, research or personal projects, combining <strong>at least two themes</strong> from this course.
+        </p>
+        <p class="lead-text">
+          You will submit a <strong>1–2 page document</strong> describing your solution and linking to it, and give a <strong>4-minute live presentation</strong> with a demo in class.
+        </p>
+
+        <!-- Course timing summary banner -->
+        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 my-6 text-sm text-gray-700">
+          <div class="font-semibold text-gray-900 mb-1">Cohort Schedule &amp; Help Sessions:</div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 text-xs sm:text-sm">
+            <div><strong>Weekly Workshop:</strong> Sundays 11:00–13:00 GMT or Weds 15:00–17:00 GMT</div>
+            <div><strong>Help Sessions:</strong> 1 hour before each workshop</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Course Themes -->
+      <section id="course-themes" class="scroll-mt-6 mb-12">
+        <h2 class="section-heading">Course Themes</h2>
+        <p class="text-gray-700 mb-4">Here is a reminder of the main course themes and modules covered:</p>
+        
+        <div class="space-y-4">
+          <div class="border-l-2 border-sky-500 pl-4 py-1">
+            <h4 class="font-semibold text-gray-900 text-base">Theme 1: Websites &amp; Presentations</h4>
+            <p class="text-sm text-gray-600">Creating and hosting static sites using ChatGPT and GitHub Pages; structuring automated presentation decks with Gamma and Beautiful.ai.</p>
+          </div>
+
+          <div class="border-l-2 border-sky-500 pl-4 py-1">
+            <h4 class="font-semibold text-gray-900 text-base">Theme 2: Automated Data Analysis</h4>
+            <p class="text-sm text-gray-600">No-code data analytics and plotting in R and Python via Cursor IDE; executive dashboard reporting with Bricks AI; data privacy and sanitization.</p>
+          </div>
+
+          <div class="border-l-2 border-sky-500 pl-4 py-1">
+            <h4 class="font-semibold text-gray-900 text-base">Theme 3: Text Processing &amp; Literature Research</h4>
+            <p class="text-sm text-gray-600">Executing LLM formulas inside Google Sheets and Excel; scientific knowledge synthesis using Consensus, Elicit, and Scite.</p>
+          </div>
+
+          <div class="border-l-2 border-sky-500 pl-4 py-1">
+            <h4 class="font-semibold text-gray-900 text-base">Theme 4: Custom GPTs &amp; Interactive Chatbots</h4>
+            <p class="text-sm text-gray-600">Model selection strategies; authoring custom instruction-grounded GPTs; building conversational decision flows in Botpress.</p>
+          </div>
+
+          <div class="border-l-2 border-sky-500 pl-4 py-1">
+            <h4 class="font-semibold text-gray-900 text-base">Theme 5: AI for Workflow Automation</h4>
+            <p class="text-sm text-gray-600">Deterministic workflow automation via Make.com; triggering multi-step integrations; introduction to autonomous browser control agents.</p>
+          </div>
+
+          <div class="border-l-2 border-sky-500 pl-4 py-1">
+            <h4 class="font-semibold text-gray-900 text-base">Theme 6: Communication, Outreach &amp; Media</h4>
+            <p class="text-sm text-gray-600">Image and video generation; scalable vector diagram generation (SVG); visual communications with Canva AI.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Project Ideas -->
+      <section id="project-ideas" class="scroll-mt-6 mb-12">
+        <h2 class="section-heading">Project Ideas</h2>
+        <p class="text-gray-700 mb-4">You are encouraged to build a project directly relevant to your daily work or research. Examples of multi-theme combinations include:</p>
+        <ul class="list-disc pl-6 space-y-2.5 text-gray-700 text-sm sm:text-base">
+          <li><strong>Automated Research Digest:</strong> An automated Make.com workflow connecting to Google Sheets to extract, categorize, and summarize weekly PubMed/arXiv literature into a live GitHub Pages feed (Themes 1, 3, 5).</li>
+          <li><strong>Clinical Registry Query Assistant:</strong> An interactive Botpress chatbot grounded in trial protocol documents that feeds structured patient queries into a sanitized R data pipeline (Themes 2, 4).</li>
+          <li><strong>Executive KPI Pipeline:</strong> A Cursor-driven analytical pipeline that takes raw operational CSVs, performs statistical summaries, and generates an SVG chart embedded into an executive summary webpage (Themes 1, 2, 6).</li>
+        </ul>
+      </section>
+
+      <!-- Section: Submission Instructions -->
+      <section id="submission-instructions" class="scroll-mt-6 mb-12">
+        <h2 class="section-heading">Submission Instructions</h2>
+        <p class="text-gray-700 mb-4">Please submit your project deliverables via the student portal before the presentation date:</p>
+        <ol class="list-decimal pl-6 space-y-2 text-gray-700 text-sm sm:text-base">
+          <li><strong>1–2 Page Document (PDF or Markdown):</strong> An executive summary detailing your problem statement, tool architecture, failure recoveries, and live URLs to your solution.</li>
+          <li><strong>Live Access Link:</strong> A functional link (e.g., GitHub repository, hosted GitHub Pages URL, published Botpress bot, or Make.com blueprint export).</li>
+          <li><strong>Demo Slides:</strong> A concise 3-to-4 slide deck supporting your 4-minute presentation.</li>
+        </ol>
+      </section>
+
+      <!-- Section: Presentation Dates -->
+      <section id="presentation-dates" class="scroll-mt-6 mb-12">
+        <h2 class="section-heading">Presentation Dates</h2>
+        <p class="text-gray-700 mb-4">Presentations take place during Week 8 of the cohort:</p>
+        <div class="border border-gray-200 rounded-lg overflow-hidden text-sm">
+          <table class="w-full text-left">
+            <thead class="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th class="p-3 font-semibold text-gray-900">Cohort Track</th>
+                <th class="p-3 font-semibold text-gray-900">Presentation Date &amp; Time</th>
+                <th class="p-3 font-semibold text-gray-900">Format</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <tr>
+                <td class="p-3">Track A (Sunday)</td>
+                <td class="p-3 font-medium text-gray-900">November 15, 2026 • 11:00–13:00 GMT</td>
+                <td class="p-3 text-gray-600">4-min live presentation + 2-min Q&amp;A</td>
+              </tr>
+              <tr>
+                <td class="p-3">Track B (Wednesday)</td>
+                <td class="p-3 font-medium text-gray-900">November 18, 2026 • 15:00–17:00 GMT</td>
+                <td class="p-3 text-gray-600">4-min live presentation + 2-min Q&amp;A</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section: Instructor Feedback Sessions -->
+      <section id="feedback-sessions" class="scroll-mt-6 mb-12">
+        <h2 class="section-heading">Instructor Feedback Sessions</h2>
+        <p class="text-gray-700 mb-3">
+          During <strong>Week 7 (Nov 8 or Nov 11)</strong>, workshop time will be dedicated to project progress checks, technical troubleshooting, and structured peer feedback rounds.
+        </p>
+        <p class="text-gray-700 text-sm">
+          Additionally, help sessions run one hour before every weekly workshop (10:00 GMT on Sundays, 14:00 GMT on Wednesdays) where instructors assist with API connections, Cursor setup, and workflow bugs.
+        </p>
+      </section>
+
+      <!-- Section: Grading Rubric -->
+      <section id="grading-rubric" class="scroll-mt-6 mb-12">
+        <h2 class="section-heading">Grading Rubric</h2>
+        <p class="text-gray-700 mb-4">The passing threshold for the course is <strong>80%</strong>. The final grade is evaluated as follows:</p>
+
+        <div class="border border-gray-200 rounded-lg overflow-hidden text-sm mb-6">
+          <table class="w-full text-left">
+            <thead class="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th class="p-3 font-semibold text-gray-900">Component</th>
+                <th class="p-3 font-semibold text-gray-900">Weight</th>
+                <th class="p-3 font-semibold text-gray-900">Criteria</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <tr>
+                <td class="p-3 font-semibold">Final Capstone Project</td>
+                <td class="p-3 text-sky-700 font-bold">40%</td>
+                <td class="p-3 text-gray-600">Multi-theme execution, utility, safety guardrails, and presentation.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold">Workshop Assignments</td>
+                <td class="p-3 text-sky-700 font-bold">40%</td>
+                <td class="p-3 text-gray-600">Hands-on tasks completed during weekly workshops.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold">Workshop Attendance</td>
+                <td class="p-3 text-sky-700 font-bold">10%</td>
+                <td class="p-3 text-gray-600">Attend at least 5 workshops to receive full attendance credit.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold">Online Quizzes</td>
+                <td class="p-3 text-sky-700 font-bold">10%</td>
+                <td class="p-3 text-gray-600">Weekly prework theory quizzes.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section: Frequently Asked Questions -->
+      <section id="faq" class="scroll-mt-6 mb-12">
+        <h2 class="section-heading">Frequently Asked Questions</h2>
+        <div class="space-y-4 text-sm sm:text-base text-gray-700">
+          <div>
+            <h4 class="font-semibold text-gray-900 mb-1">Can I work in pairs or groups?</h4>
+            <p class="text-gray-600 text-sm">Projects are evaluated individually, though you are encouraged to collaborate and test each other’s tools during the Week 7 peer feedback sessions.</p>
+          </div>
+          <div>
+            <h4 class="font-semibold text-gray-900 mb-1">What if I miss a live workshop?</h4>
+            <p class="text-gray-600 text-sm">All workshops are recorded. However, you must attend at least 5 live sessions across the term to earn the 10% attendance credit.</p>
+          </div>
+          <div>
+            <h4 class="font-semibold text-gray-900 mb-1">Do I need coding experience?</h4>
+            <p class="text-gray-600 text-sm">No. The course focuses entirely on no-code tools and AI-assisted scripting where you guide the model rather than writing code manually.</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- RIGHT / STICKY TABLE OF CONTENTS COLUMN -->
+    <!-- Visible on tablet and desktop screens (min-width: 768px) -->
+    <aside class="toc-wrapper md:col-span-4 lg:col-span-3">
+      <div class="toc-container">
+        <div class="toc-title">Table of contents</div>
+        <nav class="toc-nav" id="tocNav">
+          <a href="#overview" class="toc-item active">Overview</a>
+          <a href="#course-themes" class="toc-item">Course Themes</a>
+          <a href="#project-ideas" class="toc-item">Project Ideas</a>
+          <a href="#submission-instructions" class="toc-item">Submission Instructions</a>
+          <a href="#presentation-dates" class="toc-item">Presentation Dates</a>
+          <a href="#feedback-sessions" class="toc-item">Instructor Feedback Sessions</a>
+          <a href="#grading-rubric" class="toc-item">Grading Rubric</a>
+          <a href="#faq" class="toc-item">Frequently Asked Questions</a>
+        </nav>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- ScrollSpy Script ensuring dynamic active indicator highlighting -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const tocLinks = document.querySelectorAll('#tocNav .toc-item');
+      const sections = document.querySelectorAll('main section[id]');
+
+      function updateActiveToc() {
+        let currentSectionId = '';
+        const scrollPosition = window.scrollY + 100;
+
+        sections.forEach(section => {
+          const top = section.offsetTop;
+          const height = section.offsetHeight;
+          if (scrollPosition >= top && scrollPosition < top + height) {
+            currentSectionId = section.getAttribute('id');
+          }
+        });
+
+        // Default to first section if at top of page
+        if (!currentSectionId && sections.length > 0) {
+          if (window.scrollY < sections[0].offsetTop) {
+            currentSectionId = sections[0].getAttribute('id');
+          }
+        }
+
+        tocLinks.forEach(link => {
+          if (link.getAttribute('href') === `#${currentSectionId}`) {
+            link.classList.add('active');
+          } else {
+            link.classList.remove('active');
+          }
+        });
+      }
+
+      window.addEventListener('scroll', updateActiveToc, { passive: true });
+      updateActiveToc();
+    });
+  </script>
+</body>
+</html>
