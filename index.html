@@ -1,253 +1,2182 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI in Obstetric Point-of-Care Ultrasound (O-POCUS) Training Module</title>
+    <title>OmniPOCUS AI — Unified Clinical Workstation (PoC v1.0)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        clinical: {
+                            950: '#040811',
+                            900: '#0a1120',
+                            800: '#111c33',
+                            700: '#1e2f52',
+                            accent: '#06b6d4',
+                            emerald: '#10b981',
+                            amber: '#f59e0b',
+                            rose: '#f43f5e'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        :root {
-            --primary: #0f4c5c;
-            --secondary: #e36414;
-            --bg-light: #f8f9fa;
-            --text-dark: #2b2d42;
-            --border-color: #dee2e6;
+        /* Custom Scrollbars & Medical Dark UI refinements */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
         }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            color: var(--text-dark);
-            background-color: #f4f6f8;
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
+        ::-webkit-scrollbar-track {
+            background: #0a1120;
         }
-        header {
-            background-color: var(--primary);
-            color: white;
-            padding: 2rem;
-            text-align: center;
+        ::-webkit-scrollbar-thumb {
+            background: #1e2f52;
+            border-radius: 3px;
         }
-        header h1 { margin: 0 0 0.5rem 0; font-size: 1.8rem; }
-        header p { margin: 0; opacity: 0.9; font-size: 1rem; }
-
-        /* Main Container with Grid Layout for Top-Right TOC */
-        .container {
-            max-width: 1300px;
-            margin: 2rem auto;
-            padding: 0 1.5rem;
-            display: grid;
-            grid-template-columns: 1fr 300px;
-            gap: 2rem;
-            align-items: start;
+        ::-webkit-scrollbar-thumb:hover {
+            background: #06b6d4;
         }
 
-        /* Top-Right Sticky Table of Contents */
-        aside.toc-sidebar {
-            grid-column: 2;
-            position: sticky;
-            top: 2rem;
-            background: white;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1.25rem;
-            max-height: 85vh;
-            overflow-y: auto;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-        aside.toc-sidebar h3 {
-            margin-top: 0;
-            font-size: 1.1rem;
-            color: var(--primary);
-            border-bottom: 2px solid var(--primary);
-            padding-bottom: 0.5rem;
-        }
-        aside.toc-sidebar ul {
-            padding-left: 1.2rem;
-            margin: 0.5rem 0 0 0;
-            font-size: 0.9rem;
-        }
-        aside.toc-sidebar li {
-            margin-bottom: 0.4rem;
-        }
-        aside.toc-sidebar a {
-            color: var(--primary);
-            text-decoration: none;
-        }
-        aside.toc-sidebar a:hover {
-            text-decoration: underline;
+        .scanline-overlay {
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0),
+                rgba(255,255,255,0) 50%,
+                rgba(0, 0, 0, 0.18) 50%,
+                rgba(0, 0, 0, 0.18)
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
         }
 
-        /* Content Area */
-        main.content {
-            grid-column: 1;
-            background: white;
-            padding: 2.5rem;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        .pulse-glow {
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
         }
 
-        h2 { color: var(--primary); border-bottom: 2px solid var(--border-color); padding-bottom: 0.3rem; margin-top: 2rem; }
-        h3 { color: #333; margin-top: 1.5rem; }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1.5rem 0;
-            font-size: 0.95rem;
+        .card-glass {
+            background: rgba(17, 28, 51, 0.78);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(56, 189, 248, 0.14);
         }
-        th, td {
-            border: 1px solid var(--border-color);
-            padding: 0.75rem;
-            text-align: left;
-        }
-        th {
-            background-color: var(--bg-light);
-            color: var(--primary);
-        }
-        blockquote {
-            border-left: 4px solid var(--secondary);
-            margin: 1.5rem 0;
-            padding: 1rem;
-            background-color: #fff8f5;
-            color: #333;
-        }
-        .callout-important {
-            background-color: #eefef0;
-            border-left: 4px solid #2b8a3e;
-            padding: 1rem;
-            margin: 1.5rem 0;
-        }
-        ul, ol { padding-left: 1.5rem; }
 
-        /* Responsive Design for Mobile */
-        @media (max-width: 900px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-            aside.toc-sidebar {
-                grid-column: 1;
-                position: relative;
-                top: 0;
-                margin-bottom: 2rem;
-                max-height: none;
-            }
-            main.content {
-                grid-column: 1;
-            }
+        canvas {
+            image-rendering: auto;
+        }
+
+        @keyframes pulseSlow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.45; }
+        }
+        .animate-pulse-slow {
+            animation: pulseSlow 2.2s infinite ease-in-out;
         }
     </style>
 </head>
-<body>
+<body class="bg-clinical-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col selection:bg-cyan-500 selection:text-slate-950 overflow-x-hidden">
 
-    <header>
-        <h1>AI in Obstetric Point-of-Care Ultrasound (O-POCUS)</h1>
-        <p>Capabilities, risks, ethics and safe use at the bedside | Version 1.0 (November 2026)[cite: 1]</p>
+    <!-- ==================== 1. HEADER & HARDWARE-AGNOSTIC INGESTION HUB ==================== -->
+    <header class="bg-clinical-900 border-b border-slate-800/90 sticky top-0 z-40 shadow-xl">
+        <!-- Top Brand & Hardware Stream Row -->
+        <div class="max-w-[1920px] mx-auto px-3 sm:px-5 py-2.5 flex flex-wrap items-center justify-between gap-3">
+            <!-- Brand Title -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-700 flex items-center justify-center shadow-lg pulse-glow">
+                    <i class="fa-solid fa-wave-square text-white text-lg"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="font-bold text-base sm:text-lg tracking-tight text-white">OmniPOCUS AI</h1>
+                        <span class="text-[11px] font-mono uppercase px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-semibold">
+                            Unified Workstation PoC v1.0
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-400 hidden sm:block">Vendor-Neutral Multi-Organ AI Ultrasound Ingestion & Synthesis Platform</p>
+                </div>
+            </div>
+
+            <!-- Hardware-Agnostic Probe & Vendor Stream Selector -->
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                <div class="flex items-center bg-clinical-950 border border-slate-700/80 rounded-lg px-2.5 py-1.5 gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                    <span class="text-[11px] font-mono text-slate-400 uppercase">Ingest Stream:</span>
+                    <select id="vendorSelect" onchange="handleVendorChange(this.value)" class="bg-transparent text-xs font-medium text-cyan-300 focus:outline-none cursor-pointer pr-1">
+                        <option value="butterfly" class="bg-slate-900 text-slate-100">Butterfly iQ3 ( Ultrasound-on-Chip • OpenIGTLink )</option>
+                        <option value="clarius" class="bg-slate-900 text-slate-100">Clarius PAL HD3 ( Wireless RTSP / Raw RF API )</option>
+                        <option value="vscan" class="bg-slate-900 text-slate-100">GE Vscan Air SL ( Dual-Probe DICOM Stream )</option>
+                        <option value="lumify" class="bg-slate-900 text-slate-100">Philips Lumify S4-1 ( USB-C UVC / FHIR Bridge )</option>
+                        <option value="sonosite" class="bg-slate-900 text-slate-100">Fujifilm Sonosite PX ( FrameGrabber HDMI-RTSP )</option>
+                        <option value="mindray" class="bg-slate-900 text-slate-100">Mindray TE Air e5M ( Wi-Fi Direct DICOM-RT )</option>
+                    </select>
+                </div>
+
+                <!-- Edge Inference Runtime Badge -->
+                <div class="hidden xl:flex items-center gap-2 bg-emerald-950/50 border border-emerald-500/30 px-3 py-1.5 rounded-lg text-xs">
+                    <i class="fa-solid fa-microchip text-emerald-400"></i>
+                    <span class="text-emerald-300 font-mono">ONNX WebGPU Edge: <strong id="fpsCounter">14.2 ms (60 FPS)</strong></span>
+                </div>
+
+                <!-- Git / Architecture Blueprint Modal Trigger -->
+                <button onclick="toggleBlueprintModal(true)" class="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white text-xs font-semibold px-3.5 py-2 rounded-lg shadow-md transition-all active:scale-95">
+                    <i class="fa-brands fa-git-alt text-sm"></i>
+                    <span>Git & Architecture Blueprint</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Patient Context & Multi-Organ Synchronization Banner -->
+        <div class="bg-clinical-950/90 border-t border-slate-800/80 px-3 sm:px-5 py-2">
+            <div class="max-w-[1920px] mx-auto flex flex-wrap items-center justify-between gap-2 text-xs">
+                <div class="flex flex-wrap items-center gap-3 sm:gap-5">
+                    <div class="flex items-center gap-1.5">
+                        <i class="fa-solid fa-user-injured text-cyan-400"></i>
+                        <span class="text-slate-400">Patient:</span>
+                        <span class="font-semibold text-white font-mono" id="patientName">MRN-84920-UX (Elena Rostova, 64F)</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-slate-400">Indication:</span>
+                        <span id="clinicalIndication" class="px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30 font-medium">
+                            Acute Dyspnea, Hypotension & Multi-Organ Shock Eval
+                        </span>
+                    </div>
+                    <div class="hidden md:flex items-center gap-3 font-mono text-[11px] bg-clinical-900 px-2.5 py-1 rounded border border-slate-800">
+                        <span class="text-rose-400"><i class="fa-solid fa-heart-pulse mr-1"></i>HR: <strong id="vitalHR">112</strong> bpm</span>
+                        <span class="text-slate-600">|</span>
+                        <span class="text-amber-400">BP: <strong id="vitalBP">88/54</strong> mmHg</span>
+                        <span class="text-slate-600">|</span>
+                        <span class="text-cyan-400">SpO2: <strong id="vitalSpO2">91%</strong> (RA)</span>
+                    </div>
+                </div>
+
+                <!-- Quick Clinical Case Preset Loader -->
+                <div class="flex items-center gap-2">
+                    <span class="text-[11px] text-slate-400">Load Integrated Case Preset:</span>
+                    <button onclick="loadIntegratedSyndrome('adhf')" class="px-2.5 py-1 rounded bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 text-[11px] font-medium transition">
+                        <i class="fa-solid fa-bolt mr-1"></i>Cardiogenic Shock / ADHF
+                    </button>
+                    <button onclick="loadIntegratedSyndrome('preeclampsia')" class="px-2.5 py-1 rounded bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/30 text-[11px] font-medium transition">
+                        <i class="fa-solid fa-person-pregnant mr-1"></i>High-Risk OB + Pulmonary Edema
+                    </button>
+                    <button onclick="loadIntegratedSyndrome('normal')" class="px-2.5 py-1 rounded bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 text-[11px] font-medium transition">
+                        <i class="fa-solid fa-check mr-1"></i>All Normal Baseline
+                    </button>
+                </div>
+            </div>
+        </div>
     </header>
 
-    <div class="container">
-        <!-- TOP RIGHT TABLE OF CONTENTS -->
-        <aside class="toc-sidebar">
-            <h3>Table of Contents</h3>
-            <ul>
-                <li><a href="#about">About this Module</a></li>
-                <li><a href="#unit1">Unit 1: Intro & Definitions</a></li>
-                <li><a href="#unit2">Unit 2: Capabilities & Benefits</a></li>
-                <li><a href="#unit3">Unit 3: Risks & Learning</a></li>
-                <li><a href="#unit4">Unit 4: Ethics & Privacy</a></li>
-                <li><a href="#unit5">Unit 5: Integration & Docs</a></li>
-                <li><a href="#assessment">Part B: Assessment</a></li>
-                <li><a href="#facilitator">Part C: Facilitator Guide</a></li>
-                <li><a href="#appendices">Appendices & References</a></li>
-            </ul>
+    <!-- ==================== MAIN WORKSTATION 3-COLUMN LAYOUT ==================== -->
+    <main class="flex-1 max-w-[1920px] w-full mx-auto p-3 sm:p-4 grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+        <!-- ==================== 2. LEFT COLUMN: MULTI-ORGAN AI MODULE SWITCHER & CAPABILITIES ==================== -->
+        <aside class="lg:col-span-3 flex flex-col gap-3.5">
+            <!-- Module Selector Card -->
+            <div class="card-glass rounded-xl p-3.5 shadow-lg">
+                <div class="flex items-center justify-between mb-2.5">
+                    <h2 class="text-xs font-mono uppercase tracking-wider text-cyan-400 font-semibold flex items-center gap-1.5">
+                        <i class="fa-solid fa-layer-group"></i> 1. Unified Organ AI Modules
+                    </h2>
+                    <span class="text-[11px] text-slate-400 font-mono">5 Core Models Loaded</span>
+                </div>
+
+                <!-- 5 Clinical Modules -->
+                <div class="grid grid-cols-1 gap-2" id="organModuleButtons">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+
+            <!-- Anatomical View / Protocol Sub-Selector -->
+            <div class="card-glass rounded-xl p-3.5 shadow-lg">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-xs font-mono uppercase tracking-wider text-cyan-400 font-semibold">
+                        <i class="fa-solid fa-compass-drafting mr-1"></i> 2. Standard Protocol View
+                    </h3>
+                    <span id="activeProbeBadge" class="text-[10px] font-mono bg-slate-800 text-slate-300 px-2 py-0.5 rounded">Phased Array (1-5 MHz)</span>
+                </div>
+                <div id="viewSelectorContainer" class="grid grid-cols-2 gap-1.5">
+                    <!-- Dynamic view buttons -->
+                </div>
+
+                <!-- Interactive 12-Zone Lung or Anatomical Mini-Map when applicable -->
+                <div id="anatomicalSubMap" class="mt-3 pt-2.5 border-t border-slate-800/80 hidden">
+                    <div class="flex items-center justify-between text-[11px] text-slate-400 mb-1.5">
+                        <span>BLUE / 12-Zone Thoracic Matrix</span>
+                        <span class="font-mono text-cyan-400" id="selectedLungZoneText">Zone: R1 (Anterior Upper)</span>
+                    </div>
+                    <div class="grid grid-cols-6 gap-1 text-[10px] font-mono" id="lungZoneGrid">
+                        <!-- Dynamically rendered 12 zones -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Real-Time AI Inference Telemetry & Automated Biomarkers -->
+            <div class="card-glass rounded-xl p-3.5 shadow-lg flex-1 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2.5">
+                        <h3 class="text-xs font-mono uppercase tracking-wider text-cyan-400 font-semibold">
+                            <i class="fa-solid fa-brain mr-1"></i> 3. Real-Time AI Outputs
+                        </h3>
+                        <span id="aiModelNameBadge" class="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-700/50">
+                            EchoNet-Dynamic + SimpsonAI
+                        </span>
+                    </div>
+
+                    <!-- Dynamic Metrics Cards -->
+                    <div id="aiMetricsList" class="space-y-2.5">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+
+                <!-- Active AI Capabilities Checklist for Selected Organ -->
+                <div class="mt-4 pt-3 border-t border-slate-800/90">
+                    <div class="text-[11px] font-mono uppercase text-slate-400 mb-2 flex items-center justify-between">
+                        <span>Active Neural Pipelines</span>
+                        <span class="text-emerald-400"><i class="fa-solid fa-circle-check mr-1"></i>Zero-Silo Sync</span>
+                    </div>
+                    <ul id="capabilityChecklist" class="space-y-1 text-xs text-slate-300">
+                        <!-- Populated via JS -->
+                    </ul>
+                </div>
+            </div>
         </aside>
 
-        <!-- MAIN CONTENT AREA -->
-        <main class="content">
-            
-            <section id="about">
-                <h2>About this Module</h2>
-                <p>Obstetric point-of-care ultrasound (O-POCUS) is a focused scan done at the bedside, often with a handheld probe linked to a phone or tablet, to answer specific clinical questions: How many babies are there? Is there a heartbeat? Which way is the baby lying? Where is the placenta? Is there enough fluid? How far along is the pregnancy?[cite: 4] It is usually done by the midwife, nurse, clinical officer or doctor caring for the woman[cite: 4].</p>
-                
-                <div class="callout-important">
-                    <strong>Who it is for:</strong> Midwives, nurses, clinical officers, medical providers, emergency/rural clinicians, and O-POCUS trainers[cite: 4]. Self-study takes about 3 hours; facilitated sessions take 30 minutes[cite: 1, 4].
+        <!-- ==================== 3. CENTER COLUMN: INTERACTIVE SIMULATED ULTRASOUND VIEWPORT ==================== -->
+        <section class="lg:col-span-6 flex flex-col gap-3.5">
+            <div class="card-glass rounded-xl p-3.5 shadow-2xl flex-1 flex flex-col">
+                <!-- Viewport Top Controls Bar: Scenario Switcher & AI Overlay Toggles -->
+                <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-800">
+                    <!-- Normal vs Pathological Scenario Switcher -->
+                    <div class="flex items-center gap-1.5 bg-clinical-950 p-1 rounded-lg border border-slate-800">
+                        <span class="text-[11px] font-mono text-slate-400 px-2">Simulate State:</span>
+                        <button id="btnStateNormal" onclick="setOrganPathologyState('normal')" class="px-3 py-1.5 rounded-md text-xs font-semibold transition-all bg-emerald-600 text-white shadow">
+                            <i class="fa-solid fa-shield-heart mr-1"></i>Normal Baseline
+                        </button>
+                        <button id="btnStatePathology" onclick="setOrganPathologyState('pathology')" class="px-3 py-1.5 rounded-md text-xs font-semibold transition-all text-slate-300 hover:text-white">
+                            <i class="fa-solid fa-triangle-exclamation mr-1 text-rose-400"></i><span id="pathologyButtonLabel">Pathological Case</span>
+                        </button>
+                    </div>
+
+                    <!-- Freeze & Cine Loop Controls -->
+                    <div class="flex items-center gap-1.5">
+                        <button id="btnFreeze" onclick="toggleFreeze()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono flex items-center gap-1.5 border border-slate-700 transition">
+                            <i class="fa-solid fa-snowflake text-cyan-400"></i>
+                            <span id="freezeBtnText">FREEZE</span>
+                        </button>
+                        <button onclick="captureLoopToReport()" class="px-3 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-semibold text-xs flex items-center gap-1.5 shadow transition active:scale-95">
+                            <i class="fa-solid fa-camera"></i>
+                            <span>Log Finding</span>
+                        </button>
+                    </div>
                 </div>
-            </section>
 
-            <section id="unit1">
-                <h2>Unit 1. Introduction and Definitions</h2>
-                <p>Artificial intelligence (AI) is software that performs tasks we normally associate with human intelligence, such as recognising patterns in images[cite: 7]. Almost all current imaging AI is machine learning and deep learning built from layered artificial neural networks[cite: 7].</p>
-                <ul>
-                    <li><strong>Targeted-View AI:</strong> Operator finds and holds standard views; AI guides the view, checks quality, and places calipers[cite: 8].</li>
-                    <li><strong>Blind-Sweep AI:</strong> Operator follows a simple sweep pattern without view-finding; AI interprets the whole sweep video to give an estimate[cite: 8].</li>
-                </ul>
-            </section>
+                <!-- Real-Time AI Acquisition Guidance & Quality Meter Banner -->
+                <div class="bg-clinical-950/90 border border-slate-800/90 rounded-lg p-2.5 mb-3 flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3 flex-1 min-w-[240px]">
+                        <div class="w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between text-xs mb-1">
+                                <span class="font-semibold text-slate-200 flex items-center gap-1.5">
+                                    AI Acquisition Coach:
+                                    <span id="probeCoachInstruction" class="text-cyan-300 font-mono">Optimal acoustic window locked</span>
+                                </span>
+                                <span id="qualityScoreValue" class="font-mono font-bold text-emerald-400">94% (Diagnostic)</span>
+                            </div>
+                            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                                <div id="qualityProgressBar" class="h-full bg-gradient-to-r from-amber-500 via-emerald-400 to-cyan-400 transition-all duration-300" style="width: 94%"></div>
+                            </div>
+                        </div>
+                    </div>
 
-            <section id="unit2">
-                <h2>Unit 2. Current Capabilities, Applications and Benefits</h2>
-                <p>Blind-sweep dating allows frontline workers with minimal training to estimate gestational age accurately in settings without sonographers[cite: 12]. Key clinical studies and milestones include:</p>
-                <table>
-                    <tr>
-                        <th>Study / Source</th>
-                        <th>Setting & Users</th>
-                        <th>Key Result</th>
-                    </tr>
-                    <tr>
-                        <td>Stringer et al., JAMA 2024[cite: 12]</td>
-                        <td>Zambia/USA (~400 participants), novices with 1-day course</td>
-                        <td>Mean absolute error 3.2 days vs 3.0 days for sonographers[cite: 12].</td>
-                    </tr>
-                    <tr>
-                        <td>Google Research et al., JAMA Netw Open 2026[cite: 12]</td>
-                        <td>Nairobi & Chicago (385 participants, 16–36 weeks)</td>
-                        <td>Mean absolute error 4.18 days vs 4.48 days for expert biometry[cite: 12].</td>
-                    </tr>
-                </ul>
-                <p><strong>Regulatory Milestone:</strong> In March 2026, the US FDA cleared Butterfly Network's Gestational Age Tool as the first cleared blind-sweep AI for gestational age (intended for 16 to 37 weeks)[cite: 12].</p>
-            </section>
+                    <!-- Manual Probe Tilt / Quality Simulator Slider -->
+                    <div class="flex items-center gap-2 bg-clinical-900 px-2.5 py-1.5 rounded border border-slate-800 text-xs">
+                        <span class="text-[11px] font-mono text-slate-400">Probe Alignment:</span>
+                        <input id="probeTiltSlider" type="range" min="35" max="98" value="94" oninput="handleQualitySlider(this.value)" class="w-24 accent-cyan-400 cursor-pointer">
+                    </div>
+                </div>
 
-            <section id="unit3">
-                <h2>Unit 3. Risks and Effects on Learning</h2>
-                <p>AI tools act like a "spotlight"—reporting only what they are programmed to evaluate[cite: 15]. Key risks include:</p>
-                <ul>
-                    <li><strong>The Blind-Sweep Blind Spot:</strong> A gestational age number does not rule out twins, intrauterine fetal death, low-lying placenta, or fetal anomalies[cite: 15].</li>
-                    <li><strong>Automation Bias:</strong> The tendency to over-rely on automated suggestions even when they are incorrect[cite: 16].</li>
-                </ul>
-                <blockquote>
-                    <strong>Safety Rule ("Judge First, Then Reveal"):</strong> Always estimate clinically, answer the O-POCUS questions within your scope, and commit to your own evaluation before viewing or relying on the AI result[cite: 17].
-                </blockquote>
-            </section>
+                <!-- HTML5 Canvas B-Mode Ultrasound Viewport -->
+                <div class="relative flex-1 min-h-[380px] sm:min-h-[450px] bg-black rounded-xl overflow-hidden border border-slate-800 shadow-inner flex items-center justify-center">
+                    <canvas id="ultrasoundCanvas" class="w-full h-full block"></canvas>
+                    <div class="scanline-overlay absolute inset-0"></div>
 
-            <section id="unit4">
-                <h2>Unit 4. Ethics, Privacy and Data Security</h2>
-                <p>In alignment with WHO guidance on the ethics and governance of AI for health (2021), users must protect human autonomy, ensure transparency, maintain accountability, and secure handheld device data[cite: 18]. Patient scan images must never be transmitted via unapproved personal messaging or social media groups[cite: 19].</p>
-            </section>
+                    <!-- Top-Left On-Screen Display (OSD) DICOM Telemetry -->
+                    <div class="absolute top-3 left-3 pointer-events-none font-mono text-[11px] text-slate-300 space-y-0.5 bg-black/50 backdrop-blur-sm p-2 rounded border border-white/10">
+                        <div class="text-cyan-400 font-bold" id="osdVendorHeader">BUTTERFLY iQ3 • OPEN-IGTLINK</div>
+                        <div id="osdPresetText">PRESET: CARDIAC (FoCUS) • PLAX</div>
+                        <div>MI: <span class="text-emerald-400">0.8</span> | TIS: <span class="text-emerald-400">0.4</span> | GAIN: <span id="osdGain">58 dB</span></div>
+                        <div>DEPTH: <span id="osdDepth">16.0 cm</span> | FR: <span id="osdFrameRate">60 Hz</span></div>
+                    </div>
 
-            <section id="unit5">
-                <h2>Unit 5. Clinical Integration and Documentation</h2>
-                <p>Before relying on any tool, verify regulatory approval, scope of practice, and local referral pathways[cite: 21]. Documentation must record three separate items to support auditability and individual accountability[cite: 23]:</p>
-                <ol>
-                    <li><strong>AI Output:</strong> Device, app version, protocol, and confidence flags[cite: 23].</li>
-                    <li><strong>Clinician's Assessment:</strong> Clinical GA (LMP, fundal height) and O-POCUS findings[cite: 23].</li>
-                    <li><strong>Next Action:</strong> Dating used, clinical plan, and referral details[cite: 23].</li>
-                </ol>
-            </section>
+                    <!-- Top-Right Live Pathology Alert Badge -->
+                    <div id="viewportAlertBadge" class="absolute top-3 right-3 pointer-events-none px-3 py-1.5 rounded-lg font-mono text-xs font-semibold border backdrop-blur-md transition-all bg-emerald-950/80 text-emerald-300 border-emerald-500/40">
+                        <i class="fa-solid fa-circle-check mr-1"></i>AI SCREEN: NORMAL SONO-ANATOMY
+                    </div>
 
-            <section id="assessment">
-                <h2>Part B: Assessment</h2>
-                <p>The module includes multiple-choice questions (suggested pass mark 80%)[cite: 25], short clinical case studies[cite: 27], and a practical supervisor competency checklist[cite: 27] to guarantee safe bedside execution.</p>
-            </section>
+                    <!-- Bottom-Left Interactive Caliper Offset Notice -->
+                    <div class="absolute bottom-3 left-3 pointer-events-none flex items-center gap-2 bg-black/65 px-2.5 py-1 rounded text-[11px] font-mono text-slate-300 border border-white/10">
+                        <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+                        <span id="caliperAdjustStatus">AI Calipers: Auto-Locked (Click Canvas to Fine-Tune)</span>
+                    </div>
+                </div>
 
-            <section id="facilitator">
-                <h2>Part C: Facilitator Guide</h2>
-                <p>Provides a structured 30-minute session plan for trainers, including preparation checklists for anonymized case sets, guidance for running the "judge-first" activity, and managing common learner questions[cite: 29, 30].</p>
-            </section>
+                <!-- Bottom Viewport Toolbar: Toggleable AI Vision Layers & Gain/Depth Controls -->
+                <div class="mt-3 pt-3 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2">
+                    <div class="flex flex-wrap items-center gap-1.5">
+                        <span class="text-[11px] font-mono text-slate-400 mr-1">AI Layers:</span>
+                        <button id="toggleSegBtn" onclick="toggleLayer('segmentation')" class="px-2.5 py-1 rounded-md text-xs font-mono border transition bg-cyan-500/20 text-cyan-300 border-cyan-500/50">
+                            <i class="fa-solid fa-draw-polygon mr-1"></i>Segmentation Mask
+                        </button>
+                        <button id="toggleCalipersBtn" onclick="toggleLayer('calipers')" class="px-2.5 py-1 rounded-md text-xs font-mono border transition bg-emerald-500/20 text-emerald-300 border-emerald-500/50">
+                            <i class="fa-solid fa-ruler-combined mr-1"></i>Auto-Calipers
+                        </button>
+                        <button id="toggleGradCamBtn" onclick="toggleLayer('gradcam')" class="px-2.5 py-1 rounded-md text-xs font-mono border transition bg-slate-800 text-slate-400 border-slate-700">
+                            <i class="fa-solid fa-fire mr-1"></i>Grad-CAM Heatmap
+                        </button>
+                        <button id="toggleMModeBtn" onclick="toggleLayer('mmode')" class="px-2.5 py-1 rounded-md text-xs font-mono border transition bg-slate-800 text-slate-400 border-slate-700">
+                            <i class="fa-solid fa-chart-line mr-1"></i>M-Mode / Spectral Trace
+                        </button>
+                    </div>
 
-            <section id="appendices">
-                <h2>Appendices and References</h2>
-                <p>Includes a full glossary of technical terms (e.g., AUC-ROC, dataset shift, algorithmic bias, deskilling)[cite: 31], judge-first worksheets[cite: 32], documentation templates[cite: 33], local implementation guidelines[cite: 33], and formal literature references[cite: 33, 34].</p>
-            </section>
+                    <!-- B-Mode Gain & Speckle Control -->
+                    <div class="flex items-center gap-2 text-xs font-mono">
+                        <span class="text-slate-400 text-[11px]">B-Gain:</span>
+                        <input type="range" min="35" max="85" value="58" oninput="updateBModeGain(this.value)" class="w-20 accent-cyan-400 cursor-pointer">
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        </main>
+        <!-- ==================== 4. RIGHT COLUMN: HITL GOVERNANCE & CROSS-MODALITY SYNTHESIS ==================== -->
+        <aside class="lg:col-span-3 flex flex-col gap-3.5">
+            <!-- Human-in-the-Loop (HITL) Governance & Quality Assurance Box -->
+            <div class="card-glass rounded-xl p-3.5 shadow-lg">
+                <div class="flex items-center justify-between mb-2">
+                    <h2 class="text-xs font-mono uppercase tracking-wider text-cyan-400 font-semibold">
+                        <i class="fa-solid fa-user-shield mr-1"></i> 4. Human-in-the-Loop (HITL)
+                    </h2>
+                    <span id="hitlStatusBadge" class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                        Pending Verification
+                    </span>
+                </div>
+
+                <!-- Confidence & Acoustic Shadow Warning Box -->
+                <div id="hitlWarningBanner" class="p-2.5 rounded-lg bg-clinical-950 border border-slate-800 text-xs text-slate-300 mb-2.5 space-y-1">
+                    <div class="flex items-center justify-between font-mono text-[11px]">
+                        <span class="text-slate-400">Epistemic Uncertainty:</span>
+                        <span id="uncertaintyValue" class="text-emerald-400 font-semibold">Low (±2.4%)</span>
+                    </div>
+                    <p id="hitlAdvisoryText" class="text-[11px] text-slate-400 leading-relaxed">
+                        Endocardial & pleural boundaries clearly resolved. Verify automated caliper anchors before signing to EHR.
+                    </p>
+                </div>
+
+                <!-- Clinician Governance Action Buttons -->
+                <div class="grid grid-cols-3 gap-1.5">
+                    <button onclick="handleHITLAction('accept')" class="px-2 py-2 rounded-lg bg-emerald-600/25 hover:bg-emerald-600/40 text-emerald-300 border border-emerald-500/40 text-[11px] font-semibold transition flex flex-col items-center gap-1">
+                        <i class="fa-solid fa-check-double text-sm"></i>
+                        <span>Accept AI</span>
+                    </button>
+                    <button onclick="handleHITLAction('adjust')" class="px-2 py-2 rounded-lg bg-cyan-600/25 hover:bg-cyan-600/40 text-cyan-300 border border-cyan-500/40 text-[11px] font-semibold transition flex flex-col items-center gap-1">
+                        <i class="fa-solid fa-up-down-left-right text-sm"></i>
+                        <span>Nudge Caliper</span>
+                    </button>
+                    <button onclick="handleHITLAction('flag')" class="px-2 py-2 rounded-lg bg-rose-600/25 hover:bg-rose-600/40 text-rose-300 border border-rose-500/40 text-[11px] font-semibold transition flex flex-col items-center gap-1">
+                        <i class="fa-solid fa-flag text-sm"></i>
+                        <span>Flag Artifact</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Cross-Modality Multi-Organ Clinical Synthesis Engine -->
+            <div class="card-glass rounded-xl p-3.5 shadow-lg flex-1 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2.5">
+                        <h2 class="text-xs font-mono uppercase tracking-wider text-cyan-400 font-semibold">
+                            <i class="fa-solid fa-network-wired mr-1"></i> 5. Cross-Modality Synthesis
+                        </h2>
+                        <span class="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/30">
+                            Bayesian Fusion
+                        </span>
+                    </div>
+
+                    <!-- Multi-Organ Status Matrix Pills -->
+                    <div id="multiOrganMatrix" class="grid grid-cols-5 gap-1 mb-3">
+                        <!-- Dynamically rendered status pills for Cardiac, Lung, OB, eFAST, Vascular -->
+                    </div>
+
+                    <!-- Synthesized Clinical Impression Box -->
+                    <div class="bg-clinical-950 border border-cyan-500/30 rounded-lg p-3 mb-3">
+                        <div class="text-[10px] font-mono uppercase text-cyan-400 mb-1 flex items-center justify-between">
+                            <span>Integrated Multi-Organ Impression</span>
+                            <i class="fa-solid fa-sparkles"></i>
+                        </div>
+                        <div id="synthesizedDiagnosisTitle" class="text-sm font-bold text-white mb-1">
+                            Normal Multi-Organ Hemodynamic Profile
+                        </div>
+                        <p id="synthesizedDiagnosisBody" class="text-xs text-slate-300 leading-relaxed">
+                            Preserved LV systolic function (LVEF 61%) paired with dry A-line lung profile and collapsible IVC rules out cardiogenic pulmonary edema.
+                        </p>
+                    </div>
+
+                    <!-- Logged Findings Feed -->
+                    <div>
+                        <div class="flex items-center justify-between text-[11px] font-mono text-slate-400 mb-1.5">
+                            <span>Verified Study Findings Log</span>
+                            <button onclick="clearFindingsLog()" class="text-slate-500 hover:text-rose-400 transition">Clear</button>
+                        </div>
+                        <div id="findingsLogContainer" class="space-y-1.5 max-h-40 overflow-y-auto pr-1 text-xs">
+                            <!-- Logged findings appear here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Unified Interoperable Export Actions (FHIR R4 / DICOM-SR) -->
+                <div class="mt-4 pt-3 border-t border-slate-800 space-y-2">
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="openExportPreview('fhir')" class="px-3 py-2 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-semibold flex items-center justify-center gap-1.5 transition">
+                            <i class="fa-solid fa-file-code"></i>
+                            <span>FHIR / DICOM-SR</span>
+                        </button>
+                        <button onclick="copyStructuredNote()" class="px-3 py-2 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-xs font-semibold flex items-center justify-center gap-1.5 transition">
+                            <i class="fa-solid fa-clipboard-check"></i>
+                            <span>Copy EHR Note</span>
+                        </button>
+                    </div>
+                    <div id="toastNotification" class="hidden text-center py-1.5 px-2 rounded bg-emerald-950 border border-emerald-500/40 text-emerald-300 text-[11px] font-mono">
+                        Copied to clipboard!
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- ==================== MODAL 1: GIT REPOSITORY & ARCHITECTURE BLUEPRINT ==================== -->
+    <div id="blueprintModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="bg-clinical-900 border border-cyan-500/40 rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+            <!-- Modal Header -->
+            <div class="px-5 py-4 bg-clinical-950 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <i class="fa-brands fa-github text-cyan-400 text-xl"></i>
+                    <div>
+                        <h3 class="font-bold text-white text-base">OmniPOCUS AI — Git Repository & System Architecture Blueprint</h3>
+                        <p class="text-xs text-slate-400">Open-Source Vendor-Neutral AI-POCUS Integration Specification (ITKPOCUS + MONAI + ONNX WebGPU)</p>
+                    </div>
+                </div>
+                <button onclick="toggleBlueprintModal(false)" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-rose-500/20 hover:text-rose-400 text-slate-400 flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-5 overflow-y-auto space-y-5 text-xs text-slate-300">
+                <!-- Why This Platform Exists -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div class="p-3.5 rounded-xl bg-clinical-950 border border-slate-800">
+                        <div class="text-rose-400 font-mono font-bold mb-1"><i class="fa-solid fa-cubes-stacked mr-1"></i>The Silo Problem</div>
+                        <p class="text-slate-400 leading-relaxed">Cardiac, Lung, and OB AI models are currently locked inside proprietary hardware tablets, forcing clinicians to juggle separate probes, apps, and unlinked patient records.</p>
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-clinical-950 border border-slate-800">
+                        <div class="text-cyan-400 font-mono font-bold mb-1"><i class="fa-solid fa-plug-circle-check mr-1"></i>Unified Ingestion Layer</div>
+                        <p class="text-slate-400 leading-relaxed">Ingests raw frames via OpenIGTLink, RTSP, UVC, or DICOM from Butterfly, Clarius, GE, Philips, and Sonosite into a normalized 512×512 tensor pipeline.</p>
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-clinical-950 border border-slate-800">
+                        <div class="text-emerald-400 font-mono font-bold mb-1"><i class="fa-solid fa-diagram-project mr-1"></i>Cross-Organ Synthesis</div>
+                        <p class="text-slate-400 leading-relaxed">Combines outputs across cardiac, thoracic, abdominal, and fetal AI modules into a single HL7 FHIR R4 Observation bundle & DICOM-SR report.</p>
+                    </div>
+                </div>
+
+                <!-- Git Repository Tree & Quickstart -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-mono uppercase text-cyan-400 font-semibold">Recommended Git Repository Structure & Deployment Commands</span>
+                        <button onclick="copyGitCommands()" class="px-2.5 py-1 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-mono text-[11px] hover:bg-cyan-500/30">
+                            <i class="fa-regular fa-copy mr-1"></i>Copy Git Init Commands
+                        </button>
+                    </div>
+                    <pre id="gitCommandsBlock" class="bg-clinical-950 p-4 rounded-xl border border-slate-800 font-mono text-[11px] text-emerald-300 overflow-x-auto leading-relaxed">
+omnipocus-ai-platform/
+├── index.html                        # Zero-dependency Interactive Clinical PoC Workstation (GitHub Pages ready)
+├── README.md                         # Clinical validation metrics, FDA PCCP & architecture documentation
+├── ingestion/
+│   ├── openigtlink_bridge.py         # Real-time streaming bridge for Clarius / Butterfly / SlicerIGT
+│   └── itkpocus_normalizer.py        # Kitware ITKPOCUS fan-crop, depth-calibration & ruler OCR
+├── models_onnx/
+│   ├── cardiac_echonet_simpson.onnx  # LVEF biplane, RV strain, Pericardial effusion & RHD screening
+│   ├── lung_bline_sliding.onnx       # 12-zone B-line quantification + M-mode pleural sliding classifier
+│   ├── ob_blind_sweep_biometry.onnx  # Fetal BPD/HC/AC/FL segmentation + GA/EFW & presentation
+│   ├── efast_freefluid_renal.onnx    # Morison's pouch free fluid + hydronephrosis & bladder volume
+│   └── vascular_dvt_onsd.onnx        # Femoral/Popliteal vein compressibility + Optic Nerve Sheath (ONSD)
+└── interoperability/
+    └── fhir_dicom_sr_exporter.ts     # Generates HL7 FHIR R4 DiagnosticReport & DICOM TID 5000
+
+# Quick Git & GitHub Pages Deployment:
+git init
+git add index.html
+git commit -m "feat: OmniPOCUS AI unified multi-organ clinical workstation PoC"
+git branch -M main
+git remote add origin https://github.com/your-org/omnipocus-ai-poc.git
+git push -u origin main</pre>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <!-- ==================== MODAL 2: FHIR R4 / DICOM-SR JSON EXPORT PREVIEW ==================== -->
+    <div id="exportModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="bg-clinical-900 border border-cyan-500/40 rounded-2xl max-w-3xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+            <div class="px-5 py-3.5 bg-clinical-950 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-code text-cyan-400"></i>
+                    <h3 class="font-bold text-white text-sm">Unified HL7 FHIR R4 DiagnosticReport & DICOM-SR Payload</h3>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="copyExportJson()" class="px-3 py-1 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-xs font-mono hover:bg-cyan-500/30">
+                        <i class="fa-regular fa-copy mr-1"></i>Copy JSON
+                    </button>
+                    <button onclick="closeExportPreview()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-rose-500/20 hover:text-rose-400 text-slate-400 flex items-center justify-center">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="p-4 overflow-y-auto bg-clinical-950">
+                <pre id="fhirJsonContainer" class="font-mono text-[11px] text-cyan-300 overflow-x-auto leading-relaxed"></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== APPLICATION LOGIC & MULTI-ORGAN ULTRASOUND ENGINE ==================== -->
+    <script>
+        /**************************************************************************
+         * 1. CLINICAL MODULE DEFINITIONS (ALL 5 INTEGRATED AI-POCUS APPLICATIONS)
+         **************************************************************************/
+        const ORGAN_MODULES = {
+            cardiac: {
+                id: 'cardiac',
+                name: 'Cardiac (FoCUS Echo)',
+                shortName: 'Cardiac',
+                icon: 'fa-heart-pulse',
+                probe: 'Phased Array (1–5 MHz)',
+                depth: '16.0 cm',
+                geometry: 'sector',
+                modelName: 'EchoNet-Biplane + RHD-Net v3.2',
+                pathologyButtonText: 'Severe LV Failure + Effusion',
+                views: [
+                    { id: 'plax', label: 'PLAX (Parasternal Long)' },
+                    { id: 'psax', label: 'PSAX (Papillary Level)' },
+                    { id: 'a4c', label: 'A4C (Apical 4-Chamber)' },
+                    { id: 'ivc', label: 'Subcostal IVC' }
+                ],
+                capabilities: [
+                    'Auto Simpson Biplane LVEF & Speckle Strain',
+                    'Pericardial Effusion & Tamponade Segmentation',
+                    'RV:LV Ratio & Subcostal IVC Collapsibility Index',
+                    'Auto-Screening for Rheumatic Heart Disease (RHD)'
+                ],
+                states: {
+                    normal: {
+                        alertText: 'AI SCREEN: PRESERVED BIVENTRICULAR FUNCTION',
+                        alertLevel: 'normal',
+                        coachPrompt: 'Optimal PLAX/A4C axis locked • Endocardium clear',
+                        uncertainty: 'Low (±2.1%)',
+                        advisory: 'LV endocardial border tracked across full cardiac cycle. Mitral leaflets show normal excursion without RHD commissural fusion.',
+                        metrics: [
+                            { label: 'Automated LVEF (Biplane)', value: '61%', unit: 'Normal >52%', status: 'normal', conf: '97%' },
+                            { label: 'Pericardial Space', value: '0.0 cm', unit: 'No Effusion', status: 'normal', conf: '99%' },
+                            { label: 'RV / LV Basal Ratio', value: '0.78', unit: 'No RV Strain (<1.0)', status: 'normal', conf: '95%' },
+                            { label: 'IVC Collapsibility Index', value: '54%', unit: 'Euvolemic (RAP ~3 mmHg)', status: 'normal', conf: '94%' },
+                            { label: 'RHD / Valvular Screen', value: 'Negative', unit: 'No MR jet / normal MV', status: 'normal', conf: '96%' }
+                        ],
+                        summaryFinding: 'Cardiac: LVEF 61%, no pericardial effusion, RV:LV 0.78, IVC collapsible (54%).'
+                    },
+                    pathology: {
+                        alertText: 'CRITICAL AI ALERT: SEVERE LV DYSFUNCTION + EFFUSION',
+                        alertLevel: 'critical',
+                        coachPrompt: 'Hypokinetic apex + circumferential effusion detected',
+                        uncertainty: 'Low (±2.8%)',
+                        advisory: 'Severe global LV hypokinesis (LVEF 26%) with moderate-to-large pericardial effusion (1.8 cm posterior) and plethoric IVC.',
+                        metrics: [
+                            { label: 'Automated LVEF (Biplane)', value: '26%', unit: 'Severe HFrEF (<30%)', status: 'critical', conf: '96%' },
+                            { label: 'Pericardial Effusion', value: '1.8 cm', unit: 'Moderate-Large Pocket', status: 'critical', conf: '98%' },
+                            { label: 'RV / LV Basal Ratio', value: '1.18', unit: 'RV Dilation / Strain', status: 'warning', conf: '93%' },
+                            { label: 'IVC Collapsibility Index', value: '11%', unit: 'Plethoric (2.4 cm, RAP >15)', status: 'critical', conf: '95%' },
+                            { label: 'RHD / Valvular Screen', value: 'Mod MR Jet', unit: 'Functional Tethered MV', status: 'warning', conf: '91%' }
+                        ],
+                        summaryFinding: 'Cardiac: Severe LV dysfunction (LVEF 26%), 1.8cm pericardial effusion, plethoric IVC (11% collapse).'
+                    }
+                }
+            },
+
+            lung: {
+                id: 'lung',
+                name: 'Lung & Thoracic (BLUE)',
+                shortName: 'Lung',
+                icon: 'fa-lungs',
+                probe: 'Curvilinear / Linear (3–10 MHz)',
+                depth: '12.0 cm',
+                geometry: 'sector',
+                modelName: 'ThoracicNet-12Z + PleuraTrack v2.4',
+                pathologyButtonText: 'Confluent B-Lines / Edema',
+                views: [
+                    { id: 'ant_upper', label: 'Anterior Upper (R1/L1)' },
+                    { id: 'ant_lower', label: 'Anterior Lower (R2/L2)' },
+                    { id: 'lat_zone', label: 'Lateral Alveolar (R3/L3)' },
+                    { id: 'post_plaps', label: 'Posterior PLAPS (R4/L4)' }
+                ],
+                capabilities: [
+                    'Real-Time Automated B-Line Counter & Confluency %',
+                    'M-Mode Pleural Sliding (Seashore vs. Barcode Sign)',
+                    'Pleural Effusion Volume Estimation (Balik Formula)',
+                    'Subpleural Consolidation & Air Bronchogram Screen'
+                ],
+                states: {
+                    normal: {
+                        alertText: 'AI SCREEN: AERATED DRY LUNG (A-LINE PROFILE)',
+                        alertLevel: 'normal',
+                        coachPrompt: 'Bat-sign rib landmarks centered • Pleural line 90°',
+                        uncertainty: 'Low (±1.5%)',
+                        advisory: 'Horizontal reverberation A-lines with shimmering pleural lung sliding (M-Mode Seashore sign) rule out pneumothorax and interstitial edema.',
+                        metrics: [
+                            { label: 'Automated B-Line Count', value: '0 / field', unit: 'Dry A-Profile (<3)', status: 'normal', conf: '98%' },
+                            { label: 'Pleural Sliding Velocity', value: 'Present', unit: 'Seashore Sign (No PTX)', status: 'normal', conf: '99%' },
+                            { label: 'Pleural Effusion Volume', value: '0 mL', unit: 'Costophrenic Angle Clear', status: 'normal', conf: '97%' },
+                            { label: 'Subpleural Consolidation', value: 'Absent', unit: 'Smooth Pleural Line', status: 'normal', conf: '96%' }
+                        ],
+                        summaryFinding: 'Lung (12-Zone): Normal A-profile with preserved pleural sliding; 0 B-lines; no effusion.'
+                    },
+                    pathology: {
+                        alertText: 'CRITICAL AI ALERT: DIFFUSE CONFLUENT B-LINES (B-PROFILE)',
+                        alertLevel: 'critical',
+                        coachPrompt: 'Laser-like vertical B-lines erasing A-lines across intercostal space',
+                        uncertainty: 'Low (±2.2%)',
+                        advisory: '≥6 coalescent B-lines (72% pleural confluency) with bilateral basal pleural effusion (~380 mL) consistent with alveolar-interstitial syndrome.',
+                        metrics: [
+                            { label: 'Automated B-Line Count', value: '7 (Confluent)', unit: '72% White Lung Score', status: 'critical', conf: '97%' },
+                            { label: 'Pleural Sliding Velocity', value: 'Reduced', unit: 'Thickened Irregular Pleura', status: 'warning', conf: '94%' },
+                            { label: 'Pleural Effusion Volume', value: '380 mL', unit: 'Basal Anechoic Pocket', status: 'critical', conf: '95%' },
+                            { label: 'Subpleural Consolidation', value: '1.2 cm Shred', unit: 'Basal Atelectasis / Shred', status: 'warning', conf: '92%' }
+                        ],
+                        summaryFinding: 'Lung (12-Zone): Diffuse bilateral confluent B-lines (7/field, 72% confluency) + 380mL pleural effusion.'
+                    }
+                }
+            },
+
+            ob: {
+                id: 'ob',
+                name: 'Obstetric & Maternal-Fetal',
+                shortName: 'OB/MNCH',
+                icon: 'fa-person-pregnant',
+                probe: 'Curvilinear Convex (2–6 MHz)',
+                depth: '18.0 cm',
+                geometry: 'sector',
+                modelName: 'FetalBiometry-SweepAI (Hadlock v4)',
+                pathologyButtonText: 'Breech + Placenta Previa + Oligo',
+                views: [
+                    { id: 'transthalamic', label: 'Transthalamic (BPD / HC)' },
+                    { id: 'transabdominal', label: 'Transabdominal (AC)' },
+                    { id: 'femur', label: 'Femoral Diaphysis (FL)' },
+                    { id: 'blind_sweep', label: '6-Step Blind Sweep Protocol' }
+                ],
+                capabilities: [
+                    'Automated Fetal Biometry (BPD, HC, AC, FL Calipers)',
+                    'Hadlock Gestational Age (GA) & EFW Percentile',
+                    'Blind-Sweep Fetal Presentation (Cephalic vs. Breech)',
+                    'Placenta Previa Localization & Single Deepest Pocket (SDP)'
+                ],
+                states: {
+                    normal: {
+                        alertText: 'AI SCREEN: AGA FETUS • CEPHALIC • NORMAL AFI',
+                        alertLevel: 'normal',
+                        coachPrompt: 'Symmetrical thalami & cavum septi pellucidi in plane',
+                        uncertainty: 'Low (±3 days GA)',
+                        advisory: 'Automated ellipse & linear calipers locked on outer-to-inner skull table and femoral shaft. Fundal-posterior placenta clear of internal os.',
+                        metrics: [
+                            { label: 'Gestational Age (Hadlock)', value: '31w 4d', unit: 'EFW: 1,780g (54th %ile)', status: 'normal', conf: '96%' },
+                            { label: 'Head Biometry (BPD / HC)', value: '7.9 / 28.8 cm', unit: 'Transthalamic Plane Locked', status: 'normal', conf: '97%' },
+                            { label: 'Abdominal & Femur (AC / FL)', value: '27.4 / 6.1 cm', unit: 'Symmetric Growth', status: 'normal', conf: '95%' },
+                            { label: 'Presentation & Placenta', value: 'Cephalic', unit: 'Posterior High (No Previa)', status: 'normal', conf: '99%' },
+                            { label: 'Amniotic Fluid (SDP)', value: '5.2 cm', unit: 'Normal Volume (2–8 cm)', status: 'normal', conf: '96%' }
+                        ],
+                        summaryFinding: 'Obstetric: Live singleton, Cephalic, GA 31w4d (EFW 1780g, 54th %ile), posterior placenta, normal SDP 5.2cm.'
+                    },
+                    pathology: {
+                        alertText: 'HIGH-RISK OB ALERT: BREECH + PLACENTA PREVIA + OLIGO',
+                        alertLevel: 'critical',
+                        coachPrompt: 'Fetal cranium in maternal fundus • Placenta covering os',
+                        uncertainty: 'Moderate (±5 days GA)',
+                        advisory: 'Blind sweep detects Frank Breech presentation, complete anterior-low placenta previa overlapping internal cervical os, and oligohydramnios (SDP 1.4 cm).',
+                        metrics: [
+                            { label: 'Gestational Age / Growth', value: '31w 4d (FGR)', unit: 'EFW: 1,310g (4th %ile)', status: 'critical', conf: '94%' },
+                            { label: 'Head Biometry (BPD / HC)', value: '7.6 / 27.9 cm', unit: 'Head-Sparing Asymmetry', status: 'warning', conf: '95%' },
+                            { label: 'Abdominal & Femur (AC / FL)', value: '23.8 / 5.5 cm', unit: 'AC <3rd Percentile', status: 'critical', conf: '93%' },
+                            { label: 'Presentation & Placenta', value: 'Breech + Previa', unit: 'Complete Previa at Os', status: 'critical', conf: '98%' },
+                            { label: 'Amniotic Fluid (SDP)', value: '1.4 cm', unit: 'Severe Oligohydramnios (<2cm)', status: 'critical', conf: '97%' }
+                        ],
+                        summaryFinding: 'Obstetric: High-risk Breech fetus, FGR (EFW 4th %ile), Complete Placenta Previa, Oligohydramnios (SDP 1.4cm).'
+                    }
+                }
+            },
+
+            efast: {
+                id: 'efast',
+                name: 'Trauma & Renal (eFAST)',
+                shortName: 'eFAST/Renal',
+                icon: 'fa-kit-medical',
+                probe: 'Curvilinear Abdominal (2–5 MHz)',
+                depth: '16.0 cm',
+                geometry: 'sector',
+                modelName: 'TraumaSeg-3D + RenalHydroNet v1.9',
+                pathologyButtonText: 'Positive Free Fluid + Hydronephrosis',
+                views: [
+                    { id: 'ruq', label: 'RUQ (Morison’s Pouch)' },
+                    { id: 'luq', label: 'LUQ (Splenorenal)' },
+                    { id: 'pelvis', label: 'Suprapubic (Pelvis / Bladder)' },
+                    { id: 'renal', label: 'Renal Hydronephrosis View' }
+                ],
+                capabilities: [
+                    'Free Intraperitoneal Fluid Segmentation (Hepatorenal/Pelvic)',
+                    'Automated 3-Axis Bladder Volume Calculation (mL)',
+                    'Renal Pelvis Calyceal Grading (Mild/Moderate/Severe Hydro)',
+                    'Abdominal Aortic Aneurysm (AAA) Outer-to-Outer Caliper'
+                ],
+                states: {
+                    normal: {
+                        alertText: 'AI SCREEN: NEGATIVE eFAST • NORMAL RENAL ARCHITECTURE',
+                        alertLevel: 'normal',
+                        coachPrompt: 'Hepatorenal interface & caudal liver tip visualized',
+                        uncertainty: 'Low (±1.8%)',
+                        advisory: 'Hyperechoic Gerota fascia intact without anechoic fluid stripe in Morison’s pouch. Renal cortex-to-pelvis ratio normal.',
+                        metrics: [
+                            { label: 'RUQ / LUQ Free Fluid', value: 'Negative (0 mL)', unit: 'Morison’s Pouch Intact', status: 'normal', conf: '98%' },
+                            { label: 'Hydronephrosis Grade', value: 'None (Grade 0)', unit: 'Compact Renal Sinus', status: 'normal', conf: '96%' },
+                            { label: 'Automated Bladder Volume', value: '215 mL', unit: 'Normal Post-Void / Filling', status: 'normal', conf: '95%' },
+                            { label: 'Abdominal Aorta (AAA)', value: '1.9 cm', unit: 'Normal (<3.0 cm)', status: 'normal', conf: '97%' }
+                        ],
+                        summaryFinding: 'eFAST & Renal: Negative for free intraperitoneal fluid; no hydronephrosis; bladder 215mL.'
+                    },
+                    pathology: {
+                        alertText: 'CRITICAL eFAST ALERT: POSITIVE HEMOPERITONEUM + HYDRO',
+                        alertLevel: 'critical',
+                        coachPrompt: 'Anechoic free fluid wedge tracking inferior liver tip',
+                        uncertainty: 'Low (±2.5%)',
+                        advisory: 'Positive eFAST: 1.6 cm anechoic free fluid stripe segmented in Morison’s pouch (~450 mL estimated hemoperitoneum) + Moderate Grade 2 Hydronephrosis.',
+                        metrics: [
+                            { label: 'RUQ / LUQ Free Fluid', value: 'POSITIVE (1.6 cm)', unit: 'Est. ~450 mL Hemoperitoneum', status: 'critical', conf: '98%' },
+                            { label: 'Hydronephrosis Grade', value: 'Moderate (Gr II)', unit: 'Confluent Calyceal Dilation', status: 'warning', conf: '94%' },
+                            { label: 'Automated Bladder Volume', value: '640 mL', unit: 'Urinary Retention + Pelvic Fluid', status: 'warning', conf: '95%' },
+                            { label: 'Abdominal Aorta (AAA)', value: '4.4 cm', unit: 'Infrarenal Ectasia / AAA', status: 'critical', conf: '93%' }
+                        ],
+                        summaryFinding: 'eFAST & Renal: POSITIVE free fluid in Morison’s pouch (1.6cm stripe), Moderate Hydronephrosis, 4.4cm AAA.'
+                    }
+                }
+            },
+
+            vascular: {
+                id: 'vascular',
+                name: 'Vascular, Access & Ocular (ONSD)',
+                shortName: 'Vasc/ONSD',
+                icon: 'fa-eye',
+                probe: 'High-Freq Linear Array (7–15 MHz)',
+                depth: '5.0 cm',
+                geometry: 'linear',
+                modelName: 'VascCompress-AI + NeuroONSD v2.1',
+                pathologyButtonText: 'Occlusive DVT + Elevated ICP (ONSD)',
+                views: [
+                    { id: 'cfv_dvt', label: 'Common Femoral Vein (2-Pt DVT)' },
+                    { id: 'pop_dvt', label: 'Popliteal Trifurcation DVT' },
+                    { id: 'onsd', label: 'Ocular Optic Nerve (ONSD / ICP)' },
+                    { id: 'piv_guidance', label: 'In-Plane Needle Tip Tracking' }
+                ],
+                capabilities: [
+                    'Automated Vein Compressibility Index (DVT Thrombus Screen)',
+                    'Optic Nerve Sheath Diameter (ONSD) 3mm Retrobulbar Caliper',
+                    'Real-Time In-Plane Needle-Tip Enhancement & Vessel Guard',
+                    'Artery vs. Vein Pulsatility & Doppler Color Box Segmentation'
+                ],
+                states: {
+                    normal: {
+                        alertText: 'AI SCREEN: FULLY COMPRESSIBLE VEIN • NORMAL ONSD',
+                        alertLevel: 'normal',
+                        coachPrompt: 'Transverse linear plane perpendicular to femoral vessels',
+                        uncertainty: 'Low (±0.15 mm)',
+                        advisory: 'Common femoral & popliteal veins collapse 100% under transducer compression. Retrobulbar ONSD measures 4.3 mm (normal ICP).',
+                        metrics: [
+                            { label: 'Vein Compressibility Index', value: '98% Collapse', unit: 'Negative for DVT Thrombus', status: 'normal', conf: '99%' },
+                            { label: 'Optic Nerve Sheath (ONSD)', value: '4.3 mm', unit: 'Normal ICP (<5.5 mm at 3mm)', status: 'normal', conf: '96%' },
+                            { label: 'Needle-Tip Target Distance', value: '1.4 mm', unit: 'In-Plane Trajectory Aligned', status: 'normal', conf: '97%' },
+                            { label: 'Arterial Nerve Guard', value: 'Safe (6.2 mm)', unit: 'Clear of Femoral Nerve/Artery', status: 'normal', conf: '98%' }
+                        ],
+                        summaryFinding: 'Vascular & Ocular: CFV/Popliteal veins fully compressible (no DVT); ONSD 4.3mm (normal ICP).'
+                    },
+                    pathology: {
+                        alertText: 'CRITICAL ALERT: NON-COMPRESSIBLE DVT + ELEVATED ONSD',
+                        alertLevel: 'critical',
+                        coachPrompt: 'Echogenic intraluminal thrombus resisting probe compression',
+                        uncertainty: 'Low (±0.20 mm)',
+                        advisory: 'Proximal Common Femoral Vein non-compressible (14% collapse) with echogenic thrombus. Ocular ONSD widened to 6.6 mm (+papilledema) suggesting elevated ICP.',
+                        metrics: [
+                            { label: 'Vein Compressibility Index', value: '14% (Non-Comp)', unit: 'POSITIVE Occlusive CFV DVT', status: 'critical', conf: '98%' },
+                            { label: 'Optic Nerve Sheath (ONSD)', value: '6.6 mm', unit: 'Elevated ICP (>5.8 mm) + Disc Edema', status: 'critical', conf: '95%' },
+                            { label: 'Needle-Tip Target Distance', value: '0.4 mm (Warn)', unit: 'Posterior Wall Proximity Alert', status: 'warning', conf: '96%' },
+                            { label: 'Thrombus Lumen Occupancy', value: '84%', unit: 'Subacute Echogenic Clot', status: 'critical', conf: '94%' }
+                        ],
+                        summaryFinding: 'Vascular & Ocular: POSITIVE proximal CFV DVT (14% compressibility) + widened ONSD 6.6mm (elevated ICP).'
+                    }
+                }
+            }
+        };
+
+        /**************************************************************************
+         * 2. GLOBAL WORKSTATION STATE
+         **************************************************************************/
+        const appState = {
+            currentOrgan: 'cardiac',
+            currentView: 'plax',
+            currentVendor: 'butterfly',
+            selectedLungZone: 'R1',
+            isFrozen: false,
+            bModeGain: 58,
+            acquisitionQuality: 94,
+            caliperNudgeOffset: { x: 0, y: 0 },
+            layers: {
+                segmentation: true,
+                calipers: true,
+                gradcam: false,
+                mmode: false
+            },
+            // Per-organ pathology state so clinicians can combine findings across organs
+            organStates: {
+                cardiac: 'normal',
+                lung: 'normal',
+                ob: 'normal',
+                efast: 'normal',
+                vascular: 'normal'
+            },
+            hitlVerification: {
+                cardiac: 'pending',
+                lung: 'pending',
+                ob: 'pending',
+                efast: 'pending',
+                vascular: 'pending'
+            },
+            findingsLog: []
+        };
+
+        // Pre-allocated offscreen speckle noise canvas for realistic B-mode texture
+        let speckleBufferCanvas = document.createElement('canvas');
+        speckleBufferCanvas.width = 256;
+        speckleBufferCanvas.height = 256;
+        let speckleCtx = speckleBufferCanvas.getContext('2d');
+
+        function generateSpeckleTexture() {
+            const imgData = speckleCtx.createImageData(256, 256);
+            const data = imgData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                const v = Math.random() < 0.65 ? Math.floor(Math.random() * 55) : Math.floor(Math.random() * 145);
+                data[i] = v;
+                data[i + 1] = v + 5;
+                data[i + 2] = v + 10;
+                data[i + 3] = 42;
+            }
+            speckleCtx.putImageData(imgData, 0, 0);
+        }
+
+        /**************************************************************************
+         * 3. UI RENDERING & STATE SYNCHRONIZATION FUNCTIONS
+         **************************************************************************/
+        function renderOrganModuleButtons() {
+            const container = document.getElementById('organModuleButtons');
+            container.innerHTML = '';
+
+            Object.values(ORGAN_MODULES).forEach(mod => {
+                const isActive = appState.currentOrgan === mod.id;
+                const orgState = appState.organStates[mod.id];
+                const isPath = orgState === 'pathology';
+
+                const btn = document.createElement('button');
+                btn.onclick = () => selectOrganModule(mod.id);
+                btn.className = `w-full text-left px-3 py-2.5 rounded-xl border transition-all flex items-center justify-between ${
+                    isActive
+                        ? 'bg-gradient-to-r from-cyan-500/20 to-blue-600/15 border-cyan-400 text-white shadow-md'
+                        : 'bg-clinical-950/70 border-slate-800/90 text-slate-300 hover:border-slate-700 hover:bg-clinical-900'
+                }`;
+
+                btn.innerHTML = `
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg ${isActive ? 'bg-cyan-500 text-slate-950' : 'bg-slate-800 text-cyan-400'} flex items-center justify-center text-sm">
+                            <i class="fa-solid ${mod.icon}"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs font-semibold leading-tight">${mod.name}</div>
+                            <div class="text-[10px] font-mono text-slate-400">${mod.probe}</div>
+                        </div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold ${
+                        isPath
+                            ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+                            : 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
+                    }">
+                        ${isPath ? 'ABNORMAL' : 'NORMAL'}
+                    </span>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        function renderViewSelector() {
+            const mod = ORGAN_MODULES[appState.currentOrgan];
+            document.getElementById('activeProbeBadge').textContent = mod.probe;
+
+            const container = document.getElementById('viewSelectorContainer');
+            container.innerHTML = '';
+
+            mod.views.forEach(v => {
+                const isSelected = appState.currentView === v.id;
+                const btn = document.createElement('button');
+                btn.onclick = () => {
+                    appState.currentView = v.id;
+                    renderViewSelector();
+                    updateOSDHeaders();
+                };
+                btn.className = `px-2.5 py-1.5 rounded-lg text-[11px] font-medium border text-left truncate transition ${
+                    isSelected
+                        ? 'bg-cyan-500/20 border-cyan-400 text-cyan-200 font-semibold'
+                        : 'bg-clinical-950 border-slate-800 text-slate-400 hover:text-slate-200'
+                }`;
+                btn.innerHTML = `<i class="fa-solid fa-crosshairs mr-1 text-[10px] ${isSelected ? 'text-cyan-400' : 'text-slate-600'}"></i>${v.label}`;
+                container.appendChild(btn);
+            });
+
+            // Toggle 12-Zone Lung Matrix if Lung module is active
+            const lungSubMap = document.getElementById('anatomicalSubMap');
+            if (appState.currentOrgan === 'lung') {
+                lungSubMap.classList.remove('hidden');
+                renderLungZoneMatrix();
+            } else {
+                lungSubMap.classList.add('hidden');
+            }
+        }
+
+        function renderLungZoneMatrix() {
+            const zones = ['R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'L1', 'L2', 'L3', 'L4', 'L5', 'L6'];
+            const grid = document.getElementById('lungZoneGrid');
+            grid.innerHTML = '';
+            const isLungPath = appState.organStates.lung === 'pathology';
+
+            zones.forEach(z => {
+                const active = appState.selectedLungZone === z;
+                const btn = document.createElement('button');
+                btn.onclick = () => {
+                    appState.selectedLungZone = z;
+                    document.getElementById('selectedLungZoneText').textContent = `Zone: ${z} (${z.startsWith('R') ? 'Right' : 'Left'} Hemithorax)`;
+                    renderLungZoneMatrix();
+                };
+                btn.className = `py-1 rounded text-center border transition ${
+                    active
+                        ? 'bg-cyan-500 text-slate-950 font-bold border-cyan-300'
+                        : isLungPath && (z.endsWith('1') || z.endsWith('2') || z.endsWith('3'))
+                            ? 'bg-rose-950/70 text-rose-300 border-rose-500/40'
+                            : 'bg-clinical-950 text-slate-400 border-slate-800'
+                }`;
+                btn.textContent = z;
+                grid.appendChild(btn);
+            });
+        }
+
+        function renderAIMetricsAndCapabilities() {
+            const mod = ORGAN_MODULES[appState.currentOrgan];
+            const stateKey = appState.organStates[appState.currentOrgan];
+            const stateData = mod.states[stateKey];
+
+            document.getElementById('aiModelNameBadge').textContent = mod.modelName;
+            document.getElementById('pathologyButtonLabel').textContent = mod.pathologyButtonText;
+
+            // Update Normal vs Pathology toggle buttons
+            const btnNorm = document.getElementById('btnStateNormal');
+            const btnPath = document.getElementById('btnStatePathology');
+            if (stateKey === 'normal') {
+                btnNorm.className = 'px-3 py-1.5 rounded-md text-xs font-semibold transition-all bg-emerald-600 text-white shadow';
+                btnPath.className = 'px-3 py-1.5 rounded-md text-xs font-semibold transition-all text-slate-300 hover:text-white';
+            } else {
+                btnNorm.className = 'px-3 py-1.5 rounded-md text-xs font-semibold transition-all text-slate-300 hover:text-white';
+                btnPath.className = 'px-3 py-1.5 rounded-md text-xs font-semibold transition-all bg-rose-600 text-white shadow';
+            }
+
+            // Render Metrics Cards
+            const metricsList = document.getElementById('aiMetricsList');
+            metricsList.innerHTML = '';
+
+            stateData.metrics.forEach(m => {
+                let badgeClass = 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30';
+                let valColor = 'text-emerald-400';
+                if (m.status === 'critical') {
+                    badgeClass = 'bg-rose-500/20 text-rose-300 border-rose-500/40';
+                    valColor = 'text-rose-400';
+                } else if (m.status === 'warning') {
+                    badgeClass = 'bg-amber-500/20 text-amber-300 border-amber-500/40';
+                    valColor = 'text-amber-400';
+                }
+
+                const item = document.createElement('div');
+                item.className = 'p-2.5 rounded-lg bg-clinical-950/90 border border-slate-800/90 flex items-center justify-between gap-2';
+                item.innerHTML = `
+                    <div>
+                        <div class="text-xs font-medium text-slate-200">${m.label}</div>
+                        <div class="text-[11px] text-slate-400 font-mono">${m.unit}</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm font-bold font-mono ${valColor}">${m.value}</div>
+                        <span class="inline-block text-[10px] font-mono px-1.5 py-0.2 rounded border ${badgeClass}">
+                            Conf: ${m.conf}
+                        </span>
+                    </div>
+                `;
+                metricsList.appendChild(item);
+            });
+
+            // Render Active Capabilities Checklist
+            const capList = document.getElementById('capabilityChecklist');
+            capList.innerHTML = '';
+            mod.capabilities.forEach(c => {
+                const li = document.createElement('li');
+                li.className = 'flex items-center gap-2 text-[11px] text-slate-300';
+                li.innerHTML = `<i class="fa-solid fa-check text-cyan-400 text-[10px]"></i><span>${c}</span>`;
+                capList.appendChild(li);
+            });
+
+            // Update Viewport Alert Badge & Coaching Text
+            const alertBadge = document.getElementById('viewportAlertBadge');
+            if (stateData.alertLevel === 'normal') {
+                alertBadge.className = 'absolute top-3 right-3 pointer-events-none px-3 py-1.5 rounded-lg font-mono text-xs font-semibold border backdrop-blur-md transition-all bg-emerald-950/85 text-emerald-300 border-emerald-500/40';
+                alertBadge.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i>${stateData.alertText}`;
+            } else {
+                alertBadge.className = 'absolute top-3 right-3 pointer-events-none px-3 py-1.5 rounded-lg font-mono text-xs font-semibold border backdrop-blur-md transition-all bg-rose-950/90 text-rose-200 border-rose-500/60 animate-pulse';
+                alertBadge.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1 text-rose-400"></i>${stateData.alertText}`;
+            }
+
+            // Update HITL Panel
+            document.getElementById('uncertaintyValue').textContent = stateData.uncertainty;
+            document.getElementById('hitlAdvisoryText').textContent = stateData.advisory;
+            updateCoachPrompt();
+            updateOSDHeaders();
+            updateCrossModalitySynthesis();
+        }
+
+        function updateOSDHeaders() {
+            const vendorSelect = document.getElementById('vendorSelect');
+            const vendorText = vendorSelect.options[vendorSelect.selectedIndex].text.split('(')[0].trim().toUpperCase();
+            const mod = ORGAN_MODULES[appState.currentOrgan];
+            const viewObj = mod.views.find(v => v.id === appState.currentView) || mod.views[0];
+
+            document.getElementById('osdVendorHeader').textContent = `${vendorText} • UNIFIED DICOM/IGTL`;
+            document.getElementById('osdPresetText').textContent = `MODULE: ${mod.shortName.toUpperCase()} • ${viewObj.label.toUpperCase()}`;
+            document.getElementById('osdDepth').textContent = mod.depth;
+        }
+
+        function selectOrganModule(organId) {
+            appState.currentOrgan = organId;
+            appState.currentView = ORGAN_MODULES[organId].views[0].id;
+            appState.caliperNudgeOffset = { x: 0, y: 0 };
+            renderOrganModuleButtons();
+            renderViewSelector();
+            renderAIMetricsAndCapabilities();
+        }
+
+        function setOrganPathologyState(state) {
+            appState.organStates[appState.currentOrgan] = state;
+            renderOrganModuleButtons();
+            if (appState.currentOrgan === 'lung') renderLungZoneMatrix();
+            renderAIMetricsAndCapabilities();
+        }
+
+        /**************************************************************************
+         * 4. CROSS-MODALITY CLINICAL SYNTHESIS ENGINE
+         **************************************************************************/
+        function updateCrossModalitySynthesis() {
+            const matrixContainer = document.getElementById('multiOrganMatrix');
+            matrixContainer.innerHTML = '';
+
+            Object.values(ORGAN_MODULES).forEach(mod => {
+                const isPath = appState.organStates[mod.id] === 'pathology';
+                const pill = document.createElement('div');
+                pill.onclick = () => selectOrganModule(mod.id);
+                pill.className = `cursor-pointer p-1.5 rounded-lg border text-center transition ${
+                    isPath
+                        ? 'bg-rose-950/70 border-rose-500/50 text-rose-300'
+                        : 'bg-emerald-950/40 border-emerald-500/30 text-emerald-300'
+                }`;
+                pill.innerHTML = `
+                    <i class="fa-solid ${mod.icon} text-xs mb-0.5 block"></i>
+                    <div class="text-[10px] font-mono font-semibold truncate">${mod.shortName}</div>
+                `;
+                matrixContainer.appendChild(pill);
+            });
+
+            // Bayesian Cross-Organ Synthesis Logic
+            const s = appState.organStates;
+            const titleEl = document.getElementById('synthesizedDiagnosisTitle');
+            const bodyEl = document.getElementById('synthesizedDiagnosisBody');
+
+            const abnormalCount = Object.values(s).filter(v => v === 'pathology').length;
+
+            if (s.cardiac === 'pathology' && s.lung === 'pathology') {
+                titleEl.className = 'text-sm font-bold text-rose-400 mb-1';
+                titleEl.textContent = 'Acute Decompensated Heart Failure / Cardiogenic Shock';
+                bodyEl.textContent = 'Cross-Organ Fusion: Severe LV dysfunction (LVEF 26%) + plethoric IVC (11% collapse) directly correlates with bilateral confluent Lung B-lines (72% score) and pleural effusions. Avoid aggressive IV fluid boluses; initiate inotropic/decongestive therapy.';
+            } else if (s.ob === 'pathology' && s.lung === 'pathology') {
+                titleEl.className = 'text-sm font-bold text-purple-300 mb-1';
+                titleEl.textContent = 'Severe Preeclampsia with Maternal Pulmonary Edema & High-Risk Fetus';
+                bodyEl.textContent = 'Cross-Organ Fusion: Maternal thoracic B-profile pulmonary edema combined with Fetal Growth Restriction (EFW 4th %ile), Breech presentation, and Complete Placenta Previa requires urgent MFM/OB surgical coordination.';
+            } else if (s.efast === 'pathology' && s.cardiac === 'pathology') {
+                titleEl.className = 'text-sm font-bold text-rose-400 mb-1';
+                titleEl.textContent = 'Hemorrhagic + Obstructive Polytrauma Shock';
+                bodyEl.textContent = 'Cross-Organ Fusion: Positive eFAST hemoperitoneum in Morison’s pouch (1.6 cm stripe) coupled with 1.8 cm pericardial effusion warrants immediate trauma surgery & pericardiocentesis evaluation.';
+            } else if (s.vascular === 'pathology' && s.cardiac === 'pathology') {
+                titleEl.className = 'text-sm font-bold text-rose-400 mb-1';
+                titleEl.textContent = 'Proximal DVT with Acute RV Strain (Suspected Pulmonary Embolism)';
+                bodyEl.textContent = 'Cross-Organ Fusion: Non-compressible Common Femoral DVT (14% collapse) paired with Cardiac RV dilation (RV:LV 1.18) is highly diagnostic for thromboembolic PE shock.';
+            } else if (abnormalCount > 0) {
+                const activeAbnormals = Object.keys(s)
+                    .filter(k => s[k] === 'pathology')
+                    .map(k => ORGAN_MODULES[k].states.pathology.summaryFinding);
+                titleEl.className = 'text-sm font-bold text-amber-300 mb-1';
+                titleEl.textContent = `Localized Multi-Organ Abnormality (${abnormalCount} Module${abnormalCount > 1 ? 's' : ''} Flagged)`;
+                bodyEl.textContent = activeAbnormals.join(' • ');
+            } else {
+                titleEl.className = 'text-sm font-bold text-emerald-400 mb-1';
+                titleEl.textContent = 'Normal Multi-Organ Sono-Hemodynamic Profile';
+                bodyEl.textContent = 'All 5 integrated AI-POCUS modules show preserved cardiac contractility (LVEF 61%), dry A-line lung fields, normal fetal biometry, negative eFAST, and patent compressible vasculature.';
+            }
+        }
+
+        // Preset Loaders for 1-Click Multi-Organ Clinical Syndromes
+        function loadIntegratedSyndrome(syndrome) {
+            if (syndrome === 'adhf') {
+                appState.organStates = {
+                    cardiac: 'pathology',
+                    lung: 'pathology',
+                    ob: 'normal',
+                    efast: 'normal',
+                    vascular: 'pathology'
+                };
+                document.getElementById('patientName').textContent = 'MRN-84920-UX (Elena Rostova, 64F)';
+                document.getElementById('clinicalIndication').textContent = 'Cardiogenic Shock, Bilateral Crackles & Suspected Thromboembolism';
+                document.getElementById('vitalHR').textContent = '118';
+                document.getElementById('vitalBP').textContent = '82/48';
+                document.getElementById('vitalSpO2').textContent = '88%';
+                selectOrganModule('cardiac');
+            } else if (syndrome === 'preeclampsia') {
+                appState.organStates = {
+                    cardiac: 'normal',
+                    lung: 'pathology',
+                    ob: 'pathology',
+                    efast: 'normal',
+                    vascular: 'pathology'
+                };
+                document.getElementById('patientName').textContent = 'MRN-33109-OB (Amara Okafor, 29F G2P1)';
+                document.getElementById('clinicalIndication').textContent = '31w Gestation, Severe Headache, Dyspnea & Vaginal Spotting';
+                document.getElementById('vitalHR').textContent = '106';
+                document.getElementById('vitalBP').textContent = '174/112';
+                document.getElementById('vitalSpO2').textContent = '92%';
+                selectOrganModule('ob');
+            } else {
+                appState.organStates = {
+                    cardiac: 'normal',
+                    lung: 'normal',
+                    ob: 'normal',
+                    efast: 'normal',
+                    vascular: 'normal'
+                };
+                document.getElementById('patientName').textContent = 'MRN-10492-ER (Marcus Vance, 42M)';
+                document.getElementById('clinicalIndication').textContent = 'Routine Multi-Organ Point-of-Care Screening';
+                document.getElementById('vitalHR').textContent = '74';
+                document.getElementById('vitalBP').textContent = '118/76';
+                document.getElementById('vitalSpO2').textContent = '99%';
+                selectOrganModule('cardiac');
+            }
+            captureLoopToReport();
+        }
+
+        /**************************************************************************
+         * 5. INTERACTIVE CONTROLS, HITL GOVERNANCE & QUALITY COACH
+         **************************************************************************/
+        function handleVendorChange(vendor) {
+            appState.currentVendor = vendor;
+            updateOSDHeaders();
+        }
+
+        function handleQualitySlider(val) {
+            appState.acquisitionQuality = parseInt(val, 10);
+            updateCoachPrompt();
+        }
+
+        function updateCoachPrompt() {
+            const q = appState.acquisitionQuality;
+            const mod = ORGAN_MODULES[appState.currentOrgan];
+            const stateData = mod.states[appState.organStates[appState.currentOrgan]];
+            const valEl = document.getElementById('qualityScoreValue');
+            const barEl = document.getElementById('qualityProgressBar');
+            const promptEl = document.getElementById('probeCoachInstruction');
+
+            barEl.style.width = `${q}%`;
+
+            if (q >= 80) {
+                valEl.textContent = `${q}% (Diagnostic Lock)`;
+                valEl.className = 'font-mono font-bold text-emerald-400';
+                promptEl.textContent = stateData.coachPrompt;
+            } else if (q >= 55) {
+                valEl.textContent = `${q}% (Suboptimal Plane)`;
+                valEl.className = 'font-mono font-bold text-amber-400';
+                promptEl.textContent = 'Rotate probe 12° clockwise & tilt 5° anteriorly to resolve borders';
+            } else {
+                valEl.textContent = `${q}% (Rib Shadow / Off-Axis)`;
+                valEl.className = 'font-mono font-bold text-rose-400';
+                promptEl.textContent = 'WARNING: Acoustic rib shadowing — slide 1 intercostal space inferiorly';
+            }
+        }
+
+        function toggleLayer(layerKey) {
+            appState.layers[layerKey] = !appState.layers[layerKey];
+            const btnMap = {
+                segmentation: { id: 'toggleSegBtn', activeClass: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/50' },
+                calipers: { id: 'toggleCalipersBtn', activeClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50' },
+                gradcam: { id: 'toggleGradCamBtn', activeClass: 'bg-rose-500/20 text-rose-300 border-rose-500/50' },
+                mmode: { id: 'toggleMModeBtn', activeClass: 'bg-purple-500/20 text-purple-300 border-purple-500/50' }
+            };
+            const target = document.getElementById(btnMap[layerKey].id);
+            if (appState.layers[layerKey]) {
+                target.className = `px-2.5 py-1 rounded-md text-xs font-mono border transition ${btnMap[layerKey].activeClass}`;
+            } else {
+                target.className = 'px-2.5 py-1 rounded-md text-xs font-mono border transition bg-slate-800 text-slate-400 border-slate-700';
+            }
+        }
+
+        function updateBModeGain(val) {
+            appState.bModeGain = parseInt(val, 10);
+            document.getElementById('osdGain').textContent = `${val} dB`;
+        }
+
+        function toggleFreeze() {
+            appState.isFrozen = !appState.isFrozen;
+            const btn = document.getElementById('btnFreeze');
+            const txt = document.getElementById('freezeBtnText');
+            if (appState.isFrozen) {
+                btn.className = 'px-3 py-1.5 rounded-lg bg-cyan-500 text-slate-950 font-bold text-xs font-mono flex items-center gap-1.5 border border-cyan-300 shadow';
+                txt.textContent = 'FROZEN (CINE)';
+            } else {
+                btn.className = 'px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono flex items-center gap-1.5 border border-slate-700 transition';
+                txt.textContent = 'FREEZE';
+            }
+        }
+
+        function handleHITLAction(action) {
+            const badge = document.getElementById('hitlStatusBadge');
+            const calStatus = document.getElementById('caliperAdjustStatus');
+
+            if (action === 'accept') {
+                appState.hitlVerification[appState.currentOrgan] = 'verified';
+                badge.className = 'text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+                badge.innerHTML = '<i class="fa-solid fa-check mr-1"></i>Clinician Signed';
+                captureLoopToReport();
+            } else if (action === 'adjust') {
+                appState.caliperNudgeOffset.x = (Math.random() - 0.5) * 14;
+                appState.caliperNudgeOffset.y = (Math.random() - 0.5) * 10;
+                badge.className = 'text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40';
+                badge.textContent = 'Calipers Adjusted (HITL)';
+                calStatus.textContent = `HITL Override: Caliper anchor shifted (${appState.caliperNudgeOffset.x.toFixed(1)}px, ${appState.caliperNudgeOffset.y.toFixed(1)}px)`;
+            } else if (action === 'flag') {
+                appState.hitlVerification[appState.currentOrgan] = 'flagged';
+                badge.className = 'text-[10px] font-mono px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40';
+                badge.textContent = 'Flagged for QA Retraining';
+            }
+        }
+
+        function captureLoopToReport() {
+            const mod = ORGAN_MODULES[appState.currentOrgan];
+            const stateKey = appState.organStates[appState.currentOrgan];
+            const summary = mod.states[stateKey].summaryFinding;
+            const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+            // Avoid duplicate identical top entries
+            if (appState.findingsLog.length === 0 || appState.findingsLog[0].summary !== summary) {
+                appState.findingsLog.unshift({
+                    time: timestamp,
+                    organ: mod.shortName,
+                    state: stateKey,
+                    summary: summary
+                });
+            }
+            renderFindingsLog();
+        }
+
+        function renderFindingsLog() {
+            const container = document.getElementById('findingsLogContainer');
+            container.innerHTML = '';
+            if (appState.findingsLog.length === 0) {
+                container.innerHTML = `<div class="text-slate-500 italic text-[11px]">Click "Log Finding" or "Accept AI" to append verified organ measurements...</div>`;
+                return;
+            }
+            appState.findingsLog.forEach(item => {
+                const div = document.createElement('div');
+                const borderCol = item.state === 'pathology' ? 'border-rose-500/40 bg-rose-950/30' : 'border-slate-800 bg-clinical-950';
+                div.className = `p-2 rounded border ${borderCol} text-[11px] flex items-start justify-between gap-2`;
+                div.innerHTML = `
+                    <div>
+                        <span class="font-mono text-cyan-400 font-semibold">[${item.time}]</span>
+                        <span class="text-slate-200 ml-1">${item.summary}</span>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function clearFindingsLog() {
+            appState.findingsLog = [];
+            renderFindingsLog();
+        }
+
+        /**************************************************************************
+         * 6. HTML5 CANVAS REAL-TIME B-MODE ULTRASOUND & AI OVERLAY ENGINE
+         **************************************************************************/
+        const canvas = document.getElementById('ultrasoundCanvas');
+        const ctx = canvas.getContext('2d');
+        let animTime = 0;
+
+        function resizeCanvas() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        // Allow clicking on canvas to interactively nudge AI calipers
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left - rect.width / 2;
+            const clickY = e.clientY - rect.top - rect.height / 2;
+            appState.caliperNudgeOffset.x = Math.max(-25, Math.min(25, clickX * 0.08));
+            appState.caliperNudgeOffset.y = Math.max(-25, Math.min(25, clickY * 0.08));
+            document.getElementById('caliperAdjustStatus').textContent =
+                `HITL Manual Caliper Fine-Tune: Δx=${appState.caliperNudgeOffset.x.toFixed(1)}mm, Δy=${appState.caliperNudgeOffset.y.toFixed(1)}mm`;
+        });
+
+        function renderUltrasoundFrame() {
+            if (!appState.isFrozen) {
+                animTime += 0.045;
+            }
+
+            const w = canvas.width;
+            const h = canvas.height;
+            ctx.clearRect(0, 0, w, h);
+
+            // Background deep medical black
+            ctx.fillStyle = '#03060c';
+            ctx.fillRect(0, 0, w, h);
+
+            const mod = ORGAN_MODULES[appState.currentOrgan];
+            const isPath = appState.organStates[appState.currentOrgan] === 'pathology';
+            const gainFactor = appState.bModeGain / 58;
+            const qualityBlur = appState.acquisitionQuality < 70 ? (75 - appState.acquisitionQuality) * 0.12 : 0;
+
+            ctx.save();
+            if (qualityBlur > 0.5) {
+                ctx.filter = `blur(${qualityBlur.toFixed(1)}px)`;
+            }
+
+            // Create Sector Fan or Linear Array Clipping Region
+            ctx.save();
+            const apexX = w * 0.5;
+            const apexY = h * 0.08;
+            const maxRadius = Math.min(w * 0.72, h * 0.84);
+
+            if (mod.geometry === 'sector') {
+                ctx.beginPath();
+                ctx.moveTo(apexX, apexY);
+                ctx.arc(apexX, apexY, maxRadius, Math.PI * 0.28, Math.PI * 0.72);
+                ctx.closePath();
+                ctx.clip();
+            } else {
+                // High-frequency Linear Array rectangular beam
+                const boxW = Math.min(w * 0.76, 520);
+                const boxH = h * 0.78;
+                ctx.beginPath();
+                ctx.rect(apexX - boxW / 2, apexY + 10, boxW, boxH);
+                ctx.clip();
+            }
+
+            // Fill beam background gradient
+            const beamGrad = ctx.createRadialGradient(apexX, apexY, 20, apexX, apexY, maxRadius);
+            beamGrad.addColorStop(0, `rgba(${Math.floor(28 * gainFactor)}, ${Math.floor(36 * gainFactor)}, ${Math.floor(46 * gainFactor)}, 1)`);
+            beamGrad.addColorStop(0.6, `rgba(${Math.floor(42 * gainFactor)}, ${Math.floor(50 * gainFactor)}, ${Math.floor(62 * gainFactor)}, 1)`);
+            beamGrad.addColorStop(1, `rgba(${Math.floor(14 * gainFactor)}, ${Math.floor(18 * gainFactor)}, ${Math.floor(25 * gainFactor)}, 1)`);
+            ctx.fillStyle = beamGrad;
+            ctx.fillRect(0, 0, w, h);
+
+            // Render Organ-Specific Animated Sono-Anatomy & AI Overlays
+            if (appState.currentOrgan === 'cardiac') {
+                drawCardiacSimulation(ctx, apexX, apexY, maxRadius, isPath, animTime);
+            } else if (appState.currentOrgan === 'lung') {
+                drawLungSimulation(ctx, apexX, apexY, maxRadius, isPath, animTime);
+            } else if (appState.currentOrgan === 'ob') {
+                drawObstetricSimulation(ctx, apexX, apexY, maxRadius, isPath, animTime);
+            } else if (appState.currentOrgan === 'efast') {
+                drawEfastSimulation(ctx, apexX, apexY, maxRadius, isPath, animTime);
+            } else if (appState.currentOrgan === 'vascular') {
+                drawVascularSimulation(ctx, apexX, apexY, w, h, isPath, animTime);
+            }
+
+            // Grad-CAM Explainability Heatmap Overlay
+            if (appState.layers.gradcam) {
+                drawGradCamOverlay(ctx, apexX, apexY + maxRadius * 0.52, maxRadius * 0.36, isPath);
+            }
+
+            // Dynamic acoustic speckle noise overlay
+            if (!appState.isFrozen && Math.random() < 0.45) {
+                generateSpeckleTexture();
+            }
+            const pattern = ctx.createPattern(speckleBufferCanvas, 'repeat');
+            ctx.fillStyle = pattern;
+            ctx.fillRect(0, 0, w, h);
+
+            ctx.restore(); // End Beam Clip
+            ctx.restore(); // End Blur Filter
+
+            // Draw Sector/Linear Boundary Outline & Depth Centimeter Ruler Ticks
+            drawUltrasoundRulerAndFrame(ctx, apexX, apexY, maxRadius, w, h, mod.geometry);
+
+            // Optional M-Mode / Spectral Trace Strip at Bottom
+            if (appState.layers.mmode) {
+                drawMModeTraceStrip(ctx, w, h, isPath, animTime);
+            }
+
+            requestAnimationFrame(renderUltrasoundFrame);
+        }
+
+        // -------------------- 6A. CARDIAC (FoCUS) SIMULATION --------------------
+        function drawCardiacSimulation(ctx, cx, cy, R, isPath, t) {
+            const centerY = cy + R * 0.54;
+            // Systolic contraction phase: Severe HFrEF contracts minimally compared to Normal
+            const beat = Math.sin(t * 3.2);
+            const contraction = isPath ? 1 - 0.05 * (beat * 0.5 + 0.5) : 1 - 0.24 * (beat * 0.5 + 0.5);
+
+            // Pericardial Effusion dark anechoic halo in pathology state
+            if (isPath) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.ellipse(cx, centerY + 12, R * 0.34, R * 0.25, -0.12, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(2, 5, 10, 0.94)';
+                ctx.fill();
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = 'rgba(200, 215, 230, 0.55)';
+                ctx.stroke();
+
+                if (appState.layers.segmentation) {
+                    ctx.fillStyle = 'rgba(244, 63, 94, 0.28)';
+                    ctx.fill();
+                    ctx.strokeStyle = '#f43f5e';
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                }
+                ctx.restore();
+            }
+
+            // Myocardial wall (hyperechoic muscular ring)
+            ctx.save();
+            ctx.translate(cx, centerY);
+            ctx.rotate(-0.15);
+
+            ctx.beginPath();
+            ctx.ellipse(0, 0, R * 0.27, R * 0.19, 0, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(165, 180, 198, 0.55)';
+            ctx.fill();
+
+            // Left Ventricle (LV) Chamber Cavity
+            const lvRx = R * 0.19 * contraction + (isPath ? 18 : 0);
+            const lvRy = R * 0.12 * contraction + (isPath ? 14 : 0);
+            ctx.beginPath();
+            ctx.ellipse(-12, 6, lvRx, lvRy, 0, 0, Math.PI * 2);
+            ctx.fillStyle = '#060b14';
+            ctx.fill();
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = 'rgba(220, 232, 245, 0.7)';
+            ctx.stroke();
+
+            // Right Ventricle (RV) Chamber Anteriorly
+            const rvRy = isPath ? R * 0.095 : R * 0.055;
+            ctx.beginPath();
+            ctx.ellipse(-8, -lvRy - rvRy * 0.85, R * 0.14, rvRy, 0.05, 0, Math.PI * 2);
+            ctx.fillStyle = '#060b14';
+            ctx.fill();
+
+            // Mitral Valve Leaflets fluttering
+            const mvAngle = Math.max(0.1, Math.sin(t * 3.2 + 1.1) * (isPath ? 0.25 : 0.65));
+            ctx.strokeStyle = 'rgba(240, 248, 255, 0.9)';
+            ctx.lineWidth = 3.5;
+            ctx.beginPath();
+            ctx.moveTo(lvRx * 0.35, -lvRy * 0.45);
+            ctx.lineTo(lvRx * 0.35 - 26 * Math.cos(mvAngle), -lvRy * 0.45 + 22 * Math.sin(mvAngle));
+            ctx.moveTo(lvRx * 0.35, lvRy * 0.45);
+            ctx.lineTo(lvRx * 0.35 - 24 * Math.cos(mvAngle), lvRy * 0.45 - 18 * Math.sin(mvAngle));
+            ctx.stroke();
+
+            // AI Segmentation Overlay (Simpson's Biplane LV Endocardial Contour + RV)
+            if (appState.layers.segmentation) {
+                ctx.beginPath();
+                ctx.ellipse(-12, 6, lvRx, lvRy, 0, 0, Math.PI * 2);
+                ctx.fillStyle = isPath ? 'rgba(244, 63, 94, 0.22)' : 'rgba(6, 182, 212, 0.22)';
+                ctx.fill();
+                ctx.setLineDash([5, 4]);
+                ctx.strokeStyle = isPath ? '#f43f5e' : '#06b6d4';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            // AI Calipers Overlay (Simpson's Disks + LVIDd)
+            if (appState.layers.calipers) {
+                const ox = appState.caliperNudgeOffset.x;
+                const oy = appState.caliperNudgeOffset.y;
+                ctx.strokeStyle = '#10b981';
+                ctx.lineWidth = 1.5;
+
+                // Long-axis centerline
+                ctx.beginPath();
+                ctx.moveTo(-lvRx - 10 + ox, 6 + oy);
+                ctx.lineTo(lvRx - 12 + ox, 6 + oy);
+                ctx.stroke();
+
+                // Simpson's Biplane stacked orthogonal disks
+                for (let d = -0.75; d <= 0.65; d += 0.28) {
+                    const xPos = -12 + d * lvRx + ox;
+                    const halfH = Math.sqrt(Math.max(0, 1 - d * d)) * lvRy;
+                    ctx.strokeStyle = 'rgba(16, 185, 129, 0.6)';
+                    ctx.beginPath();
+                    ctx.moveTo(xPos, 6 - halfH + oy);
+                    ctx.lineTo(xPos, 6 + halfH + oy);
+                    ctx.stroke();
+                }
+
+                // Caliper Text Tag
+                ctx.fillStyle = '#10b981';
+                ctx.font = 'bold 11px "JetBrains Mono", monospace';
+                ctx.fillText(isPath ? 'LVEF: 26% (Biplane)' : 'LVEF: 61% (Biplane)', -lvRx, -lvRy - 10);
+                if (isPath) {
+                    ctx.fillStyle = '#f43f5e';
+                    ctx.fillText('PEff: 1.8 cm', -20, lvRy + 26);
+                }
+            }
+            ctx.restore();
+        }
+
+        // -------------------- 6B. LUNG & THORACIC (BLUE) SIMULATION --------------------
+        function drawLungSimulation(ctx, cx, cy, R, isPath, t) {
+            const pleuraY = cy + R * 0.34;
+            const slideShift = Math.sin(t * 2.4) * (isPath ? 2.5 : 14);
+
+            // Rib Acoustic Shadows (Left & Right Bat-Sign Landmarks)
+            [-R * 0.23, R * 0.23].forEach(ribOffsetX => {
+                // Bright hyperechoic rib cortex arc
+                ctx.beginPath();
+                ctx.arc(cx + ribOffsetX, pleuraY - 12, 26, Math.PI * 0.15, Math.PI * 0.85);
+                ctx.strokeStyle = 'rgba(245, 250, 255, 0.92)';
+                ctx.lineWidth = 5;
+                ctx.stroke();
+
+                // Clean acoustic shadow column below rib
+                ctx.fillStyle = 'rgba(2, 4, 9, 0.88)';
+                ctx.fillRect(cx + ribOffsetX - 24, pleuraY - 5, 48, R * 0.65);
+            });
+
+            // Shimmering Pleural Line
+            ctx.beginPath();
+            ctx.moveTo(cx - R * 0.16, pleuraY);
+            ctx.lineTo(cx + R * 0.16, pleuraY);
+            ctx.strokeStyle = 'rgba(240, 252, 255, 0.95)';
+            ctx.lineWidth = isPath ? 6 : 4;
+            ctx.stroke();
+
+            if (!isPath) {
+                // Normal Dry Lung: Equidistant Horizontal Reverberation A-Lines
+                [1.45, 1.9, 2.35].forEach((mult, idx) => {
+                    const ay = cy + R * 0.34 * mult;
+                    ctx.beginPath();
+                    ctx.moveTo(cx - R * 0.14 + slideShift * 0.2, ay);
+                    ctx.lineTo(cx + R * 0.14 + slideShift * 0.2, ay);
+                    ctx.strokeStyle = `rgba(180, 215, 235, ${0.58 - idx * 0.15})`;
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+
+                    if (appState.layers.calipers) {
+                        ctx.fillStyle = '#10b981';
+                        ctx.font = '10px "JetBrains Mono", monospace';
+                        ctx.fillText(`A${idx + 1}-Line`, cx + R * 0.15, ay + 3);
+                    }
+                });
+            } else {
+                // Pathological Interstitial Syndrome: Vertical Laser-Like Confluent B-Lines
+                const bLineOffsets = [-0.12, -0.07, -0.03, 0.01, 0.05, 0.09, 0.13];
+                bLineOffsets.forEach((off, idx) => {
+                    const bx = cx + R * off + Math.sin(t * 1.5 + idx) * 2.5;
+                    const grad = ctx.createLinearGradient(bx, pleuraY, bx + off * 95, cy + R * 0.95);
+                    grad.addColorStop(0, 'rgba(240, 250, 255, 0.85)');
+                    grad.addColorStop(0.5, 'rgba(200, 230, 248, 0.55)');
+                    grad.addColorStop(1, 'rgba(180, 220, 240, 0.15)');
+
+                    ctx.beginPath();
+                    ctx.moveTo(bx - 4, pleuraY);
+                    ctx.lineTo(bx + 4, pleuraY);
+                    ctx.lineTo(bx + off * 110 + 14, cy + R * 0.95);
+                    ctx.lineTo(bx + off * 110 - 14, cy + R * 0.95);
+                    ctx.closePath();
+                    ctx.fillStyle = grad;
+                    ctx.fill();
+
+                    if (appState.layers.segmentation) {
+                        ctx.strokeStyle = 'rgba(244, 63, 94, 0.55)';
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                    }
+                });
+            }
+
+            // Pleural Line AI Segmentation Highlight
+            if (appState.layers.segmentation) {
+                ctx.strokeStyle = isPath ? '#f43f5e' : '#06b6d4';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(cx - R * 0.16, pleuraY);
+                ctx.lineTo(cx + R * 0.16, pleuraY);
+                ctx.stroke();
+            }
+
+            if (appState.layers.calipers) {
+                ctx.fillStyle = isPath ? '#f43f5e' : '#06b6d4';
+                ctx.font = 'bold 11px "JetBrains Mono", monospace';
+                ctx.fillText(
+                    isPath ? 'AI B-LINES: 7 (72% CONFLUENT)' : 'PLEURAL SLIDING: +SEASHORE (0 B-LINES)',
+                    cx - R * 0.16,
+                    pleuraY - 14
+                );
+            }
+        }
+
+        // -------------------- 6C. OBSTETRIC & MATERNAL-FETAL SIMULATION --------------------
+        function drawObstetricSimulation(ctx, cx, cy, R, isPath, t) {
+            const centerY = cy + R * 0.54;
+            const fetalMove = Math.sin(t * 1.4) * 3;
+
+            // Amniotic Fluid Pocket (Single Deepest Pocket - Normal vs Severe Oligohydramnios)
+            ctx.beginPath();
+            ctx.ellipse(cx, centerY, R * 0.34, R * 0.24, 0, 0, Math.PI * 2);
+            ctx.fillStyle = isPath ? 'rgba(30, 38, 48, 0.8)' : 'rgba(4, 8, 15, 0.92)';
+            ctx.fill();
+
+            // Placenta Localization (High Posterior vs Complete Previa Covering Os)
+            ctx.beginPath();
+            if (!isPath) {
+                ctx.ellipse(cx - R * 0.15, centerY + R * 0.17, R * 0.18, R * 0.055, 0.2, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(150, 170, 190, 0.55)';
+            } else {
+                // Placenta Previa covering right lateral/inferior internal os
+                ctx.ellipse(cx + R * 0.18, centerY + R * 0.08, R * 0.15, R * 0.09, -0.4, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(175, 150, 165, 0.72)';
+            }
+            ctx.fill();
+
+            // Fetal Skull (Transthalamic BPD / HC Ellipse)
+            const headRx = isPath ? R * 0.165 : R * 0.195;
+            const headRy = isPath ? R * 0.125 : R * 0.148;
+            ctx.save();
+            ctx.translate(cx + fetalMove, centerY - 6);
+            ctx.rotate(isPath ? 0.35 : -0.08);
+
+            // Hyperechoic bony calvarium
+            ctx.beginPath();
+            ctx.ellipse(0, 0, headRx, headRy, 0, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(38, 48, 62, 0.95)';
+            ctx.fill();
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = 'rgba(235, 245, 255, 0.92)';
+            ctx.stroke();
+
+            // Midline Falx Cerebri & Symmetrical Thalami + CSP
+            ctx.beginPath();
+            ctx.moveTo(-headRx * 0.85, 0);
+            ctx.lineTo(headRx * 0.85, 0);
+            ctx.strokeStyle = 'rgba(210, 230, 245, 0.8)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // AI Segmentation Mask
+            if (appState.layers.segmentation) {
+                ctx.beginPath();
+                ctx.ellipse(0, 0, headRx, headRy, 0, 0, Math.PI * 2);
+                ctx.fillStyle = isPath ? 'rgba(245, 158, 11, 0.18)' : 'rgba(6, 182, 212, 0.18)';
+                ctx.fill();
+            }
+
+            // Automated Biometry Calipers (BPD Outer-to-Inner + HC Ellipse)
+            if (appState.layers.calipers) {
+                const ox = appState.caliperNudgeOffset.x;
+                const oy = appState.caliperNudgeOffset.y;
+
+                // HC Dashed Perimeter Ellipse
+                ctx.setLineDash([4, 4]);
+                ctx.strokeStyle = '#10b981';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.ellipse(ox, oy, headRx + 3, headRy + 3, 0, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // BPD Orthogonal Caliper Line
+                ctx.setLineDash([2, 2]);
+                ctx.strokeStyle = '#06b6d4';
+                ctx.beginPath();
+                ctx.moveTo(ox, -headRy + oy);
+                ctx.lineTo(ox, headRy + oy);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Caliper Crosshairs
+                drawCrosshair(ctx, ox, -headRy + oy, '#06b6d4');
+                drawCrosshair(ctx, ox, headRy + oy, '#06b6d4');
+
+                ctx.fillStyle = '#10b981';
+                ctx.font = 'bold 11px "JetBrains Mono", monospace';
+                ctx.fillText(isPath ? 'BPD: 7.6cm | EFW: 4th %ile' : 'BPD: 7.9cm | GA: 31w4d', -headRx * 0.8, -headRy - 12);
+            }
+            ctx.restore();
+        }
+
+        // -------------------- 6D. TRAUMA & ABDOMINAL (eFAST & RENAL) SIMULATION --------------------
+        function drawEfastSimulation(ctx, cx, cy, R, isPath, t) {
+            const centerY = cy + R * 0.52;
+            const breath = Math.sin(t * 1.6) * 4;
+
+            // Liver Parenchyma (Left upper quadrant of sector)
+            ctx.beginPath();
+            ctx.moveTo(cx - R * 0.35, centerY - R * 0.22);
+            ctx.quadraticCurveTo(cx + R * 0.05, centerY - R * 0.02 + breath, cx - R * 0.08, centerY + R * 0.18);
+            ctx.lineTo(cx - R * 0.35, centerY + R * 0.18);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(110, 128, 145, 0.58)';
+            ctx.fill();
+
+            // Positive eFAST: Anechoic Free Intraperitoneal Fluid Wedge in Morison's Pouch
+            if (isPath) {
+                ctx.beginPath();
+                ctx.moveTo(cx - R * 0.12, centerY - R * 0.08 + breath);
+                ctx.quadraticCurveTo(cx + R * 0.06, centerY + 4 + breath, cx + R * 0.18, centerY - R * 0.04);
+                ctx.quadraticCurveTo(cx + R * 0.02, centerY + R * 0.12 + breath, cx - R * 0.12, centerY + R * 0.08);
+                ctx.closePath();
+                ctx.fillStyle = '#03050a';
+                ctx.fill();
+
+                if (appState.layers.segmentation) {
+                    ctx.fillStyle = 'rgba(244, 63, 94, 0.42)';
+                    ctx.fill();
+                    ctx.strokeStyle = '#f43f5e';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+            }
+
+            // Right Kidney (Bean-shaped cortex + hyperechoic renal sinus)
+            ctx.save();
+            ctx.translate(cx + R * 0.11, centerY + R * 0.09 + breath);
+            ctx.rotate(0.25);
+
+            ctx.beginPath();
+            ctx.ellipse(0, 0, R * 0.14, R * 0.085, 0, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(85, 100, 118, 0.72)';
+            ctx.fill();
+            ctx.lineWidth = 2.5;
+            ctx.strokeStyle = 'rgba(220, 235, 250, 0.85)'; // Gerota's fascia
+            ctx.stroke();
+
+            // Renal Sinus / Pelvis (Normal bright sinus vs Hydronephrosis dilated dark calyces)
+            ctx.beginPath();
+            ctx.ellipse(0, 0, R * 0.075, R * 0.04, 0, 0, Math.PI * 2);
+            ctx.fillStyle = isPath ? '#040812' : 'rgba(215, 228, 240, 0.8)';
+            ctx.fill();
+
+            if (isPath && appState.layers.segmentation) {
+                ctx.fillStyle = 'rgba(245, 158, 11, 0.35)';
+                ctx.fill();
+            }
+            ctx.restore();
+
+            if (appState.layers.calipers) {
+                ctx.fillStyle = isPath ? '#f43f5e' : '#10b981';
+                ctx.font = 'bold 11px "JetBrains Mono", monospace';
+                ctx.fillText(
+                    isPath ? 'MORISON’S POUCH: +FREE FLUID (1.6 cm)' : 'MORISON’S POUCH: INTACT (0 mL)',
+                    cx - R * 0.25,
+                    centerY - R * 0.16
+                );
+            }
+        }
+
+        // -------------------- 6E. VASCULAR (DVT) & OCULAR (ONSD) SIMULATION --------------------
+        function drawVascularSimulation(ctx, cx, topY, w, h, isPath, t) {
+            const isONSD = appState.currentView === 'onsd';
+            const centerY = topY + h * 0.38;
+
+            if (isONSD) {
+                // Ocular Globe & Retrobulbar Optic Nerve Sheath Diameter (ONSD)
+                const globeR = Math.min(w, h) * 0.22;
+                ctx.beginPath();
+                ctx.arc(cx, centerY - 25, globeR, 0, Math.PI * 2);
+                ctx.fillStyle = '#040811';
+                ctx.fill();
+                ctx.lineWidth = 3.5;
+                ctx.strokeStyle = 'rgba(230, 242, 255, 0.9)';
+                ctx.stroke();
+
+                // Retrobulbar Optic Nerve Sheath (Dark vertical band posterior to retina)
+                const sheathW = isPath ? 46 : 28; // 6.6mm vs 4.3mm scaled
+                const retinaY = centerY - 25 + globeR;
+                ctx.fillStyle = 'rgba(10, 16, 28, 0.92)';
+                ctx.fillRect(cx - sheathW / 2, retinaY, sheathW, h * 0.32);
+
+                if (appState.layers.segmentation) {
+                    ctx.fillStyle = isPath ? 'rgba(244, 63, 94, 0.28)' : 'rgba(6, 182, 212, 0.25)';
+                    ctx.fillRect(cx - sheathW / 2, retinaY, sheathW, h * 0.25);
+                }
+
+                // 3mm Retrobulbar Depth Marker + Transverse ONSD Caliper
+                if (appState.layers.calipers) {
+                    const depth3mmY = retinaY + 28;
+                    ctx.strokeStyle = '#06b6d4';
+                    ctx.setLineDash([3, 3]);
+                    ctx.beginPath();
+                    ctx.moveTo(cx, retinaY);
+                    ctx.lineTo(cx, depth3mmY);
+                    ctx.stroke();
+
+                    ctx.setLineDash([]);
+                    ctx.strokeStyle = isPath ? '#f43f5e' : '#10b981';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(cx - sheathW / 2, depth3mmY);
+                    ctx.lineTo(cx + sheathW / 2, depth3mmY);
+                    ctx.stroke();
+
+                    drawCrosshair(ctx, cx - sheathW / 2, depth3mmY, isPath ? '#f43f5e' : '#10b981');
+                    drawCrosshair(ctx, cx + sheathW / 2, depth3mmY, isPath ? '#f43f5e' : '#10b981');
+
+                    ctx.fillStyle = isPath ? '#f43f5e' : '#10b981';
+                    ctx.font = 'bold 11px "JetBrains Mono", monospace';
+                    ctx.fillText(isPath ? 'ONSD: 6.6 mm (ELEVATED ICP)' : 'ONSD: 4.3 mm (NORMAL ICP)', cx + sheathW / 2 + 12, depth3mmY + 4);
+                }
+            } else {
+                // Lower Extremity 2-Point DVT Compression (Common Femoral Artery + Vein)
+                const compressCycle = (Math.sin(t * 2.2) + 1) * 0.5; // 0 to 1 probe compression cycle
+                const arteryPulse = 1 + Math.sin(t * 6.5) * 0.06;
+
+                // Common Femoral Artery (CFA - Pulsatile circular lumen on left)
+                const cfaX = cx - 65;
+                ctx.beginPath();
+                ctx.arc(cfaX, centerY, 28 * arteryPulse, 0, Math.PI * 2);
+                ctx.fillStyle = '#040811';
+                ctx.fill();
+                ctx.lineWidth = 4;
+                ctx.strokeStyle = 'rgba(235, 245, 255, 0.88)';
+                ctx.stroke();
+
+                // Common Femoral Vein (CFV - Collapses completely when Normal, resists when DVT)
+                const cfvX = cx + 55;
+                const veinRy = isPath
+                    ? 32 * (1 - 0.12 * compressCycle) // Non-compressible DVT
+                    : Math.max(3, 32 * (1 - 0.92 * compressCycle)); // Collapses completely
+
+                ctx.beginPath();
+                ctx.ellipse(cfvX, centerY + (32 - veinRy) * 0.4, 34, veinRy, 0, 0, Math.PI * 2);
+                ctx.fillStyle = '#040811';
+                ctx.fill();
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = 'rgba(210, 228, 245, 0.8)';
+                ctx.stroke();
+
+                // Echogenic Intraluminal Thrombus inside CFV in Pathology Mode
+                if (isPath) {
+                    ctx.beginPath();
+                    ctx.ellipse(cfvX + 2, centerY + 2, 26, veinRy * 0.78, 0.1, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(135, 148, 165, 0.65)';
+                    ctx.fill();
+                }
+
+                if (appState.layers.segmentation) {
+                    // Artery red segmentation ring
+                    ctx.strokeStyle = '#ef4444';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.arc(cfaX, centerY, 28 * arteryPulse, 0, Math.PI * 2);
+                    ctx.stroke();
+
+                    // Vein cyan/rose segmentation ring
+                    ctx.strokeStyle = isPath ? '#f43f5e' : '#06b6d4';
+                    ctx.beginPath();
+                    ctx.ellipse(cfvX, centerY + (32 - veinRy) * 0.4, 34, veinRy, 0, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+
+                if (appState.layers.calipers) {
+                    ctx.fillStyle = '#ef4444';
+                    ctx.font = 'bold 11px "JetBrains Mono", monospace';
+                    ctx.fillText('CFA (Artery)', cfaX - 35, centerY - 38);
+
+                    ctx.fillStyle = isPath ? '#f43f5e' : '#06b6d4';
+                    ctx.fillText(
+                        isPath ? 'CFV: NON-COMPRESSIBLE DVT (14%)' : `CFV: COMPRESSIBLE (${Math.round((1 - veinRy / 32) * 100)}%)`,
+                        cfvX - 45,
+                        centerY - 38
+                    );
+                }
+            }
+        }
+
+        // -------------------- 6F. GRAD-CAM, RULERS & M-MODE STRIP --------------------
+        function drawGradCamOverlay(ctx, x, y, radius, isPath) {
+            const grad = ctx.createRadialGradient(x, y, 5, x, y, radius);
+            if (isPath) {
+                grad.addColorStop(0, 'rgba(244, 63, 94, 0.62)');
+                grad.addColorStop(0.45, 'rgba(245, 158, 11, 0.38)');
+                grad.addColorStop(0.8, 'rgba(6, 182, 212, 0.15)');
+                grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            } else {
+                grad.addColorStop(0, 'rgba(16, 185, 129, 0.45)');
+                grad.addColorStop(0.55, 'rgba(6, 182, 212, 0.25)');
+                grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            }
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawCrosshair(ctx, x, y, color) {
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(x - 5, y);
+            ctx.lineTo(x + 5, y);
+            ctx.moveTo(x, y - 5);
+            ctx.lineTo(x, y + 5);
+            ctx.stroke();
+        }
+
+        function drawUltrasoundRulerAndFrame(ctx, apexX, apexY, maxRadius, w, h, geometry) {
+            ctx.strokeStyle = 'rgba(56, 189, 248, 0.28)';
+            ctx.lineWidth = 1.5;
+
+            if (geometry === 'sector') {
+                ctx.beginPath();
+                ctx.moveTo(apexX, apexY);
+                ctx.arc(apexX, apexY, maxRadius, Math.PI * 0.28, Math.PI * 0.72);
+                ctx.closePath();
+                ctx.stroke();
+            } else {
+                const boxW = Math.min(w * 0.76, 520);
+                const boxH = h * 0.78;
+                ctx.strokeRect(apexX - boxW / 2, apexY + 10, boxW, boxH);
+            }
+
+            // Probe Orientation Marker Dot (Cyan TGC/Probe Indicator)
+            ctx.fillStyle = '#06b6d4';
+            ctx.beginPath();
+            ctx.arc(apexX - 85, apexY + 18, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Right-Side Centimeter Depth Scale Ticks
+            const rulerX = w - 28;
+            ctx.strokeStyle = 'rgba(148, 163, 184, 0.5)';
+            ctx.fillStyle = 'rgba(148, 163, 184, 0.7)';
+            ctx.font = '10px "JetBrains Mono", monospace';
+
+            for (let i = 1; i <= 8; i++) {
+                const ty = apexY + (maxRadius / 8) * i;
+                ctx.beginPath();
+                ctx.moveTo(rulerX, ty);
+                ctx.lineTo(rulerX + (i % 2 === 0 ? 10 : 5), ty);
+                ctx.stroke();
+                if (i % 2 === 0) {
+                    ctx.fillText(`${i * 2}`, rulerX - 16, ty + 3);
+                }
+            }
+        }
+
+        function drawMModeTraceStrip(ctx, w, h, isPath, t) {
+            const stripH = 68;
+            const stripY = h - stripH - 42;
+            ctx.fillStyle = 'rgba(4, 8, 17, 0.92)';
+            ctx.fillRect(20, stripY, w - 40, stripH);
+            ctx.strokeStyle = 'rgba(6, 182, 212, 0.4)';
+            ctx.strokeRect(20, stripY, w - 40, stripH);
+
+            ctx.fillStyle = '#06b6d4';
+            ctx.font = '10px "JetBrains Mono", monospace';
+            ctx.fillText(
+                appState.currentOrgan === 'lung'
+                    ? (isPath ? 'M-MODE: REDUCED SLIDING / B-PROFILE' : 'M-MODE: SEASHORE SIGN (NORMAL SLIDING)')
+                    : 'M-MODE / TIME-MOTION TRACE (60 Hz)',
+                28,
+                stripY + 14
+            );
+
+            ctx.beginPath();
+            ctx.strokeStyle = isPath ? '#f43f5e' : '#10b981';
+            ctx.lineWidth = 2;
+            for (let x = 25; x < w - 25; x += 3) {
+                const wave = isPath
+                    ? Math.sin(x * 0.04 + t * 2) * 4
+                    : Math.sin(x * 0.08 + t * 4) * 14 * Math.sin(x * 0.02);
+                const y = stripY + stripH * 0.6 + wave;
+                if (x === 25) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+        }
+
+        /**************************************************************************
+         * 7. INTEROPERABLE EXPORT (FHIR R4 / DICOM-SR & EHR CLINICAL NOTE)
+         **************************************************************************/
+        function buildUnifiedFHIRPayload() {
+            const patient = document.getElementById('patientName').textContent;
+            const vendor = document.getElementById('vendorSelect').value;
+            const synthesisTitle = document.getElementById('synthesizedDiagnosisTitle').textContent;
+            const synthesisBody = document.getElementById('synthesizedDiagnosisBody').textContent;
+
+            const observations = Object.keys(ORGAN_MODULES).map(orgKey => {
+                const mod = ORGAN_MODULES[orgKey];
+                const stateKey = appState.organStates[orgKey];
+                return {
+                    organSystem: mod.name,
+                    aiModel: mod.modelName,
+                    clinicalState: stateKey.toUpperCase(),
+                    hitlGovernanceStatus: appState.hitlVerification[orgKey],
+                    measurements: mod.states[stateKey].metrics
+                };
+            });
+
+            return {
+                resourceType: 'DiagnosticReport',
+                id: 'omnipocus-unified-sr-' + Date.now(),
+                meta: {
+                    profile: ['http://hl7.org/fhir/StructureDefinition/DiagnosticReport', 'DICOM-SR-TID-5000'],
+                    source: `OmniPOCUS-AI-v1.0 (${vendor.toUpperCase()}-Stream)`
+                },
+                status: 'final',
+                category: [{ coding: [{ system: 'http://terminology.hl7.org/CodeSystem/v2-0074', code: 'CUS', display: 'Point-of-Care Ultrasound' }] }],
+                subject: { display: patient },
+                effectiveDateTime: new Date().toISOString(),
+                conclusion: `${synthesisTitle}: ${synthesisBody}`,
+                multiOrganObservations: observations
+            };
+        }
+
+        function openExportPreview() {
+            const payload = buildUnifiedFHIRPayload();
+            document.getElementById('fhirJsonContainer').textContent = JSON.stringify(payload, null, 2);
+            const modal = document.getElementById('exportModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeExportPreview() {
+            const modal = document.getElementById('exportModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function copyExportJson() {
+            const text = document.getElementById('fhirJsonContainer').textContent;
+            copyTextToClipboard(text, 'FHIR R4 / DICOM-SR JSON copied to clipboard!');
+        }
+
+        function copyStructuredNote() {
+            const patient = document.getElementById('patientName').textContent;
+            const synthesisTitle = document.getElementById('synthesizedDiagnosisTitle').textContent;
+            const synthesisBody = document.getElementById('synthesizedDiagnosisBody').textContent;
+
+            const lines = [
+                '=== OMNIPOCUS AI — UNIFIED MULTI-ORGAN ULTRASOUND REPORT ===',
+                `Patient: ${patient}`,
+                `Timestamp: ${new Date().toLocaleString()}`,
+                `Integrated Impression: ${synthesisTitle}`,
+                `Synthesis Summary: ${synthesisBody}`,
+                '',
+                '--- ORGAN-BY-ORGAN AI BIOMETRICS ---'
+            ];
+
+            Object.keys(ORGAN_MODULES).forEach(k => {
+                const mod = ORGAN_MODULES[k];
+                const st = appState.organStates[k];
+                lines.push(`• ${mod.states[st].summaryFinding}`);
+            });
+
+            copyTextToClipboard(lines.join('\n'), 'Structured EHR Note copied to clipboard!');
+        }
+
+        function toggleBlueprintModal(show) {
+            const modal = document.getElementById('blueprintModal');
+            if (show) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            } else {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function copyGitCommands() {
+            const text = document.getElementById('gitCommandsBlock').textContent;
+            copyTextToClipboard(text, 'Git commands & structure copied!');
+        }
+
+        function copyTextToClipboard(text, message) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+
+            const toast = document.getElementById('toastNotification');
+            toast.textContent = message;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 2600);
+        }
+
+        /**************************************************************************
+         * 8. INITIALIZATION ON WINDOW LOAD
+         **************************************************************************/
+        window.onload = function () {
+            generateSpeckleTexture();
+            resizeCanvas();
+            renderOrganModuleButtons();
+            renderViewSelector();
+            renderAIMetricsAndCapabilities();
+            captureLoopToReport();
+            renderUltrasoundFrame();
+        };
+    </script>
 </body>
 </html>
