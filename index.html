@@ -1,422 +1,253 @@
-<!-- ... existing code ... ... -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI in Obstetric Point-of-Care Ultrasound (O-POCUS) Training Module</title>
+    <style>
+        :root {
+            --primary: #0f4c5c;
+            --secondary: #e36414;
+            --bg-light: #f8f9fa;
+            --text-dark: #2b2d42;
+            --border-color: #dee2e6;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: var(--text-dark);
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        header h1 { margin: 0 0 0.5rem 0; font-size: 1.8rem; }
+        header p { margin: 0; opacity: 0.9; font-size: 1rem; }
 
-  <style>
-    /* Exact Quarto / The Graph Courses layout and styling */
-    html {
-      scroll-behavior: smooth;
-    }
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      color: #212529;
-      background-color: #ffffff;
-      line-height: 1.6;
-    }
+        /* Main Container with Grid Layout for Top-Right TOC */
+        .container {
+            max-width: 1300px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 2rem;
+            align-items: start;
+        }
 
-    /* Strict Two-Column Top-Aligned Layout Container */
-    .page-layout {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: flex-start;
-      max-width: 1240px;
-      margin: 0 auto;
-      padding: 3rem 2rem 5rem 2.5rem;
-      box-sizing: border-box;
-      gap: 2.5rem;
-    }
+        /* Top-Right Sticky Table of Contents */
+        aside.toc-sidebar {
+            grid-column: 2;
+            position: sticky;
+            top: 2rem;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.25rem;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        aside.toc-sidebar h3 {
+            margin-top: 0;
+            font-size: 1.1rem;
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 0.5rem;
+        }
+        aside.toc-sidebar ul {
+            padding-left: 1.2rem;
+            margin: 0.5rem 0 0 0;
+            font-size: 0.9rem;
+        }
+        aside.toc-sidebar li {
+            margin-bottom: 0.4rem;
+        }
+        aside.toc-sidebar a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        aside.toc-sidebar a:hover {
+            text-decoration: underline;
+        }
 
-    /* Main Left Content */
-    .content-area {
-      flex: 1 1 auto;
-      min-width: 0;
-      max-width: 820px;
-    }
+        /* Content Area */
+        main.content {
+            grid-column: 1;
+            background: white;
+            padding: 2.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
 
-    /* TOP RIGHT Permanent Sticky TOC */
-    .toc-sidebar {
-      width: 250px;
-      flex-shrink: 0;
-      position: sticky;
-      top: 2rem;
-      align-self: flex-start;
-      z-index: 50;
-    }
+        h2 { color: var(--primary); border-bottom: 2px solid var(--border-color); padding-bottom: 0.3rem; margin-top: 2rem; }
+        h3 { color: #333; margin-top: 1.5rem; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+        }
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 0.75rem;
+            text-align: left;
+        }
+        th {
+            background-color: var(--bg-light);
+            color: var(--primary);
+        }
+        blockquote {
+            border-left: 4px solid var(--secondary);
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background-color: #fff8f5;
+            color: #333;
+        }
+        .callout-important {
+            background-color: #eefef0;
+            border-left: 4px solid #2b8a3e;
+            padding: 1rem;
+            margin: 1.5rem 0;
+        }
+        ul, ol { padding-left: 1.5rem; }
 
-    .toc-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: #1e293b;
-      margin-bottom: 0.65rem;
-      letter-spacing: -0.01em;
-    }
-
-    .toc-nav {
-      border-left: 1.5px solid #e2e8f0;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-    }
-
-    .toc-link {
-      position: relative;
-      display: block;
-      padding: 0.35rem 0 0.35rem 0.95rem;
-      font-size: 0.925rem;
-      color: #4b5563;
-      text-decoration: none;
-      line-height: 1.35;
-      margin-left: -1.5px;
-      border-left: 2px solid transparent;
-      transition: color 0.15s ease, border-color 0.15s ease;
-    }
-
-    .toc-link:hover {
-      color: #0d6efd;
-    }
-
-    /* Active State Matching Screenshot (Blue vertical bar + Blue text) */
-    .toc-link.active {
-      color: #0d6efd !important;
-      font-weight: 500;
-      border-left: 2.5px solid #0d6efd !important;
-    }
-
-    /* Typography from Screenshot */
-    h1.course-title {
-      font-size: 2.45rem;
-      font-weight: 700;
-      line-height: 1.2;
-      color: #111827;
-      letter-spacing: -0.025em;
-      margin: 0 0 1.25rem 0;
-    }
-
-    .author-block {
-      margin-bottom: 2.75rem;
-    }
-
-    .author-label {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: #6b7280;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 0.25rem;
-    }
-
-    .author-name {
-      font-size: 1.05rem;
-      color: #1f2937;
-      font-weight: 400;
-    }
-
-    h2.section-heading {
-      font-size: 1.95rem;
-      font-weight: 700;
-      color: #111827;
-      letter-spacing: -0.02em;
-      margin: 2.75rem 0 1.15rem 0;
-    }
-
-    h3.sub-heading {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: #1f2937;
-      margin: 1.75rem 0 0.75rem 0;
-    }
-
-    p.lead-text {
-      font-size: 1.15rem;
-      line-height: 1.65;
-      color: #1f2937;
-      margin-bottom: 1.25rem;
-    }
-
-    /* Code and block styling */
-    .code-box {
-      background-color: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 6px;
-      padding: 0.85rem 1rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.88rem;
-      color: #0f172a;
-      overflow-x: auto;
-      margin: 1rem 0;
-    }
-
-    @media (max-width: 860px) {
-      .page-layout {
-        flex-direction: column-reverse;
-        padding: 1.5rem 1rem;
-      }
-      .toc-sidebar {
-        width: 100%;
-        position: relative;
-        top: 0;
-        margin-bottom: 2rem;
-        padding-bottom: 1rem;
-        border-bottom: 1px solid #e2e8f0;
-      }
-    }
-  </style>
+        /* Responsive Design for Mobile */
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            aside.toc-sidebar {
+                grid-column: 1;
+                position: relative;
+                top: 0;
+                margin-bottom: 2rem;
+                max-height: none;
+            }
+            main.content {
+                grid-column: 1;
+            }
+        }
+    </style>
 </head>
 <body>
 
-  <!-- Strict Flex Row Container: Left = Content, Right = TOC -->
-  <div class="page-layout">
-    
-    <!-- LEFT COLUMN: MAIN CONTENT -->
-    <main class="content-area">
-      
-      <!-- Title Header Block (Direct Match to Screenshot) -->
-      <header>
-        <h1 class="course-title">Final Project: Generative AI for work &amp; research</h1>
-        <div class="author-block">
-          <div class="author-label">AUTHOR</div>
-          <div class="author-name">Alphonce Oyugi</div>
-        </div>
-      </header>
+    <header>
+        <h1>AI in Obstetric Point-of-Care Ultrasound (O-POCUS)</h1>
+        <p>Capabilities, risks, ethics and safe use at the bedside | Version 1.0 (November 2026)[cite: 1]</p>
+    </header>
 
-      <!-- Section: Overview -->
-      <section id="overview" class="scroll-mt-6 mb-12">
-        <h2 class="section-heading">Overview</h2>
-        <p class="lead-text">
-          For your final project, you will design and build an AI solution relevant to your work, research or personal projects, combining <strong>at least two themes</strong> from this course.
-        </p>
-        <p class="lead-text">
-          You will submit a <strong>1–2 page document</strong> describing your solution and linking to it, and give a <strong>4-minute live presentation</strong> with a demo in class.
-        </p>
+    <div class="container">
+        <!-- TOP RIGHT TABLE OF CONTENTS -->
+        <aside class="toc-sidebar">
+            <h3>Table of Contents</h3>
+            <ul>
+                <li><a href="#about">About this Module</a></li>
+                <li><a href="#unit1">Unit 1: Intro & Definitions</a></li>
+                <li><a href="#unit2">Unit 2: Capabilities & Benefits</a></li>
+                <li><a href="#unit3">Unit 3: Risks & Learning</a></li>
+                <li><a href="#unit4">Unit 4: Ethics & Privacy</a></li>
+                <li><a href="#unit5">Unit 5: Integration & Docs</a></li>
+                <li><a href="#assessment">Part B: Assessment</a></li>
+                <li><a href="#facilitator">Part C: Facilitator Guide</a></li>
+                <li><a href="#appendices">Appendices & References</a></li>
+            </ul>
+        </aside>
 
-        <!-- Course timing summary banner -->
-        <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 my-6 text-sm text-slate-700">
-          <div class="font-semibold text-slate-900 mb-1">Cohort 2026 T3 Session Details:</div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 text-xs sm:text-sm">
-            <div><strong>Weekly Workshop:</strong> Sundays 11:00–13:00 GMT or Wednesdays 15:00–17:00 GMT</div>
-            <div><strong>Help Sessions:</strong> 1 hour before each workshop</div>
-          </div>
-        </div>
-      </section>
+        <!-- MAIN CONTENT AREA -->
+        <main class="content">
+            
+            <section id="about">
+                <h2>About this Module</h2>
+                <p>Obstetric point-of-care ultrasound (O-POCUS) is a focused scan done at the bedside, often with a handheld probe linked to a phone or tablet, to answer specific clinical questions: How many babies are there? Is there a heartbeat? Which way is the baby lying? Where is the placenta? Is there enough fluid? How far along is the pregnancy?[cite: 4] It is usually done by the midwife, nurse, clinical officer or doctor caring for the woman[cite: 4].</p>
+                
+                <div class="callout-important">
+                    <strong>Who it is for:</strong> Midwives, nurses, clinical officers, medical providers, emergency/rural clinicians, and O-POCUS trainers[cite: 4]. Self-study takes about 3 hours; facilitated sessions take 30 minutes[cite: 1, 4].
+                </div>
+            </section>
 
-      <!-- Section: Course Themes -->
-      <section id="course-themes" class="scroll-mt-6 mb-12">
-        <h2 class="section-heading">Course Themes</h2>
-        <p class="text-slate-700 text-lg mb-4">Here is a reminder of the main course themes:</p>
-        
-        <div class="space-y-4">
-          <div class="border-l-2 border-sky-500 pl-4 py-1">
-            <h4 class="font-semibold text-slate-900 text-base">Theme 1: Websites &amp; Presentations</h4>
-            <p class="text-sm text-slate-600">Creating static sites with ChatGPT and GitHub Pages; understanding websites vs. web applications; automated slide design using Gamma and Beautiful.ai.</p>
-          </div>
+            <section id="unit1">
+                <h2>Unit 1. Introduction and Definitions</h2>
+                <p>Artificial intelligence (AI) is software that performs tasks we normally associate with human intelligence, such as recognising patterns in images[cite: 7]. Almost all current imaging AI is machine learning and deep learning built from layered artificial neural networks[cite: 7].</p>
+                <ul>
+                    <li><strong>Targeted-View AI:</strong> Operator finds and holds standard views; AI guides the view, checks quality, and places calipers[cite: 8].</li>
+                    <li><strong>Blind-Sweep AI:</strong> Operator follows a simple sweep pattern without view-finding; AI interprets the whole sweep video to give an estimate[cite: 8].</li>
+                </ul>
+            </section>
 
-          <div class="border-l-2 border-sky-500 pl-4 py-1">
-            <h4 class="font-semibold text-slate-900 text-base">Theme 2: Automated Data Analysis</h4>
-            <p class="text-sm text-slate-600">Local data privacy and de-identification; no-code data analyses and plotting with R/Python via Cursor; automated dashboards in Bricks AI.</p>
-          </div>
+            <section id="unit2">
+                <h2>Unit 2. Current Capabilities, Applications and Benefits</h2>
+                <p>Blind-sweep dating allows frontline workers with minimal training to estimate gestational age accurately in settings without sonographers[cite: 12]. Key clinical studies and milestones include:</p>
+                <table>
+                    <tr>
+                        <th>Study / Source</th>
+                        <th>Setting & Users</th>
+                        <th>Key Result</th>
+                    </tr>
+                    <tr>
+                        <td>Stringer et al., JAMA 2024[cite: 12]</td>
+                        <td>Zambia/USA (~400 participants), novices with 1-day course</td>
+                        <td>Mean absolute error 3.2 days vs 3.0 days for sonographers[cite: 12].</td>
+                    </tr>
+                    <tr>
+                        <td>Google Research et al., JAMA Netw Open 2026[cite: 12]</td>
+                        <td>Nairobi & Chicago (385 participants, 16–36 weeks)</td>
+                        <td>Mean absolute error 4.18 days vs 4.48 days for expert biometry[cite: 12].</td>
+                    </tr>
+                </ul>
+                <p><strong>Regulatory Milestone:</strong> In March 2026, the US FDA cleared Butterfly Network's Gestational Age Tool as the first cleared blind-sweep AI for gestational age (intended for 16 to 37 weeks)[cite: 12].</p>
+            </section>
 
-          <div class="border-l-2 border-sky-500 pl-4 py-1">
-            <h4 class="font-semibold text-slate-900 text-base">Theme 3: Text Processing &amp; Research</h4>
-            <p class="text-sm text-slate-600">Running LLM operations directly in spreadsheets; academic literature discovery and knowledge extraction using Consensus, Elicit, and Scite.</p>
-          </div>
+            <section id="unit3">
+                <h2>Unit 3. Risks and Effects on Learning</h2>
+                <p>AI tools act like a "spotlight"—reporting only what they are programmed to evaluate[cite: 15]. Key risks include:</p>
+                <ul>
+                    <li><strong>The Blind-Sweep Blind Spot:</strong> A gestational age number does not rule out twins, intrauterine fetal death, low-lying placenta, or fetal anomalies[cite: 15].</li>
+                    <li><strong>Automation Bias:</strong> The tendency to over-rely on automated suggestions even when they are incorrect[cite: 16].</li>
+                </ul>
+                <blockquote>
+                    <strong>Safety Rule ("Judge First, Then Reveal"):</strong> Always estimate clinically, answer the O-POCUS questions within your scope, and commit to your own evaluation before viewing or relying on the AI result[cite: 17].
+                </blockquote>
+            </section>
 
-          <div class="border-l-2 border-sky-500 pl-4 py-1">
-            <h4 class="font-semibold text-slate-900 text-base">Theme 4: Custom GPTs and Chatbots</h4>
-            <p class="text-sm text-slate-600">LLM model terminology (matching reasoning vs. latency); creating stateful interactive chatbots with Botpress; building specialized Custom GPTs.</p>
-          </div>
+            <section id="unit4">
+                <h2>Unit 4. Ethics, Privacy and Data Security</h2>
+                <p>In alignment with WHO guidance on the ethics and governance of AI for health (2021), users must protect human autonomy, ensure transparency, maintain accountability, and secure handheld device data[cite: 18]. Patient scan images must never be transmitted via unapproved personal messaging or social media groups[cite: 19].</p>
+            </section>
 
-          <div class="border-l-2 border-sky-500 pl-4 py-1">
-            <h4 class="font-semibold text-slate-900 text-base">Theme 5: AI for Workflow Automation</h4>
-            <p class="text-sm text-slate-600">AI agents vs. deterministic workflows; building automated event-driven pipelines in Make.com; introduction to browser control agents.</p>
-          </div>
+            <section id="unit5">
+                <h2>Unit 5. Clinical Integration and Documentation</h2>
+                <p>Before relying on any tool, verify regulatory approval, scope of practice, and local referral pathways[cite: 21]. Documentation must record three separate items to support auditability and individual accountability[cite: 23]:</p>
+                <ol>
+                    <li><strong>AI Output:</strong> Device, app version, protocol, and confidence flags[cite: 23].</li>
+                    <li><strong>Clinician's Assessment:</strong> Clinical GA (LMP, fundal height) and O-POCUS findings[cite: 23].</li>
+                    <li><strong>Next Action:</strong> Dating used, clinical plan, and referral details[cite: 23].</li>
+                </ol>
+            </section>
 
-          <div class="border-l-2 border-sky-500 pl-4 py-1">
-            <h4 class="font-semibold text-slate-900 text-base">Theme 6: GenAI for Communication and Outreach</h4>
-            <p class="text-sm text-slate-600">Visual model comprehension; generating graphics with ChatGPT and Canva; editable diagrams via AI-generated SVG; introduction to video tools.</p>
-          </div>
-        </div>
-      </section>
+            <section id="assessment">
+                <h2>Part B: Assessment</h2>
+                <p>The module includes multiple-choice questions (suggested pass mark 80%)[cite: 25], short clinical case studies[cite: 27], and a practical supervisor competency checklist[cite: 27] to guarantee safe bedside execution.</p>
+            </section>
 
-      <!-- Section: Project Ideas -->
-      <section id="project-ideas" class="scroll-mt-6 mb-12">
-        <h2 class="section-heading">Project Ideas</h2>
-        <p class="text-slate-700 text-base mb-4">You are encouraged to build a project directly relevant to your daily work or research. Examples of multi-theme combinations include:</p>
-        <ul class="list-disc pl-6 space-y-2 text-slate-700 text-base">
-          <li><strong>Automated Research Digest:</strong> An automated Make.com workflow connecting to Google Sheets to extract, categorize, and summarize weekly literature into a live GitHub Pages feed (Themes 1, 3, 5).</li>
-          <li><strong>Clinical Registry Query Assistant:</strong> An interactive Botpress chatbot grounded in trial protocol documents that feeds structured patient queries into a sanitized R data pipeline (Themes 2, 4).</li>
-          <li><strong>Executive KPI Pipeline:</strong> A Cursor-driven analytical pipeline that takes raw operational CSVs, performs statistical summaries, and generates an SVG chart embedded into an executive summary webpage (Themes 1, 2, 6).</li>
-        </ul>
-      </section>
+            <section id="facilitator">
+                <h2>Part C: Facilitator Guide</h2>
+                <p>Provides a structured 30-minute session plan for trainers, including preparation checklists for anonymized case sets, guidance for running the "judge-first" activity, and managing common learner questions[cite: 29, 30].</p>
+            </section>
 
-      <!-- Section: Submission Instructions -->
-      <section id="submission-instructions" class="scroll-mt-6 mb-12">
-        <h2 class="section-heading">Submission Instructions</h2>
-        <p class="text-slate-700 text-base mb-4">Please submit your project deliverables via the student portal before the presentation date:</p>
-        <ol class="list-decimal pl-6 space-y-2 text-slate-700 text-base">
-          <li><strong>1–2 Page Document:</strong> An executive summary describing your problem statement, tool architecture, failure recoveries, and live URLs to your solution.</li>
-          <li><strong>Live Access Link:</strong> A functional URL (e.g., GitHub Pages site, published Botpress chatbot, or exported Make.com blueprint).</li>
-          <li><strong>Demo Slides:</strong> A concise 3-to-4 slide deck supporting your 4-minute presentation.</li>
-        </ol>
-      </section>
+            <section id="appendices">
+                <h2>Appendices and References</h2>
+                <p>Includes a full glossary of technical terms (e.g., AUC-ROC, dataset shift, algorithmic bias, deskilling)[cite: 31], judge-first worksheets[cite: 32], documentation templates[cite: 33], local implementation guidelines[cite: 33], and formal literature references[cite: 33, 34].</p>
+            </section>
 
-      <!-- Section: Presentation Dates -->
-      <section id="presentation-dates" class="scroll-mt-6 mb-12">
-        <h2 class="section-heading">Presentation Dates</h2>
-        <p class="text-slate-700 text-base mb-4">Presentations take place during Week 8 of the cohort:</p>
-        <div class="border border-slate-200 rounded-lg overflow-hidden text-sm">
-          <table class="w-full text-left">
-            <thead class="bg-slate-50 border-b border-slate-200">
-              <tr>
-                <th class="p-3 font-semibold text-slate-900">Cohort Track</th>
-                <th class="p-3 font-semibold text-slate-900">Presentation Date &amp; Time</th>
-                <th class="p-3 font-semibold text-slate-900">Format</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100">
-              <tr>
-                <td class="p-3">Track A (Sunday)</td>
-                <td class="p-3 font-medium text-slate-900">November 15, 2026 • 11:00–13:00 GMT</td>
-                <td class="p-3 text-slate-600">4-min live presentation + 2-min Q&amp;A</td>
-              </tr>
-              <tr>
-                <td class="p-3">Track B (Wednesday)</td>
-                <td class="p-3 font-medium text-slate-900">November 18, 2026 • 15:00–17:00 GMT</td>
-                <td class="p-3 text-slate-600">4-min live presentation + 2-min Q&amp;A</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+        </main>
+    </div>
 
-      <!-- Section: Instructor Feedback Sessions -->
-      <section id="feedback-sessions" class="scroll-mt-6 mb-12">
-        <h2 class="section-heading">Instructor Feedback Sessions</h2>
-        <p class="text-slate-700 text-base mb-3">
-          During <strong>Week 7 (Nov 8 or Nov 11)</strong>, workshop time is dedicated to project progress checks, technical troubleshooting, and structured peer feedback rounds.
-        </p>
-        <p class="text-slate-700 text-sm">
-          Additionally, help sessions run one hour before every weekly workshop (10:00 GMT on Sundays, 14:00 GMT on Wednesdays) where instructors assist with API connections, Cursor setup, and workflow bugs.
-        </p>
-      </section>
-
-      <!-- Section: Grading Rubric -->
-      <section id="grading-rubric" class="scroll-mt-6 mb-12">
-        <h2 class="section-heading">Grading Rubric</h2>
-        <p class="text-slate-700 text-base mb-4">The passing threshold for the course is <strong>80%</strong>. The final grade is evaluated as follows:</p>
-
-        <div class="border border-slate-200 rounded-lg overflow-hidden text-sm mb-6">
-          <table class="w-full text-left">
-            <thead class="bg-slate-50 border-b border-slate-200">
-              <tr>
-                <th class="p-3 font-semibold text-slate-900">Component</th>
-                <th class="p-3 font-semibold text-slate-900">Weight</th>
-                <th class="p-3 font-semibold text-slate-900">Criteria</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100">
-              <tr>
-                <td class="p-3 font-semibold">Final Capstone Project</td>
-                <td class="p-3 text-sky-700 font-bold">40%</td>
-                <td class="p-3 text-slate-600">Multi-theme execution, utility, safety guardrails, and presentation.</td>
-              </tr>
-              <tr>
-                <td class="p-3 font-semibold">Workshop Assignments</td>
-                <td class="p-3 text-sky-700 font-bold">40%</td>
-                <td class="p-3 text-slate-600">Hands-on tasks completed during weekly workshops.</td>
-              </tr>
-              <tr>
-                <td class="p-3 font-semibold">Workshop Attendance</td>
-                <td class="p-3 text-sky-700 font-bold">10%</td>
-                <td class="p-3 text-slate-600">Attend at least 5 workshops to receive full attendance credit.</td>
-              </tr>
-              <tr>
-                <td class="p-3 font-semibold">Online Quizzes</td>
-                <td class="p-3 text-sky-700 font-bold">10%</td>
-                <td class="p-3 text-slate-600">Weekly prework theory quizzes.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- Section: Frequently Asked Questions -->
-      <section id="faq" class="scroll-mt-6 mb-12">
-        <h2 class="section-heading">Frequently Asked Questions</h2>
-        <div class="space-y-4 text-base text-slate-700">
-          <div>
-            <h4 class="font-semibold text-slate-900 mb-1">Can I work in pairs or groups?</h4>
-            <p class="text-slate-600 text-sm">Projects are evaluated individually, though you are encouraged to collaborate and test each other’s tools during the Week 7 peer feedback sessions.</p>
-          </div>
-          <div>
-            <h4 class="font-semibold text-slate-900 mb-1">What if I miss a live workshop?</h4>
-            <p class="text-slate-600 text-sm">All workshops are recorded. However, you must attend at least 5 live sessions across the term to earn the 10% attendance credit.</p>
-          </div>
-          <div>
-            <h4 class="font-semibold text-slate-900 mb-1">Do I need coding experience?</h4>
-            <p class="text-slate-600 text-sm">No. The course focuses entirely on no-code tools and AI-assisted scripting where you guide the model rather than writing code manually.</p>
-          </div>
-        </div>
-      </section>
-
-    </main>
-
-    <!-- RIGHT COLUMN: TABLE OF CONTENTS (TOP RIGHT POSITIONED) -->
-    <aside class="toc-sidebar">
-      <div class="toc-title">Table of contents</div>
-      <nav class="toc-nav" id="tocNav">
-        <a href="#overview" class="toc-link active">Overview</a>
-        <a href="#course-themes" class="toc-link">Course Themes</a>
-        <a href="#project-ideas" class="toc-link">Project Ideas</a>
-        <a href="#submission-instructions" class="toc-link">Submission Instructions</a>
-        <a href="#presentation-dates" class="toc-link">Presentation Dates</a>
-        <a href="#feedback-sessions" class="toc-link">Instructor Feedback Sessions</a>
-        <a href="#grading-rubric" class="toc-link">Grading Rubric</a>
-        <a href="#faq" class="toc-link">Frequently Asked Questions</a>
-      </nav>
-    </aside>
-
-  </div>
-
-  <!-- ScrollSpy Script ensuring dynamic active indicator highlighting -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const tocLinks = document.querySelectorAll('#tocNav .toc-link');
-      const sections = document.querySelectorAll('main section[id]');
-
-      function updateActiveToc() {
-        let currentSectionId = '';
-        const scrollPosition = window.scrollY + 120;
-
-        sections.forEach(section => {
-          const top = section.offsetTop;
-          const height = section.offsetHeight;
-          if (scrollPosition >= top && scrollPosition < top + height) {
-            currentSectionId = section.getAttribute('id');
-          }
-        });
-
-        if (!currentSectionId && sections.length > 0) {
-          if (window.scrollY < sections[0].offsetTop) {
-            currentSectionId = sections[0].getAttribute('id');
-          }
-        }
-
-        tocLinks.forEach(link => {
-          if (link.getAttribute('href') === `#${currentSectionId}`) {
-            link.classList.add('active');
-          } else {
-            link.classList.remove('active');
-          }
-        });
-      }
-
-      window.addEventListener('scroll', updateActiveToc, { passive: true });
-      updateActiveToc();
-    });
-  </script>
 </body>
 </html>
